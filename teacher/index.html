@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Mentor — Teacher Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A45; --paper:#EFF0E8; --card:#FBFBF7;
+    --brass:#8B6B3A; --brass-light:#C9A86B;
+    --line: rgba(30,42,69,0.13);
+    --visual:#3D6FB4; --auditory:#6B5CA5; --readwrite:#D69A3E; --kinesthetic:#4F8F6B;
+    --shadow: 0 1px 2px rgba(30,42,69,0.05), 0 8px 20px rgba(30,42,69,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--paper);font-family:'Inter',sans-serif;color:var(--ink);
+    padding:64px 20px 60px;
+  }
+  .wrap{max-width:1100px;margin:0 auto;}
+  .header{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:14px;
+  }
+  .brandrow{display:flex;align-items:center;gap:10px;}
+  .brand{font-family:'Fraunces',serif;font-weight:600;font-size:21px;}
+  .brand small{display:block;font-family:'Inter';font-weight:500;font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+  .who{font-size:13px;color:#5b6172;text-align:right;}
+  .who b{color:var(--ink);}
+
+  .controlbar{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
+    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-bottom:18px;box-shadow:var(--shadow);
+  }
+  .periods{display:flex;gap:6px;flex-wrap:wrap;}
+  .period-pill{
+    border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 13px;
+    font-family:'JetBrains Mono';font-size:13px;font-weight:600;cursor:pointer;color:#5b6172;
+  }
+  .period-pill.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .toggle-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#5b6172;font-weight:500;}
+  .switch{
+    width:38px;height:22px;border-radius:12px;background:var(--line);position:relative;cursor:pointer;flex-shrink:0;
+  }
+  .switch.on{background:var(--brass);}
+  .switch::after{
+    content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;
+  }
+  .switch.on::after{left:18px;}
+
+  .grid{display:grid;grid-template-columns: 1.5fr 1fr; gap:18px; margin-bottom:18px;}
+  @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .panel-head{
+    padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
+  }
+  .panel-title{font-family:'Fraunces',serif;font-weight:600;font-size:16px;}
+  .panel-sub{font-size:12px;color:#8a8f9b;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{
+    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.03em;color:#8a8f9b;
+    padding:10px 18px;border-bottom:1px solid var(--line);font-weight:700;
+  }
+  td{padding:10px 18px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tr.unassessed td{color:#aab0bb;}
+  .idcell{font-family:'JetBrains Mono';font-weight:600;}
+  .pill{
+    display:inline-flex;align-items:center;gap:5px;border-radius:8px;padding:4px 9px;font-size:11.5px;font-weight:700;color:#fff;
+  }
+  .pill.secondary{opacity:0.55;}
+  .dot{width:7px;height:7px;border-radius:50%;background:#fff;}
+  .status-ok{color:var(--kinesthetic);font-weight:700;font-size:12px;}
+  .status-pending{color:#aab0bb;font-weight:700;font-size:12px;}
+
+  .rose-panel{display:flex;flex-direction:column;align-items:center;padding:18px;}
+  .insight{
+    margin-top:14px;background:#FAF6EE;border:1px solid var(--brass-light);border-radius:12px;padding:12px 14px;font-size:12.5px;color:#5b6172;line-height:1.5;
+  }
+  .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px;font-size:11.5px;color:#5b6172;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend .dot2{width:8px;height:8px;border-radius:50%;}
+
+  /* lesson upload panel */
+  .upload-zone{
+    border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;margin:18px;
+    color:#8a8f9b;font-size:13px;
+  }
+  .upload-zone b{color:var(--ink);}
+  .uploaded-item{
+    margin:0 18px 14px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+    display:flex;align-items:center;justify-content:space-between;background:#fff;
+  }
+  .uploaded-item .name{font-weight:600;font-size:13.5px;}
+  .uploaded-item .meta{font-size:11.5px;color:#8a8f9b;margin-top:2px;}
+  .badge-analyzed{
+    font-size:11px;font-weight:700;color:var(--kinesthetic);background:rgba(79,143,107,0.1);
+    padding:4px 9px;border-radius:8px;
+  }
+  .strategies-head{padding:0 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .strategies-head .label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:#8a8f9b;}
+  .settings-note{font-size:11.5px;color:#8a8f9b;display:flex;align-items:center;gap:6px;}
+  .settings-note .dot3{width:7px;height:7px;border-radius:50%;background:var(--kinesthetic);}
+  .strategy-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 18px 18px;}
+  @media (max-width:880px){ .strategy-cards{grid-template-columns:1fr;} }
+  .strategy-card{
+    border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;
+  }
+  .strategy-card .stag{
+    display:inline-block;font-size:10.5px;font-weight:700;color:#fff;padding:3px 8px;border-radius:6px;margin-bottom:8px;
+  }
+  .strategy-card .stitle{font-weight:700;font-size:13.5px;margin-bottom:4px;}
+  .strategy-card .sdesc{font-size:12px;color:#5b6172;line-height:1.45;}
+  .strategy-card .ssource{margin-top:8px;font-size:10.5px;color:#aab0bb;text-transform:uppercase;letter-spacing:0.02em;font-weight:700;}
+</style>
+</head>
+<body>
+<div style="position:fixed;top:0;left:0;right:0;width:100%;background:#1E2A45;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:7px 14px;font-family:Inter,sans-serif;z-index:9999;box-sizing:border-box;">PREVIEW BUILD &middot; <a href="/" style="color:#C9A86B;text-decoration:none;">&larr; Back to Lesson Mentor home</a></div>
+<div class="wrap">
+
+  <div class="header">
+    <div class="brandrow">
+      <svg id="logoGlyph" width="32" height="32"></svg>
+      <div class="brand">Lesson Mentor<small>Teacher dashboard</small></div>
+    </div>
+    <div class="who">Ms. Alvarez &nbsp;·&nbsp; <b>Grade 5</b> &nbsp;·&nbsp; Lincoln Elementary</div>
+  </div>
+
+  <div class="controlbar">
+    <div class="periods" id="periods">
+      <div class="period-pill active">Period 1</div>
+      <div class="period-pill">Period 2</div>
+      <div class="period-pill">Period 3</div>
+      <div class="period-pill">Period 4</div>
+      <div class="period-pill">Period 5</div>
+    </div>
+    <div class="toggle-row">
+      <span>Self-contained classroom</span>
+      <div class="switch" id="selfContainedToggle" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Period 1 roster</div>
+          <div class="panel-sub">22 students &middot; 19 assessed this year</div>
+        </div>
+        <div class="panel-sub">Tap a row for full profile</div>
+      </div>
+      <table>
+        <thead><tr><th>Student</th><th>Primary</th><th>Secondary</th><th>Assessed</th></tr></thead>
+        <tbody id="rosterBody"></tbody>
+      </table>
+    </div>
+
+    <div class="panel rose-panel">
+      <div class="panel-title" style="align-self:flex-start;padding:14px 0 0 0;">Class profile</div>
+      <svg id="classRose" width="170" height="170" style="margin-top:6px;"></svg>
+      <div class="legend" id="classLegend"></div>
+      <div class="insight">62% of Period 1 leans <b>Visual / Kinesthetic</b>. Consider pairing reading-heavy tasks with a diagram or quick build — especially for your 4 unassessed students once they complete baseline.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Lesson plans &amp; curriculum</div>
+        <div class="panel-sub">Upload a lesson or full curriculum module — suggestions update automatically</div>
+      </div>
+    </div>
+    <div class="upload-zone"><b>Drop a file</b> or click to upload &nbsp;·&nbsp; PDF, DOCX, or boxed curriculum export (e.g. Eureka Math)</div>
+    <div class="uploaded-item">
+      <div>
+        <div class="name">Eureka Math — Module 4, Lesson 12: Multiplying Fractions</div>
+        <div class="meta">Uploaded today · 6 pages · matched against Period 1's class profile</div>
+      </div>
+      <div class="badge-analyzed">✓ Analyzed</div>
+    </div>
+
+    <div class="strategies-head">
+      <span class="label">Suggested strategies for this lesson</span>
+      <span class="settings-note"><span class="dot3"></span>Kagan strategies enabled for Lincoln Elementary</span>
+    </div>
+    <div class="strategy-cards">
+      <div class="strategy-card">
+        <span class="stag" style="background:#4F8F6B;">Kinesthetic</span>
+        <div class="stitle">Fraction Number-Line Walk</div>
+        <div class="sdesc">Tape a number line on the floor; students physically step to plot fraction products before checking on paper.</div>
+        <div class="ssource">Rules-based · strategy library</div>
+      </div>
+      <div class="strategy-card">
+        <span class="stag" style="background:#3D6FB4;">Visual</span>
+        <div class="stitle">Area-Model Color Coding</div>
+        <div class="sdesc">Color each factor's region differently so the overlap (the product) is visually obvious before introducing the algorithm.</div>
+        <div class="ssource">AI-generated from lesson content</div>
+      </div>
+      <div class="strategy-card">
+        <span class="stag" style="background:#6B5CA5;">Auditory</span>
+        <div class="stitle">Think-Pair-Share (Kagan)</div>
+        <div class="sdesc">Partners narrate their reasoning aloud before writing — surfaces misconceptions before independent practice.</div>
+        <div class="ssource">Rules-based · Kagan library</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = { V:'#3D6FB4', A:'#6B5CA5', R:'#D69A3E', K:'#4F8F6B' };
+const NAMES = { V:'Visual', A:'Auditory', R:'Read/Write', K:'Kinesthetic' };
+const CLASS_PROFILE = { V:34, A:16, R:18, K:32 };
+
+function describeWedge(cx, cy, r, startAngle, endAngle){
+  const toRad = a => (a-90) * Math.PI/180;
+  const x1 = cx + r*Math.cos(toRad(startAngle)), y1 = cy + r*Math.sin(toRad(startAngle));
+  const x2 = cx + r*Math.cos(toRad(endAngle)), y2 = cy + r*Math.sin(toRad(endAngle));
+  const large = endAngle - startAngle > 180 ? 1 : 0;
+  return `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+}
+function buildRose(svg, profile, size){
+  const r = size/2 - 4, cx = size/2, cy = size/2;
+  let angle = 0; let html = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#1E2A45" stroke-opacity="0.1"/>`;
+  const order = ['V','A','R','K'];
+  let dominant = order[0]; order.forEach(k=>{ if(profile[k] > profile[dominant]) dominant = k; });
+  order.forEach(k=>{
+    const sweep = profile[k]/100*360;
+    html += `<path d="${describeWedge(cx,cy,r,angle,angle+sweep)}" fill="${COLORS[k]}" opacity="0.88"/>`;
+    angle += sweep;
+  });
+  html += `<circle cx="${cx}" cy="${cy}" r="${r*0.22}" fill="#FBFBF7" stroke="#1E2A45" stroke-opacity="0.12"/>`;
+  let domStart = 0; for(const k of order){ if(k===dominant) break; domStart += profile[k]/100*360; }
+  const domMid = domStart + (profile[dominant]/100*360)/2;
+  const toRad = a => (a-90) * Math.PI/180;
+  const nx = cx + (r*0.7)*Math.cos(toRad(domMid)), ny = cy + (r*0.7)*Math.sin(toRad(domMid));
+  html += `<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#1E2A45" stroke-width="2"/>`;
+  html += `<circle cx="${cx}" cy="${cy}" r="3" fill="#1E2A45"/>`;
+  svg.innerHTML = html;
+}
+buildRose(document.getElementById('logoGlyph'), CLASS_PROFILE, 32);
+buildRose(document.getElementById('classRose'), CLASS_PROFILE, 170);
+
+const legend = document.getElementById('classLegend');
+['V','A','R','K'].forEach(k=>{
+  legend.innerHTML += `<span><span class="dot2" style="background:${COLORS[k]}"></span>${NAMES[k]} ${CLASS_PROFILE[k]}%</span>`;
+});
+
+const ROSTER = [
+  {id:'4471', primary:'V', secondary:'K', assessed:true},
+  {id:'4488', primary:'K', secondary:'A', assessed:true},
+  {id:'4502', primary:'R', secondary:'V', assessed:true},
+  {id:'4519', primary:'A', secondary:'V', assessed:true},
+  {id:'4533', primary:'V', secondary:'R', assessed:true},
+  {id:'4540', primary:null, secondary:null, assessed:false},
+  {id:'4558', primary:'K', secondary:'V', assessed:true},
+  {id:'4561', primary:null, secondary:null, assessed:false},
+];
+const body = document.getElementById('rosterBody');
+ROSTER.forEach(s=>{
+  if(!s.assessed){
+    body.innerHTML += `<tr class="unassessed">
+      <td class="idcell">#${s.id}</td>
+      <td colspan="2">Not yet assessed</td>
+      <td class="status-pending">Pending</td>
+    </tr>`;
+  } else {
+    body.innerHTML += `<tr>
+      <td class="idcell">#${s.id}</td>
+      <td><span class="pill" style="background:${COLORS[s.primary]}"><span class="dot"></span>${NAMES[s.primary]}</span></td>
+      <td><span class="pill secondary" style="background:${COLORS[s.secondary]}"><span class="dot"></span>${NAMES[s.secondary]}</span></td>
+      <td class="status-ok">Fall ✓</td>
+    </tr>`;
+  }
+});
+
+document.getElementById('periods').addEventListener('click', e=>{
+  if(!e.target.classList.contains('period-pill')) return;
+  document.querySelectorAll('.period-pill').forEach(p=>p.classList.remove('active'));
+  e.target.classList.add('active');
+});
+</script>
+</body>
+</html>

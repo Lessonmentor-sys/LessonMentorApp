@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Mentor — Question Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A45; --paper:#EFF0E8; --card:#FBFBF7;
+    --brass:#8B6B3A; --brass-light:#C9A86B;
+    --line: rgba(30,42,69,0.13);
+    --visual:#3D6FB4; --auditory:#6B5CA5; --readwrite:#D69A3E; --kinesthetic:#4F8F6B;
+    --shadow: 0 1px 2px rgba(30,42,69,0.05), 0 8px 20px rgba(30,42,69,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);font-family:'Inter',sans-serif;color:var(--ink);padding:64px 20px 60px;}
+  .wrap{max-width:1100px;margin:0 auto;}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:14px;}
+  .brand{font-family:'Fraunces',serif;font-weight:600;font-size:21px;}
+  .brand small{display:block;font-family:'Inter';font-weight:500;font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+  .count{font-size:13px;color:#5b6172;}
+  .count b{color:var(--ink);}
+
+  .controlbar{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:20px;box-shadow:var(--shadow);
+  }
+  .filters{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-pill{
+    border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 13px;
+    font-size:12.5px;font-weight:600;cursor:pointer;color:#5b6172;
+  }
+  .filter-pill.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:#5b6172;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend .dot{width:8px;height:8px;border-radius:50%;}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  @media (max-width:780px){ .grid{grid-template-columns:1fr;} }
+
+  .qcard{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);
+  }
+  .qcard-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .grade-badge{
+    font-family:'JetBrains Mono';font-size:11px;font-weight:700;color:#fff;background:var(--ink);
+    padding:4px 9px;border-radius:7px;letter-spacing:0.02em;
+  }
+  .qnum{font-size:11px;color:#aab0bb;font-weight:600;}
+  .qtext{font-family:'Fraunces',serif;font-size:15px;font-weight:600;line-height:1.4;margin-bottom:12px;}
+  .opts{display:flex;flex-direction:column;gap:6px;}
+  .opt{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#3d4250;line-height:1.4;}
+  .opt .tag{
+    flex-shrink:0;width:64px;text-align:center;font-size:10px;font-weight:700;color:#fff;
+    padding:3px 0;border-radius:6px;letter-spacing:0.02em;
+  }
+  .fmt-note{font-size:11px;color:#aab0bb;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+<div style="position:fixed;top:0;left:0;right:0;width:100%;background:#1E2A45;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:7px 14px;font-family:Inter,sans-serif;z-index:9999;box-sizing:border-box;">PREVIEW BUILD &middot; <a href="/" style="color:#C9A86B;text-decoration:none;">&larr; Back to Lesson Mentor home</a></div>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="brand">Lesson Mentor<small>Question bank — review grid</small></div>
+    </div>
+    <div class="count"><b id="visibleCount">44</b> of 44 questions shown</div>
+  </div>
+
+  <div class="controlbar">
+    <div class="filters" id="filters">
+      <div class="filter-pill active" data-grade="all">All grades</div>
+      <div class="filter-pill" data-grade="K-2">K-2</div>
+      <div class="filter-pill" data-grade="3-5">Grades 3-5</div>
+      <div class="filter-pill" data-grade="6-12">Grades 6-12</div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:#3D6FB4;"></span>Visual</span>
+      <span><span class="dot" style="background:#6B5CA5;"></span>Auditory</span>
+      <span><span class="dot" style="background:#D69A3E;"></span>Read/Write</span>
+      <span><span class="dot" style="background:#4F8F6B;"></span>Kinesthetic</span>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const COLORS = { V:'#3D6FB4', A:'#6B5CA5', R:'#D69A3E', K:'#4F8F6B' };
+const NAMES = { V:'Visual', A:'Auditory', R:'Read/Write', K:'Kinesthetic' };
+
+const QUESTIONS = [
+// K-2 -- 20 two-option questions (10 appearances per modality)
+{ grade:'K-2', q: "You want to learn about dinosaurs.", opts:[['V', "Look at a big picture book"], ['A', "Listen to a story read out loud"]]},
+{ grade:'K-2', q: "Your teacher is teaching new letters.", opts:[['V', "Look at letters on a poster"], ['R', "Trace and write them yourself"]]},
+{ grade:'K-2', q: "It's centers time in the classroom.", opts:[['V', "Look at a picture chart on the wall"], ['K', "Build something with blocks"]]},
+{ grade:'K-2', q: "It's story time on the rug.", opts:[['A', "Listen to the teacher read out loud"], ['R', "Look at a book and point to the words"]]},
+{ grade:'K-2', q: "You're learning a new song.", opts:[['A', "Sing along and listen to the music"], ['K', "Do the hand motions and dance"]]},
+{ grade:'K-2', q: "We're learning about plants.", opts:[['R', "Look at a book with words about plants"], ['K', "Plant a real seed in the dirt"]]},
+{ grade:'K-2', q: "You are learning about the weather.", opts:[['V', "Look at pictures of big storm clouds"], ['A', "Listen to a recording of real thunder"]]},
+{ grade:'K-2', q: "Your class is practicing adding numbers.", opts:[['R', "Write the numbers on a whiteboard"], ['K', "Use plastic cubes to build groups"]]},
+{ grade:'K-2', q: "You want to find out how a puppy grows up.", opts:[['V', "Watch a video of a puppy growing big"], ['K', "Visit a real dog and pet it"]]},
+{ grade:'K-2', q: "It's time to learn your sight words.", opts:[['A', "Sing a catchy rhyming alphabet song"], ['R', "Trace the words with a pencil"]]},
+{ grade:'K-2', q: "You are learning about bugs in nature.", opts:[['A', "Hear the teacher explain where bugs live"], ['K', "Act out crawling like a caterpillar"]]},
+{ grade:'K-2', q: "You are learning how to draw shapes.", opts:[['V', "Look at a colorful chart of shapes"], ['R', "Find shape names in a book"]]},
+{ grade:'K-2', q: "You are learning about different colors.", opts:[['V', "Look at a bright rainbow poster"], ['A', "Listen to a poem about colors"]]},
+{ grade:'K-2', q: "You want to remember your teacher's rules.", opts:[['R', "Copy the rules checklist down"], ['K', "Roleplay the right way to line up"]]},
+{ grade:'K-2', q: "You are learning about fish in the ocean.", opts:[['V', "Watch a video of fish swimming around"], ['K', "Touch real seashells and sand"]]},
+{ grade:'K-2', q: "You want to learn a new rhyme.", opts:[['A', "Listen to your teacher say it twice"], ['R', "Look at the typed words on paper"]]},
+{ grade:'K-2', q: "Your class is learning about community helpers.", opts:[['A', "Listen to a firefighter give a speech"], ['K', "Try on a heavy firefighter jacket"]]},
+{ grade:'K-2', q: "You are playing a matching game.", opts:[['V', "Match colored pattern cards together"], ['R', "Match word labels to pictures"]]},
+{ grade:'K-2', q: "You are learning about the solar system.", opts:[['V', "Look at a glowing model of the planets"], ['R', "Read a tiny flip-book about space"]]},
+{ grade:'K-2', q: "You need to practice your spelling words.", opts:[['A', "Spell the words out loud to a friend"], ['K', "Write words using finger-paint"]]},
+
+// Grades 3-5 -- 12 four-option forced-rank questions
+{ grade:'3-5', q: "Your class is learning about the water cycle. Rank these from most (1) to least (4) interesting to you.", opts:[['V', "Watch a video showing rain falling"], ['A', "Listen to a podcast explaining it"], ['R', "Read a short article about it"], ['K', "Build a model with a cup and plastic wrap"]]},
+{ grade:'3-5', q: "You got a new board game. Rank how you'd most like to learn the rules.", opts:[['V', "Watch a how-to-play video"], ['A', "Have someone explain the rules out loud"], ['R', "Read the instruction booklet"], ['K', "Just start playing and figure it out"]]},
+{ grade:'3-5', q: "Your teacher assigns a report on animals. Rank how you'd most like to find your information.", opts:[['V', "Look at a chart comparing animals"], ['A', "Listen to a nature documentary"], ['R', "Read a book about the animal"], ['K', "Visit a zoo or handle real animal items"]]},
+{ grade:'3-5', q: "It's time to study your spelling words. Rank these study methods.", opts:[['V', "Look at the words written in different colors"], ['A', "Say the words out loud and spell them aloud"], ['R', "Write the words several times"], ['K', "Spell the words by jumping on letter tiles on the floor"]]},
+{ grade:'3-5', q: "Your class is starting a unit on space. Rank these activities.", opts:[['V', "Watch a video of a rocket launch"], ['A', "Listen to an astronaut's story"], ['R', "Read a book about planets"], ['K', "Build a model rocket"]]},
+{ grade:'3-5', q: "Math time! You're learning multiplication. Rank these study methods.", opts:[['V', "Look at a multiplication chart"], ['A', "Listen to a multiplication song"], ['R', "Write out the times tables"], ['K', "Use counters or blocks to group numbers"]]},
+{ grade:'3-5', q: "You're picking how to present a class project. Rank these options.", opts:[['V', "Make a poster with pictures"], ['A', "Give an oral presentation"], ['R', "Write a report"], ['K', "Build a diorama or model"]]},
+{ grade:'3-5', q: "Free reading time! Rank how you'd most like to enjoy a story.", opts:[['V', "Look at a picture book"], ['A', "Listen to an audiobook"], ['R', "Read a chapter book to yourself"], ['K', "Act out the story with friends"]]},
+{ grade:'3-5', q: "Your class is studying maps and geography. Rank how you'd most like to learn about it.", opts:[['V', "Look at a large wall map"], ['A', "Listen to a traveler tell stories"], ['R', "Fill out a worksheet of capitals"], ['K', "Mold a map out of clay"]]},
+{ grade:'3-5', q: "You're learning the rules for a new recess game. Rank how you'd most like to learn them.", opts:[['V', "Look at a diagram of the court boundary lines"], ['A', "Listen to the coach explain it"], ['R', "Read the printed rule sheet"], ['K', "Jump into a practice round"]]},
+{ grade:'3-5', q: "Your class is learning about symmetry in art. Rank how you'd most like to explore it.", opts:[['V', "Look at photos of symmetrical buildings"], ['A', "Talk through the definition with a peer"], ['R', "Copy the definition from the board"], ['K', "Fold paper and cut out shapes"]]},
+{ grade:'3-5', q: "Your class is studying desert ecosystems. Rank how you'd most like to learn about it.", opts:[['V', "Look at an infographic food chain"], ['A', "Listen to desert night audio tracks"], ['R', "Read a short encyclopedia entry"], ['K', "Sort animal cards into habitat bins"]]},
+
+// Grades 6-12 -- 12 four-option forced-rank questions
+{ grade:'6-12', q: "You're assigned a research project. Rank how you'd prefer to gather information.", opts:[['V', "Watch documentaries or video explainers"], ['A', "Listen to podcasts or interviews"], ['R', "Read articles, books, or journals"], ['K', "Conduct a hands-on experiment or field visit"]]},
+{ grade:'6-12', q: "You're studying for a big test. Rank your preferred study methods.", opts:[['V', "Make diagrams, charts, or color-coded notes"], ['A', "Talk it through with a study group, or record yourself explaining it"], ['R', "Rewrite notes and summarize in your own words"], ['K', "Use flashcards you physically sort and move"]]},
+{ grade:'6-12', q: "Your teacher assigns a group project. Rank your preferred role on the team.", opts:[['V', "Designing the visual presentation or slides"], ['A', "Presenting and leading discussion"], ['R', "Writing the report"], ['K', "Building the prototype or model"]]},
+{ grade:'6-12', q: "You're learning a new skill outside of school. Rank how you'd prefer to start.", opts:[['V', "Watch a tutorial video"], ['A', "Discuss it with a mentor, or have someone explain it"], ['R', "Read a guide or manual"], ['K', "Just try it and learn by doing"]]},
+{ grade:'6-12', q: "In science class, rank how you'd most like a new concept taught.", opts:[['V', "With diagrams and visual models"], ['A', "Through class discussion and lecture"], ['R', "Through the textbook reading"], ['K', "Through a lab experiment"]]},
+{ grade:'6-12', q: "You're choosing an elective or club. Rank what appeals to you most.", opts:[['V', "Photography, film, or art club"], ['A', "Debate, choir, or podcast club"], ['R', "Writing or journalism club"], ['K', "Robotics, sports, or shop club"]]},
+{ grade:'6-12', q: "You need to remember historical events for class. Rank your preferred method.", opts:[['V', "Timeline with images"], ['A', "Listening to a historical podcast or lecture"], ['R', "Reading primary source documents"], ['K', "Reenacting events or visiting a historical site"]]},
+{ grade:'6-12', q: "You're preparing for a class presentation. Rank how you'd practice.", opts:[['V', "Watching examples of great presentations"], ['A', "Practicing out loud or rehearsing with someone"], ['R', "Writing out your script word for word"], ['K', "Practicing with props or moving through the space"]]},
+{ grade:'6-12', q: "You're learning to code a website. Rank how you'd prefer to start.", opts:[['V', "Watch a screen-recorded video walkthrough"], ['A', "Attend a live coding lecture with Q&A"], ['R', "Review a written HTML tag cheat-sheet"], ['K', "Type script directly into a compiler to see what breaks"]]},
+{ grade:'6-12', q: "Your class is analyzing the plot of a novel. Rank how you'd most like to dig into it.", opts:[['V', "Fill out a plot-mountain visual diagram"], ['A', "Join a small-group Socratic seminar"], ['R', "Write a chapter-by-chapter outline"], ['K', "Act out a 1-minute scene with a classmate"]]},
+{ grade:'6-12', q: "You're learning geometry volume formulas. Rank your preferred study method.", opts:[['V', "Use color-coded flashcards with 3D shape diagrams"], ['A', "Explain the math logic out loud to a peer"], ['R', "Write out formulas multiple times"], ['K', "Measure physical boxes and objects in the room"]]},
+{ grade:'6-12', q: "Your class is analyzing a historic speech. Rank how you'd most like to study it.", opts:[['V', "Look at newsreel footage from that day"], ['A', "Listen to the original audio recording"], ['R', "Read the text transcript line-by-line"], ['K', "Read the speech aloud using the posture and pacing of the speaker"]]},
+];
+
+const grid = document.getElementById('grid');
+function renderCards(filter){
+  grid.innerHTML = '';
+  let visible = 0;
+  let counter = {};
+  QUESTIONS.forEach((item)=>{
+    counter[item.grade] = (counter[item.grade]||0)+1;
+    if(filter !== 'all' && item.grade !== filter) return;
+    visible++;
+    const optsHtml = item.opts.map(([mod, text])=> `
+      <div class="opt"><span class="tag" style="background:${COLORS[mod]}">${NAMES[mod]}</span><span>${text}</span></div>
+    `).join('');
+    grid.innerHTML += `
+      <div class="qcard">
+        <div class="qcard-head">
+          <span class="grade-badge">${item.grade}</span>
+          <span class="qnum">${item.opts.length}-option ${item.opts.length===2?'choice':'forced-rank'}</span>
+        </div>
+        <div class="qtext">${item.q}</div>
+        <div class="opts">${optsHtml}</div>
+      </div>`;
+  });
+  document.getElementById('visibleCount').textContent = visible;
+}
+renderCards('all');
+
+document.getElementById('filters').addEventListener('click', e=>{
+  const pill = e.target.closest('.filter-pill');
+  if(!pill) return;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  renderCards(pill.dataset.grade);
+});
+</script>
+</body>
+</html>

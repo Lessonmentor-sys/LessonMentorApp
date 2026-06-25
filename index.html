@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Mentor — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A45; --paper:#EFF0E8; --card:#FBFBF7;
+    --brass:#8B6B3A; --brass-light:#C9A86B;
+    --line: rgba(30,42,69,0.13);
+    --visual:#3D6FB4; --auditory:#6B5CA5; --readwrite:#D69A3E; --kinesthetic:#4F8F6B;
+    --shadow: 0 1px 2px rgba(30,42,69,0.05), 0 8px 20px rgba(30,42,69,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);font-family:'Inter',sans-serif;color:var(--ink);
+    background-image: radial-gradient(circle at 1px 1px, rgba(30,42,69,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .banner{
+    background:var(--ink);color:#fff;text-align:center;font-size:12.5px;font-weight:600;
+    padding:8px 16px;letter-spacing:0.02em;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:48px 24px 80px;}
+  .hero{text-align:center;margin-bottom:48px;}
+  .hero svg{margin-bottom:14px;}
+  .hero h1{font-family:'Fraunces',serif;font-size:34px;font-weight:600;margin:0 0 8px;letter-spacing:-0.01em;}
+  .hero p{font-size:15px;color:#5b6172;max-width:520px;margin:0 auto;line-height:1.6;}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:36px;}
+  @media (max-width:680px){ .grid{grid-template-columns:1fr;} }
+  a.card{
+    display:block;text-decoration:none;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 22px 20px;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;
+  }
+  a.card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(30,42,69,0.08), 0 14px 28px rgba(30,42,69,0.1);}
+  .card-tag{
+    display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+    color:var(--brass);margin-bottom:8px;
+  }
+  .card h2{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin:0 0 6px;}
+  .card p{font-size:13px;color:#5b6172;line-height:1.5;margin:0;}
+  .card .arrow{float:right;color:#aab0bb;font-size:18px;}
+  footer{text-align:center;margin-top:56px;font-size:11.5px;color:#8a8f9b;}
+  footer a{color:var(--brass);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="banner">PREVIEW BUILD — interactive mockups for internal review, not yet a functioning app</div>
+<div class="wrap">
+  <div class="hero">
+    <svg width="56" height="56" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="#fff" stroke="#1E2A45" stroke-opacity="0.12"/>
+      <path d="M32,32 L32,6 A26,26 0 0,1 54.5,19 Z" fill="#3D6FB4" opacity="0.88"/>
+      <path d="M32,32 L54.5,19 A26,26 0 0,1 54.5,45 Z" fill="#6B5CA5" opacity="0.88"/>
+      <path d="M32,32 L54.5,45 A26,26 0 0,1 32,58 Z" fill="#D69A3E" opacity="0.88"/>
+      <path d="M32,32 L32,58 A26,26 0 0,1 9.5,19 Z" fill="#4F8F6B" opacity="0.88"/>
+      <path d="M32,32 L9.5,19 A26,26 0 0,1 32,6 Z" fill="#3D6FB4" opacity="0.88"/>
+      <circle cx="32" cy="32" r="6" fill="#FBFBF7" stroke="#1E2A45" stroke-opacity="0.12"/>
+    </svg>
+    <h1>Lesson Mentor</h1>
+    <p>Differentiation, built from how each student actually learns — VARK + Multiple Intelligences, scored from real assessments, matched to real lesson plans.</p>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="/student/"><span class="arrow">→</span><span class="card-tag">Student</span><h2>Assessment flow</h2><p>Sign-in, baseline quiz, trail-badge picker, results, and study tips.</p></a>
+    <a class="card" href="/teacher/"><span class="arrow">→</span><span class="card-tag">Teacher</span><h2>Class dashboard</h2><p>Roster, class learning profile, lesson upload, strategy suggestions.</p></a>
+    <a class="card" href="/admin/"><span class="arrow">→</span><span class="card-tag">Admin</span><h2>School panel</h2><p>Student & teacher management, period-based assignment, settings.</p></a>
+    <a class="card" href="/questions/"><span class="arrow">→</span><span class="card-tag">Content</span><h2>Question bank</h2><p>All 44 questions, filterable by grade band, color-coded by modality.</p></a>
+    <a class="card" href="/engine-demo/"><span class="arrow">→</span><span class="card-tag">Engine</span><h2>Selection engine demo</h2><p>Run real assessments and watch the no-repeat / coverage logic work.</p></a>
+  </div>
+
+  <footer>Lesson Mentor &middot; lessonmentor.app &middot; built on <a href="https://supabase.com">Supabase</a> + Cloudflare Pages</footer>
+</div>
+</body>
+</html>

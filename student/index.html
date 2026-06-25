@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Mentor — Student Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A45;
+    --paper:#EFF0E8;
+    --card:#FBFBF7;
+    --brass:#8B6B3A;
+    --brass-light:#C9A86B;
+    --line: rgba(30,42,69,0.14);
+    --visual:#3D6FB4;
+    --auditory:#6B5CA5;
+    --readwrite:#D69A3E;
+    --kinesthetic:#4F8F6B;
+    --shadow: 0 1px 2px rgba(30,42,69,0.06), 0 6px 16px rgba(30,42,69,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image: radial-gradient(circle at 1px 1px, rgba(30,42,69,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding: 68px 16px 60px;
+  }
+  .device{
+    width:100%;
+    max-width:430px;
+    background:var(--card);
+    border-radius:28px;
+    box-shadow: var(--shadow);
+    border:1px solid var(--line);
+    overflow:hidden;
+    min-height:760px;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:18px 20px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .glyph{flex-shrink:0;}
+  .brand{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:-0.01em;
+  }
+  .brand small{
+    display:block;
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size:11px;
+    color:#6b7280;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    margin-top:1px;
+  }
+  .screen{
+    flex:1;
+    padding:28px 22px 22px;
+    display:none;
+    flex-direction:column;
+  }
+  .screen.active{display:flex;}
+
+  /* dots nav for mockup walkthrough */
+  .stepnav{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    padding:14px 0 0;
+    border-top:1px solid var(--line);
+  }
+  .stepnav button{
+    width:9px;height:9px;border-radius:50%;
+    border:none;background:var(--line);cursor:pointer;padding:0;
+  }
+  .stepnav button.active{background:var(--brass);}
+  .navrow{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 22px 18px;
+  }
+  .navlabel{font-size:11px;color:#8a8f9b;letter-spacing:0.03em;text-transform:uppercase;font-weight:600;}
+  .navbtn{
+    border:none;background:var(--ink);color:#fff;font-family:'Inter';font-weight:600;
+    font-size:13px;padding:9px 16px;border-radius:10px;cursor:pointer;
+  }
+  .navbtn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+
+  /* sign-in */
+  .signin-title{font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin:18px 0 6px;}
+  .signin-sub{color:#5b6172;font-size:14px;line-height:1.5;margin-bottom:28px;}
+  .idfield{
+    font-family:'JetBrains Mono',monospace;
+    font-size:28px;font-weight:600;letter-spacing:0.08em;
+    text-align:center;
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    color:var(--ink);
+    background:#fff;
+  }
+  .idnote{
+    margin-top:10px;font-size:12px;color:#8a8f9b;text-align:center;
+  }
+  .keypad{
+    margin-top:auto;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  }
+  .key{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:16px 0;text-align:center;font-family:'JetBrains Mono';font-weight:600;font-size:18px;
+  }
+
+  /* quiz */
+  .progress-row{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .progress-track{flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden;}
+  .progress-fill{width:30%;height:100%;background:var(--brass);}
+  .progress-label{font-size:12px;color:#8a8f9b;font-weight:600;white-space:nowrap;}
+  .question{font-family:'Fraunces',serif;font-size:21px;font-weight:600;line-height:1.35;margin-bottom:22px;}
+  .opt-cards{display:flex;flex-direction:column;gap:12px;}
+  .opt-card{
+    display:flex;align-items:center;gap:14px;
+    border:2px solid var(--line);border-radius:16px;
+    padding:16px;background:#fff;cursor:pointer;
+    transition: border-color .15s;
+  }
+  .opt-card:hover{border-color:var(--brass-light);}
+  .opt-card.picked{border-color:var(--brass);background:#FAF4EA;}
+  .opt-emoji{font-size:28px;width:40px;text-align:center;flex-shrink:0;}
+  .opt-text{font-size:15px;font-weight:600;}
+
+  /* rank screen */
+  .rank-instructions{font-size:13px;color:#5b6172;margin-bottom:16px;line-height:1.5;}
+  .rank-list{display:flex;flex-direction:column;gap:10px;}
+  .rank-item{
+    display:flex;align-items:center;gap:12px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+  }
+  .rank-num{
+    font-family:'JetBrains Mono';font-weight:700;font-size:13px;
+    width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .rank-emoji{font-size:20px;width:28px;text-align:center;}
+  .rank-label{flex:1;font-size:14px;font-weight:600;}
+  .rank-arrows{display:flex;flex-direction:column;gap:2px;}
+  .rank-arrows button{
+    border:none;background:transparent;color:var(--brass);cursor:pointer;
+    font-size:12px;line-height:1;padding:2px 4px;
+  }
+
+  /* microcheck */
+  .lesson-mock{
+    border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;margin-bottom:18px;
+  }
+  .lesson-mock-header{
+    background:var(--ink);color:#fff;font-size:12px;font-weight:600;
+    padding:8px 14px;letter-spacing:0.03em;text-transform:uppercase;
+  }
+  .lesson-mock-body{padding:18px 16px;font-size:13px;color:#5b6172;line-height:1.5;}
+  .lesson-mock-body em{color:var(--ink);font-style:normal;font-weight:600;}
+  .checkin{
+    border:2px dashed var(--brass-light);border-radius:16px;padding:18px;text-align:center;background:#FAF6EE;
+  }
+  .checkin-q{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-bottom:14px;}
+  .checkin-btns{display:flex;gap:14px;justify-content:center;}
+  .checkin-btns button{
+    border:2px solid var(--line);background:#fff;border-radius:12px;
+    font-size:26px;padding:10px 18px;cursor:pointer;
+  }
+  .checkin-note{margin-top:14px;font-size:11px;color:#8a8f9b;line-height:1.5;}
+
+  /* results */
+  .results-head{text-align:center;margin-bottom:18px;}
+  .results-head h2{font-family:'Fraunces',serif;font-size:22px;margin:0 0 4px;}
+  .results-head p{font-size:13px;color:#5b6172;margin:0;}
+  .rose-wrap{display:flex;justify-content:center;margin:6px 0 18px;}
+  .style-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  .style-bar-row{display:flex;align-items:center;gap:10px;}
+  .style-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .style-name{font-size:13px;font-weight:600;width:88px;flex-shrink:0;}
+  .style-track{flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden;}
+  .style-fill{height:100%;border-radius:4px;}
+  .style-pct{font-family:'JetBrains Mono';font-size:12px;font-weight:600;width:34px;text-align:right;}
+  .summary-card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:13px;color:#5b6172;line-height:1.55;
+  }
+  .summary-card b{color:var(--ink);}
+
+  /* avatar picker */
+  .avatar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin:8px 0 4px;}
+  .avatar-sub{font-size:13px;color:#5b6172;margin-bottom:20px;line-height:1.5;}
+  .badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .badge{
+    display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;
+    border:2px solid transparent;border-radius:16px;padding:8px 4px;
+  }
+  .badge.picked{border-color:var(--brass);background:#FAF4EA;}
+  .badge-circle{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#F2EFE5;border:1px solid var(--line);}
+  .badge-name{font-size:11.5px;font-weight:600;color:#5b6172;}
+  .avatar-mini{flex-shrink:0;}
+
+  /* study tips */
+  .tip-feed-head{margin-bottom:16px;}
+  .tip-feed-head h2{font-family:'Fraunces',serif;font-size:21px;margin:0 0 4px;}
+  .tip-feed-head p{font-size:13px;color:#5b6172;margin:0;line-height:1.5;}
+  .tip-card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;
+  }
+  .tip-source{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:#8a8f9b;margin-bottom:6px;}
+  .tip-tag{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;padding:3px 8px;border-radius:6px;margin-bottom:8px;}
+  .tip-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .tip-body{font-size:12.5px;color:#5b6172;line-height:1.5;}
+  .tip-stub{
+    border:2px dashed var(--line);border-radius:14px;padding:16px;text-align:center;font-size:12px;color:#aab0bb;line-height:1.5;
+  }
+</style>
+</head>
+<body>
+<div style="position:fixed;top:0;left:0;right:0;width:100%;background:#1E2A45;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:7px 14px;font-family:Inter,sans-serif;z-index:9999;box-sizing:border-box;">PREVIEW BUILD &middot; <a href="/" style="color:#C9A86B;text-decoration:none;">&larr; Back to Lesson Mentor home</a></div>
+
+<div class="device">
+  <div class="topbar">
+    <svg class="avatar-mini" id="topAvatar" width="30" height="30"></svg>
+    <div class="brand">Lesson Mentor<small>Student check-in</small></div>
+  </div>
+
+  <!-- Screen 1: Sign in -->
+  <div class="screen active" data-screen="0">
+    <div class="signin-title">Let's find your learning compass.</div>
+    <div class="signin-sub">Enter your Student ID to start. No name needed — just your ID number.</div>
+    <div class="idfield" id="idDisplay">4 4 7 1</div>
+    <div class="idnote">Your ID is on your schedule card.</div>
+    <div class="keypad">
+      <div class="key">1</div><div class="key">2</div><div class="key">3</div>
+      <div class="key">4</div><div class="key">5</div><div class="key">6</div>
+      <div class="key">7</div><div class="key">8</div><div class="key">9</div>
+      <div class="key">⌫</div><div class="key">0</div><div class="key">Go</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Avatar / trail badge picker -->
+  <div class="screen" data-screen="1b">
+    <div class="avatar-title">Pick your trail badge.</div>
+    <div class="avatar-sub">This is just for you — pick the one you like. It doesn't change your results.</div>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </div>
+
+  <!-- Screen 2: Visual-first quiz question -->
+  <div class="screen" data-screen="1">
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" style="width:37.5%"></div></div>
+      <div class="progress-label">Question 3 of 8</div>
+    </div>
+    <div class="question">You just got a new Lego set. What do you do first?</div>
+    <div class="opt-cards">
+      <div class="opt-card picked">
+        <div class="opt-emoji">🎥</div>
+        <div class="opt-text">Watch a build video</div>
+      </div>
+      <div class="opt-card">
+        <div class="opt-emoji">📖</div>
+        <div class="opt-text">Look at the picture guide</div>
+      </div>
+      <div class="opt-card">
+        <div class="opt-emoji">🧩</div>
+        <div class="opt-text">Just start snapping pieces together</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: forced rank slider -->
+  <div class="screen" data-screen="2">
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+      <div class="progress-label">Question 6 of 8</div>
+    </div>
+    <div class="question">Put these in order — top is how you'd most like to learn about volcanoes.</div>
+    <div class="rank-instructions">Tap the arrows to reorder. Questions like this score all four styles at once, so we need fewer of them.</div>
+    <div class="rank-list" id="rankList">
+      <div class="rank-item"><div class="rank-num">1</div><div class="rank-emoji">🎬</div><div class="rank-label">Watch a video</div><div class="rank-arrows"><button>▲</button><button>▼</button></div></div>
+      <div class="rank-item"><div class="rank-num">2</div><div class="rank-emoji">🏗️</div><div class="rank-label">Build a model</div><div class="rank-arrows"><button>▲</button><button>▼</button></div></div>
+      <div class="rank-item"><div class="rank-num">3</div><div class="rank-emoji">🎧</div><div class="rank-label">Listen to a story</div><div class="rank-arrows"><button>▲</button><button>▼</button></div></div>
+      <div class="rank-item"><div class="rank-num">4</div><div class="rank-emoji">📄</div><div class="rank-label">Read a short article</div><div class="rank-arrows"><button>▲</button><button>▼</button></div></div>
+    </div>
+  </div>
+
+  <!-- Screen 4: passive microcheck -->
+  <div class="screen" data-screen="3">
+    <div class="lesson-mock">
+      <div class="lesson-mock-header">Today's lesson · Mapping the Rainforest</div>
+      <div class="lesson-mock-body">Students explored canopy layers using <em>an interactive map</em>. This check-in appears automatically at the end of the activity — no separate test, just a single tap.</div>
+    </div>
+    <div class="checkin">
+      <div class="checkin-q">How did you like learning with the map today?</div>
+      <div class="checkin-btns">
+        <button>👍</button>
+        <button>👎</button>
+      </div>
+      <div class="checkin-note">Winter &amp; Spring updates run on signals like this — zero extra minutes for students, profile adjusts quietly in the background.</div>
+    </div>
+  </div>
+
+  <!-- Screen 5: results -->
+  <div class="screen" data-screen="4">
+    <div class="results-head">
+      <h2>Your learning compass</h2>
+      <p>Based on your Fall baseline + recent activity</p>
+    </div>
+    <div class="rose-wrap"><svg id="bigRose" width="190" height="190"></svg></div>
+    <div class="style-bars" id="styleBars"></div>
+    <div class="summary-card">
+      <b>Primary: Visual.</b> You learn best with diagrams, charts, and color. <b>Secondary: Kinesthetic</b> — hands-on building helps it stick.
+    </div>
+  </div>
+
+  <!-- Screen 6: Study tips placeholder -->
+  <div class="screen" data-screen="5">
+    <div class="tip-feed-head">
+      <h2>Study tips for you</h2>
+      <p>Shows up automatically when your teacher uploads a new lesson — matched to your learning profile.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-source">From: Multiplying Fractions — Ms. Alvarez</div>
+      <span class="tip-tag" style="background:#3D6FB4;">Visual</span>
+      <div class="tip-title">Color the area model before the steps</div>
+      <div class="tip-body">Draw the two factors as overlapping colored rectangles first — the overlap is your answer. Do this before you write any numbers.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-source">From: Multiplying Fractions — Ms. Alvarez</div>
+      <span class="tip-tag" style="background:#4F8F6B;">Kinesthetic</span>
+      <div class="tip-title">Walk the number line</div>
+      <div class="tip-body">Use tape on the floor (or just step it out on paper squares) to physically move through the multiplication instead of only doing it on paper.</div>
+    </div>
+    <div class="tip-stub">Placeholder feed — this list will populate from the same suggestion engine that powers the teacher dashboard, rewritten for a student reading level.</div>
+  </div>
+
+  <div class="navrow">
+    <button class="navbtn ghost" onclick="go(-1)">Back</button>
+    <span class="navlabel">Mockup walkthrough</span>
+    <button class="navbtn" onclick="go(1)">Next</button>
+  </div>
+  <div class="stepnav" id="stepnav"></div>
+</div>
+
+<script>
+const COLORS = { V:'#3D6FB4', A:'#6B5CA5', R:'#D69A3E', K:'#4F8F6B' };
+const NAMES = { V:'Visual', A:'Auditory', R:'Read/Write', K:'Kinesthetic' };
+const PROFILE = { V:42, A:18, R:12, K:28 };
+
+function describeWedge(cx, cy, r, startAngle, endAngle){
+  const toRad = a => (a-90) * Math.PI/180;
+  const x1 = cx + r*Math.cos(toRad(startAngle));
+  const y1 = cy + r*Math.sin(toRad(startAngle));
+  const x2 = cx + r*Math.cos(toRad(endAngle));
+  const y2 = cy + r*Math.sin(toRad(endAngle));
+  const large = endAngle - startAngle > 180 ? 1 : 0;
+  return `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z`;
+}
+
+function buildRose(svg, profile, size){
+  const r = size/2 - 4, cx = size/2, cy = size/2;
+  let angle = 0;
+  let html = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="${'#1E2A45'}" stroke-opacity="0.1"/>`;
+  const order = ['V','A','R','K'];
+  let dominant = order[0];
+  order.forEach(k=>{ if(profile[k] > profile[dominant]) dominant = k; });
+  order.forEach(k=>{
+    const sweep = profile[k]/100 * 360;
+    html += `<path d="${describeWedge(cx,cy,r,angle,angle+sweep)}" fill="${COLORS[k]}" opacity="0.88"/>`;
+    angle += sweep;
+  });
+  html += `<circle cx="${cx}" cy="${cy}" r="${r*0.22}" fill="#FBFBF7" stroke="#1E2A45" stroke-opacity="0.12"/>`;
+  // needle pointing to dominant wedge center
+  let a2 = 0; order.forEach(k=>{ if(k===dominant) return; a2 += profile[k]/100*360; });
+  let domStart = 0; for(const k of order){ if(k===dominant) break; domStart += profile[k]/100*360; }
+  const domMid = domStart + (profile[dominant]/100*360)/2;
+  const toRad = a => (a-90) * Math.PI/180;
+  const nx = cx + (r*0.7)*Math.cos(toRad(domMid));
+  const ny = cy + (r*0.7)*Math.sin(toRad(domMid));
+  html += `<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#1E2A45" stroke-width="2"/>`;
+  html += `<circle cx="${cx}" cy="${cy}" r="3" fill="#1E2A45"/>`;
+  svg.innerHTML = html;
+}
+
+const BADGES = [
+  { id:'fox',      name:'Fox',      base:'#EFC0AE', accent:'#C97B63',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="23" cy="20" rx="6" ry="8" fill="${a}"/><ellipse cx="41" cy="20" rx="6" ry="8" fill="${a}"/>
+      <ellipse cx="32" cy="40" rx="17" ry="15" fill="${b}"/>
+      <ellipse cx="32" cy="44" rx="7" ry="6" fill="#fff" opacity="0.55"/>
+      <circle cx="26" cy="37" r="2.2" fill="#3A2E22"/><circle cx="38" cy="37" r="2.2" fill="#3A2E22"/>
+      <ellipse cx="32" cy="45" rx="2.6" ry="2" fill="${a}"/>`; } },
+  { id:'owl',      name:'Owl',      base:'#C3D2DE', accent:'#5B7C99',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="23" cy="21" rx="5" ry="7" fill="${a}"/><ellipse cx="41" cy="21" rx="5" ry="7" fill="${a}"/>
+      <ellipse cx="32" cy="40" rx="17" ry="15" fill="${b}"/>
+      <circle cx="25" cy="36" r="6.5" fill="#fff"/><circle cx="39" cy="36" r="6.5" fill="#fff"/>
+      <circle cx="25" cy="36" r="2.4" fill="#3A2E22"/><circle cx="39" cy="36" r="2.4" fill="#3A2E22"/>
+      <ellipse cx="32" cy="42" rx="2.6" ry="3" fill="${a}"/>`; } },
+  { id:'turtle',   name:'Turtle',   base:'#C7DCB6', accent:'#6B8A5A',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <circle cx="32" cy="40" r="17" fill="${a}"/><circle cx="32" cy="40" r="12" fill="${b}"/>
+      <circle cx="32" cy="22" r="9" fill="${b}"/>
+      <circle cx="28" cy="20" r="1.9" fill="#3A2E22"/><circle cx="36" cy="20" r="1.9" fill="#3A2E22"/>
+      <ellipse cx="32" cy="38" rx="4" ry="3" fill="#fff" opacity="0.5"/>`; } },
+  { id:'rabbit',   name:'Rabbit',   base:'#DCC9E3', accent:'#8A6B9E',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="23" cy="14" rx="5.5" ry="15" fill="${b}"/><ellipse cx="41" cy="14" rx="5.5" ry="15" fill="${b}"/>
+      <ellipse cx="23" cy="15" rx="2.3" ry="10" fill="${a}" opacity="0.55"/><ellipse cx="41" cy="15" rx="2.3" ry="10" fill="${a}" opacity="0.55"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <circle cx="26" cy="38" r="2.2" fill="#3A2E22"/><circle cx="38" cy="38" r="2.2" fill="#3A2E22"/>
+      <ellipse cx="32" cy="44" rx="2.4" ry="2" fill="${a}"/>`; } },
+  { id:'otter',    name:'Otter',    base:'#C2DAD5', accent:'#5B8A8A',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <circle cx="21" cy="26" r="6" fill="${a}"/><circle cx="43" cy="26" r="6" fill="${a}"/>
+      <ellipse cx="32" cy="40" rx="16" ry="15" fill="${b}"/>
+      <ellipse cx="32" cy="44" rx="8" ry="6" fill="#fff" opacity="0.5"/>
+      <circle cx="26" cy="36" r="2.1" fill="#3A2E22"/><circle cx="38" cy="36" r="2.1" fill="#3A2E22"/>
+      <ellipse cx="32" cy="44" rx="2.4" ry="2" fill="${a}"/>`; } },
+  { id:'hedgehog', name:'Hedgehog', base:'#E9DBAB', accent:'#B8954A',
+    draw:(s,b,a)=>{ let h=''; const arc=[[-18,30],[-11,22],[-4,18],[3,18],[10,22],[17,30]];
+      arc.forEach(p=> h += `<ellipse cx="${32+p[0]}" cy="${p[1]}" rx="5" ry="7" fill="${a}"/>`);
+      h += `<circle cx="32" cy="40" r="15" fill="${b}"/>
+      <circle cx="27" cy="38" r="2.1" fill="#3A2E22"/><circle cx="37" cy="38" r="2.1" fill="#3A2E22"/>
+      <ellipse cx="32" cy="44" rx="2.4" ry="2" fill="${a}"/>`;
+      s.innerHTML += h; } },
+  { id:'deer',     name:'Deer',     base:'#E6C4BF', accent:'#9E5B5B',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="24" cy="13" rx="4" ry="7" fill="${a}"/><ellipse cx="40" cy="13" rx="4" ry="7" fill="${a}"/>
+      <ellipse cx="22" cy="22" rx="4.5" ry="6" fill="${b}"/><ellipse cx="42" cy="22" rx="4.5" ry="6" fill="${b}"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <circle cx="26" cy="38" r="2.1" fill="#3A2E22"/><circle cx="38" cy="38" r="2.1" fill="#3A2E22"/>
+      <ellipse cx="32" cy="45" rx="2.6" ry="2" fill="${a}"/>`; } },
+  { id:'bee',      name:'Bee',      base:'#F0DF9E', accent:'#C9A23E',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="32" cy="40" rx="15" ry="12" fill="${b}"/>
+      <rect x="21" y="36" width="22" height="4.5" rx="2.2" fill="${a}"/>
+      <rect x="21" y="44" width="22" height="4.5" rx="2.2" fill="${a}"/>
+      <ellipse cx="19" cy="29" rx="6" ry="8" fill="#fff" opacity="0.6"/>
+      <ellipse cx="45" cy="29" rx="6" ry="8" fill="#fff" opacity="0.6"/>
+      <circle cx="26" cy="36" r="2" fill="#3A2E22"/><circle cx="38" cy="36" r="2" fill="#3A2E22"/>`; } },
+  { id:'bear',     name:'Bear',     base:'#E1CCA8', accent:'#8B6B3A',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <circle cx="21" cy="20" r="7" fill="${a}"/><circle cx="43" cy="20" r="7" fill="${a}"/>
+      <circle cx="21" cy="20" r="3" fill="${b}"/><circle cx="43" cy="20" r="3" fill="${b}"/>
+      <circle cx="32" cy="40" r="17" fill="${b}"/>
+      <ellipse cx="32" cy="45" rx="8" ry="6" fill="#fff" opacity="0.5"/>
+      <circle cx="26" cy="37" r="2.2" fill="#3A2E22"/><circle cx="38" cy="37" r="2.2" fill="#3A2E22"/>
+      <ellipse cx="32" cy="45" rx="2.8" ry="2.2" fill="${a}"/>`; } },
+  { id:'panda',    name:'Panda',    base:'#F0EFE9', accent:'#4A4A48',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <circle cx="21" cy="20" r="7" fill="${a}"/><circle cx="43" cy="20" r="7" fill="${a}"/>
+      <circle cx="32" cy="40" r="17" fill="${b}"/>
+      <ellipse cx="24" cy="37" rx="6" ry="8" fill="${a}"/><ellipse cx="40" cy="37" rx="6" ry="8" fill="${a}"/>
+      <circle cx="24" cy="37" r="2.3" fill="#fff"/><circle cx="40" cy="37" r="2.3" fill="#fff"/>
+      <ellipse cx="32" cy="45" rx="2.6" ry="2" fill="${a}"/>`; } },
+  { id:'koala',    name:'Koala',    base:'#D6D6D2', accent:'#8A8A84',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <circle cx="18" cy="19" r="10" fill="${a}"/><circle cx="46" cy="19" r="10" fill="${a}"/>
+      <circle cx="18" cy="19" r="5" fill="${b}"/><circle cx="46" cy="19" r="5" fill="${b}"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <ellipse cx="32" cy="44" rx="5" ry="4" fill="${a}"/>
+      <circle cx="26" cy="36" r="2.1" fill="#3A2E22"/><circle cx="38" cy="36" r="2.1" fill="#3A2E22"/>`; } },
+  { id:'penguin',  name:'Penguin',  base:'#E7ECEF', accent:'#36465A',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="16" cy="40" rx="5" ry="10" fill="${a}"/><ellipse cx="48" cy="40" rx="5" ry="10" fill="${a}"/>
+      <ellipse cx="32" cy="38" rx="16" ry="17" fill="${a}"/>
+      <ellipse cx="32" cy="43" rx="10" ry="12" fill="${b}"/>
+      <ellipse cx="32" cy="40" rx="3" ry="2" fill="#E0A23E"/>
+      <circle cx="27" cy="33" r="2" fill="#3A2E22"/><circle cx="37" cy="33" r="2" fill="#3A2E22"/>`; } },
+  { id:'dolphin',  name:'Dolphin',  base:'#C7D7E0', accent:'#4F7C96',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="32" cy="20" rx="3.5" ry="9" fill="${a}"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <ellipse cx="16" cy="42" rx="6" ry="4" fill="${b}"/>
+      <ellipse cx="32" cy="46" rx="7" ry="5" fill="#fff" opacity="0.45"/>
+      <circle cx="26" cy="38" r="2" fill="#3A2E22"/><circle cx="38" cy="38" r="2" fill="#3A2E22"/>`; } },
+  { id:'octopus',  name:'Octopus',  base:'#DCC3DE', accent:'#8A5B9E',
+    draw:(s,b,a)=>{ let h=''; const legs=[-22,-13,-4,5,14,22];
+      legs.forEach(dx=> h += `<ellipse cx="${32+dx}" cy="${46+Math.abs(dx)/8}" rx="3.6" ry="9" fill="${a}"/>`);
+      h += `<circle cx="32" cy="30" r="15" fill="${b}"/>
+      <ellipse cx="28" cy="34" rx="6" ry="6" fill="#fff" opacity="0.5"/>
+      <circle cx="26" cy="28" r="2.6" fill="#3A2E22"/><circle cx="38" cy="28" r="2.6" fill="#3A2E22"/>`;
+      s.innerHTML += h; } },
+  { id:'narwhal',  name:'Narwhal',  base:'#C9D9E3', accent:'#5B7E96',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="32" cy="13" rx="2" ry="11" fill="${a}"/>
+      <line x1="29" y1="6" x2="35" y2="9" stroke="#fff" stroke-width="1.2" opacity="0.6"/>
+      <line x1="29" y1="12" x2="35" y2="15" stroke="#fff" stroke-width="1.2" opacity="0.6"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <ellipse cx="48" cy="42" rx="4" ry="7" fill="${a}"/>
+      <circle cx="26" cy="38" r="2" fill="#3A2E22"/><circle cx="38" cy="38" r="2" fill="#3A2E22"/>`; } },
+  { id:'axolotl',  name:'Axolotl',  base:'#F0C9D2', accent:'#C97B93',
+    draw:(s,b,a)=>{ let h='';
+      [30,36,42].forEach(y=>{ h+=`<ellipse cx="15" cy="${y}" rx="3" ry="5.5" fill="${a}"/><ellipse cx="49" cy="${y}" rx="3" ry="5.5" fill="${a}"/>`; });
+      h += `<ellipse cx="32" cy="40" rx="17" ry="14" fill="${b}"/>
+      <circle cx="26" cy="38" r="2" fill="#3A2E22"/><circle cx="38" cy="38" r="2" fill="#3A2E22"/>
+      <path d="M27,46 Q32,49 37,46" stroke="${a}" stroke-width="1.6" fill="none"/>`;
+      s.innerHTML += h; } },
+  { id:'komodo',   name:'Komodo Dragon', base:'#C7D2B0', accent:'#6B7A4A',
+    draw:(s,b,a)=>{ let h='';
+      [[20,24],[26,18],[38,18],[44,24]].forEach(p=> h+=`<ellipse cx="${p[0]}" cy="${p[1]}" rx="3.3" ry="5.5" fill="${a}"/>`);
+      h += `<ellipse cx="32" cy="42" rx="17" ry="14" fill="${b}"/>
+      <ellipse cx="32" cy="27" rx="8" ry="7" fill="${b}"/>
+      <circle cx="27" cy="29" r="1.8" fill="#3A2E22"/><circle cx="37" cy="29" r="1.8" fill="#3A2E22"/>`;
+      s.innerHTML += h; } },
+  { id:'chameleon',name:'Chameleon', base:'#B9E0B0', accent:'#4F9E55',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="44" cy="48" rx="3" ry="7" fill="${a}"/>
+      <ellipse cx="28" cy="26" rx="3" ry="5" fill="${a}"/><ellipse cx="38" cy="24" rx="3" ry="5" fill="${a}"/>
+      <ellipse cx="32" cy="42" rx="17" ry="14" fill="${b}"/>
+      <circle cx="24" cy="30" r="7" fill="#fff"/><circle cx="40" cy="27" r="7" fill="#fff"/>
+      <circle cx="24" cy="30" r="3" fill="#3A2E22"/><circle cx="40" cy="27" r="3" fill="#3A2E22"/>`; } },
+  { id:'toucan',   name:'Toucan',   base:'#D8D5D2', accent:'#2B2B2E',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="24" cy="46" rx="6" ry="9" fill="${a}"/>
+      <circle cx="32" cy="42" r="15" fill="${a}"/>
+      <ellipse cx="46" cy="34" rx="13" ry="7" fill="#E08A3E"/>
+      <circle cx="27" cy="36" r="2.2" fill="#fff"/><circle cx="27" cy="36" r="1" fill="#3A2E22"/>`; } },
+  { id:'elephant', name:'Elephant', base:'#D7D9DA', accent:'#8C9092',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="15" cy="30" rx="9" ry="12" fill="${a}"/><ellipse cx="49" cy="30" rx="9" ry="12" fill="${a}"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <ellipse cx="32" cy="55" rx="3.6" ry="9" fill="${b}"/>
+      <circle cx="26" cy="38" r="2" fill="#3A2E22"/><circle cx="38" cy="38" r="2" fill="#3A2E22"/>`; } },
+  { id:'flamingo', name:'Flamingo', base:'#F2C9D6', accent:'#D9789F',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="32" cy="44" rx="14" ry="11" fill="${b}"/>
+      <ellipse cx="33" cy="24" rx="4" ry="15" fill="${b}"/>
+      <circle cx="34" cy="13" r="9" fill="${b}"/>
+      <ellipse cx="41" cy="13" rx="5" ry="2.4" fill="${a}"/>
+      <circle cx="31" cy="11" r="1.8" fill="#3A2E22"/>`; } },
+  { id:'raccoon',  name:'Raccoon',  base:'#D9D4C9', accent:'#4A4642',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="22" cy="18" rx="5" ry="7" fill="${a}"/><ellipse cx="42" cy="18" rx="5" ry="7" fill="${a}"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <ellipse cx="32" cy="36" rx="16" ry="7" fill="${a}"/>
+      <circle cx="26" cy="36" r="2.4" fill="#fff"/><circle cx="38" cy="36" r="2.4" fill="#fff"/>
+      <circle cx="26" cy="36" r="1.1" fill="#3A2E22"/><circle cx="38" cy="36" r="1.1" fill="#3A2E22"/>
+      <ellipse cx="32" cy="45" rx="2.4" ry="2" fill="${a}"/>`; } },
+  { id:'wolf',     name:'Wolf',     base:'#D3D6D8', accent:'#5C636A',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="23" cy="15" rx="5" ry="9" fill="${a}"/><ellipse cx="41" cy="15" rx="5" ry="9" fill="${a}"/>
+      <circle cx="32" cy="40" r="16" fill="${b}"/>
+      <ellipse cx="32" cy="48" rx="7" ry="5" fill="${b}"/>
+      <circle cx="26" cy="37" r="2.1" fill="#3A2E22"/><circle cx="38" cy="37" r="2.1" fill="#3A2E22"/>
+      <ellipse cx="32" cy="49" rx="2.2" ry="1.8" fill="${a}"/>`; } },
+  { id:'sloth',    name:'Sloth',    base:'#DDD0B0', accent:'#6E5A3E',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="24" cy="22" rx="4" ry="5" fill="${a}"/><ellipse cx="40" cy="22" rx="4" ry="5" fill="${a}"/>
+      <circle cx="32" cy="40" r="17" fill="${b}"/>
+      <ellipse cx="25" cy="37" rx="5" ry="7" fill="${a}"/><ellipse cx="39" cy="37" rx="5" ry="7" fill="${a}"/>
+      <circle cx="25" cy="37" r="2" fill="#fff"/><circle cx="39" cy="37" r="2" fill="#fff"/>
+      <circle cx="25" cy="37" r="1" fill="#3A2E22"/><circle cx="39" cy="37" r="1" fill="#3A2E22"/>`; } },
+  { id:'seahorse', name:'Seahorse', base:'#C9DCE0', accent:'#4F8A93',
+    draw:(s,b,a)=>{ s.innerHTML += `
+      <ellipse cx="29" cy="42" rx="10" ry="17" fill="${b}"/>
+      <circle cx="38" cy="22" r="9" fill="${b}"/>
+      <ellipse cx="46" cy="20" rx="6" ry="3.2" fill="${b}"/>
+      <ellipse cx="20" cy="44" rx="5" ry="8" fill="${a}"/>
+      <circle cx="40" cy="19" r="1.9" fill="#3A2E22"/>`; } },
+];
+
+function renderBadgeIcon(svg, badge){
+  svg.setAttribute('viewBox','0 0 64 64');
+  svg.innerHTML = `<circle cx="32" cy="32" r="31" fill="#F2EFE5"/>`;
+  badge.draw(svg, badge.base, badge.accent);
+}
+
+const badgeGrid = document.getElementById('badgeGrid');
+let selectedBadge = BADGES[0];
+BADGES.forEach((b,i)=>{
+  const wrap = document.createElement('div');
+  wrap.className = 'badge' + (i===0 ? ' picked' : '');
+  wrap.innerHTML = `<div class="badge-circle"></div><div class="badge-name">${b.name}</div>`;
+  const circleHolder = wrap.querySelector('.badge-circle');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','62'); svg.setAttribute('height','62');
+  circleHolder.appendChild(svg);
+  renderBadgeIcon(svg, b, 62);
+  wrap.addEventListener('click', ()=>{
+    document.querySelectorAll('.badge').forEach(el=>el.classList.remove('picked'));
+    wrap.classList.add('picked');
+    selectedBadge = b;
+    renderBadgeIcon(document.getElementById('topAvatar'), b, 30);
+  });
+  badgeGrid.appendChild(wrap);
+});
+renderBadgeIcon(document.getElementById('topAvatar'), selectedBadge, 30);
+
+buildRose(document.getElementById('bigRose'), PROFILE, 190);
+
+const barsEl = document.getElementById('styleBars');
+['V','A','R','K'].sort((a,b)=>PROFILE[b]-PROFILE[a]).forEach(k=>{
+  barsEl.innerHTML += `<div class="style-bar-row">
+    <div class="style-dot" style="background:${COLORS[k]}"></div>
+    <div class="style-name">${NAMES[k]}</div>
+    <div class="style-track"><div class="style-fill" style="width:${PROFILE[k]}%;background:${COLORS[k]}"></div></div>
+    <div class="style-pct">${PROFILE[k]}%</div>
+  </div>`;
+});
+
+let current = 0;
+const screens = document.querySelectorAll('.screen');
+const stepnav = document.getElementById('stepnav');
+screens.forEach((s,i)=>{
+  const b = document.createElement('button');
+  b.onclick = ()=>{ current=i; render(); };
+  stepnav.appendChild(b);
+});
+function render(){
+  screens.forEach((s,i)=> s.classList.toggle('active', i===current));
+  stepnav.querySelectorAll('button').forEach((b,i)=> b.classList.toggle('active', i===current));
+}
+function go(dir){
+  current = Math.max(0, Math.min(screens.length-1, current+dir));
+  render();
+}
+render();
+</script>
+</body>
+</html>
