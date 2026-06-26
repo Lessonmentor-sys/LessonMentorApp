@@ -459,7 +459,7 @@ function bindNavigation() {
       document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
       button.classList.add("active");
       document.getElementById(`${button.dataset.view}-view`).classList.add("active");
-      const titles = { teacher: "Teacher dashboard", student: "Student dashboard", library: "Strategy library", admin: "Admin dashboard", questions: "Question bank" };
+      const titles = { teacher: "Teacher dashboard", student: "Student dashboard", library: "Strategy library", admin: "School Dashboard", questions: "Question bank" };
       document.getElementById("view-title").textContent = titles[button.dataset.view];
     });
   });
@@ -470,14 +470,6 @@ function bindNavigation() {
     appState.questionIndex = 0;
     appState.answers = {};
     document.getElementById("lesson-text").value = "";
-    document.getElementById("lesson-output").innerHTML = `
-      <div class="history-row muted-row">
-        <div>
-          <strong>No generated lesson yet</strong>
-          <p>Generate a plan and the newest file will appear here.</p>
-        </div>
-      </div>
-    `;
     renderAll();
   });
 }
@@ -744,7 +736,10 @@ function renderLessonAnalysis() {
 
 function renderStandardsPreview() {
   const matches = getStandardMatches();
-  document.getElementById("template-count").textContent = matches.length ? "Ready to preview/download" : "Preview/download";
+  const templateCount = document.getElementById("template-count");
+  if (templateCount) {
+    templateCount.textContent = matches.length ? "Ready to preview/download" : "Preview/download";
+  }
 }
 
 function getStandardMatches() {
@@ -800,19 +795,6 @@ async function generateLessonPlan() {
     .map(system => system.label);
   if (supportInserts.length) selectedSystemLabels.push("IEP Supports");
 
-  document.getElementById("lesson-output").innerHTML = `
-    <div class="history-row">
-      <div>
-        <strong>Generated erosion lesson plan</strong>
-        <p>Today · ${classProfiles[appState.activePeriod].name} · ${selectedSystemLabels.join(", ")} · ${standards.map(item => item.id).join(", ")} · available for 15 days</p>
-      </div>
-      <div class="document-actions">
-        <button class="secondary-button">Preview</button>
-        <button class="secondary-button">Download</button>
-      </div>
-    </div>
-  `;
-
   const submission = {
     title: "Generated erosion lesson plan",
     period: classProfiles[appState.activePeriod].name,
@@ -849,7 +831,10 @@ async function persistLessonSubmission(submission, standards, supportInserts, or
 
   const { error } = await api.createLessonSubmission(payload);
   if (error) {
-    document.getElementById("template-count").textContent = "Saved locally; Supabase error";
+    const submissionHistory = document.getElementById("submission-history");
+    if (submissionHistory) {
+      submissionHistory.insertAdjacentHTML("afterbegin", `<div class="history-row muted-row"><strong>Saved locally; Supabase error</strong></div>`);
+    }
     console.error("Lesson submission save failed", error);
   }
 }
@@ -894,7 +879,20 @@ function selectOrganizers() {
 }
 
 function renderSubmissionHistory() {
-  document.getElementById("submission-history").innerHTML = appState.submissions.map(item => `
+  const submissionHistory = document.getElementById("submission-history");
+  if (!appState.submissions.length) {
+    submissionHistory.innerHTML = `
+      <div class="history-row muted-row">
+        <div>
+          <strong>No generated lessons yet</strong>
+          <p>Generate a plan and it will appear at the top of this history.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  submissionHistory.innerHTML = appState.submissions.map(item => `
     <div class="history-row">
       <div>
         <strong>${item.title}</strong>

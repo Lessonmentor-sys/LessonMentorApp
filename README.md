@@ -33,9 +33,14 @@ The anon key is safe to use in the browser. Do not put service-role keys in this
 
 ## Database
 
-Run the migrations in `supabase/migrations` inside your Supabase SQL editor or with the Supabase CLI:
+For a brand-new Supabase project, run the migrations in `supabase/migrations` inside your Supabase SQL editor or with the Supabase CLI:
 
 1. `001_initial_schema.sql`
+2. `002_seed_strategy_library.sql`
+
+For the current Lesson Mentor Supabase project that already has assessment-engine tables, do not run `001_initial_schema.sql`. Run:
+
+1. `003_existing_supabase_merge.sql`
 2. `002_seed_strategy_library.sql`
 
 The schema turns on row-level security. Real saving will need authentication connected so records can belong to the signed-in teacher.

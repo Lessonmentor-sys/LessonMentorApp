@@ -1009,18 +1009,12 @@ button {
   color: var(--ink);
 }
 
-.lesson-output {
-  display: grid;
-  gap: 12px;
-}
-
 .standards-preview {
   display: grid;
   gap: 8px;
   margin-bottom: 12px;
 }
 
-.lesson-output p,
 .lesson-block p,
 .history-row p,
 .support-card p {
@@ -1462,6 +1456,110 @@ button {
   padding: 0 12px;
 }
 
+.owner-shell {
+  width: min(1220px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 28px 0 44px;
+}
+
+.owner-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.owner-hero h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+}
+
+.owner-hero p {
+  color: #40506a;
+  line-height: 1.5;
+  max-width: 760px;
+}
+
+.owner-login-card,
+.owner-edit-row,
+.owner-billing-grid,
+.owner-control-grid {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 14px;
+}
+
+.owner-login-card,
+.owner-edit-list,
+.owner-billing-grid,
+.owner-control-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.owner-login-card label,
+.owner-edit-row label,
+.owner-billing-grid label {
+  display: grid;
+  gap: 5px;
+  font-weight: 750;
+  min-width: 0;
+}
+
+.owner-login-card input,
+.owner-edit-row input,
+.owner-edit-row select,
+.owner-billing-grid input,
+.owner-billing-grid select {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 10px;
+  background: #fff;
+}
+
+.owner-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.owner-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  gap: 18px;
+}
+
+.owner-grid .panel:last-child {
+  grid-column: 1 / -1;
+}
+
+.owner-edit-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(90px, 0.35fr) minmax(150px, 0.55fr) auto;
+  align-items: end;
+  gap: 10px;
+  box-shadow: none;
+}
+
+.owner-billing-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.owner-control-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 @media (max-width: 900px) {
   .landing-nav,
   .landing-hero,
@@ -1480,6 +1578,15 @@ button {
   }
 
   .landing-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .owner-hero,
+  .owner-tabs,
+  .owner-grid,
+  .owner-edit-row,
+  .owner-billing-grid,
+  .owner-control-grid {
     grid-template-columns: 1fr;
   }
 }

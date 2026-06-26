@@ -23,10 +23,11 @@ git push -u origin main
 
 1. Create a Supabase project.
 2. Open SQL Editor.
-3. Run `supabase/migrations/001_initial_schema.sql`.
-4. Run `supabase/migrations/002_seed_strategy_library.sql`.
-5. Copy the project URL and anon public key.
-6. Update `config.js`.
+3. If this is a brand-new Supabase project, run `supabase/migrations/001_initial_schema.sql`.
+4. If this is the current project that already has `students`, `assessments`, and `question_bank`, run `supabase/migrations/003_existing_supabase_merge.sql` instead.
+5. Run `supabase/migrations/002_seed_strategy_library.sql`.
+6. Copy the project URL and anon public key.
+7. Update `config.js`.
 
 ## 3. Auth
 
