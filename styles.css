@@ -1316,7 +1316,9 @@ button {
 .landing-banner img {
   display: block;
   width: 100%;
-  height: auto;
+  height: clamp(260px, 42vw, 680px);
+  object-fit: cover;
+  object-position: center top;
 }
 
 .landing-hero,
@@ -1326,12 +1328,16 @@ button {
 }
 
 .landing-hero {
+  width: min(1680px, calc(100% - 64px));
+}
+
+.landing-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   align-items: center;
   min-height: auto;
-  padding: 46px 0;
+  padding: 38px 0 42px;
 }
 
 .landing-hero h1,
@@ -1342,16 +1348,16 @@ button {
 }
 
 .landing-hero h1 {
-  font-size: clamp(2.25rem, 4.8vw, 4.65rem);
-  line-height: 1.04;
-  max-width: 1120px;
+  font-size: clamp(2.15rem, 3.45vw, 4rem);
+  line-height: 1.08;
+  max-width: 1500px;
 }
 
 .hero-lede {
-  max-width: 760px;
+  max-width: 1360px;
   margin: 18px 0 0;
   color: #40506a;
-  font-size: 1.25rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.35rem);
   line-height: 1.5;
 }
 
@@ -1511,9 +1517,9 @@ button {
 }
 
 .sales-hero h1 {
-  font-size: clamp(2.25rem, 4.8vw, 4.65rem);
-  line-height: 1.04;
-  max-width: 1100px;
+  font-size: clamp(2.15rem, 3.45vw, 4rem);
+  line-height: 1.08;
+  max-width: 1500px;
 }
 
 .hero-proof-strip {
@@ -1966,13 +1972,199 @@ button {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+/* Lesson Mentor public landing page reset */
+.landing-page main {
+  background: #f4f7fb;
+}
+
+.story-hero,
+.landing-band-block {
+  width: min(1440px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.story-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 0.65fr);
+  gap: 28px;
+  align-items: stretch;
+  padding: 54px 0;
+  background: #0f2f64;
+  box-shadow: 0 0 0 100vmax #0f2f64;
+  clip-path: inset(0 -100vmax);
+}
+
+.story-hero-copy {
+  display: grid;
+  align-content: center;
+}
+
+.story-hero h1 {
+  margin: 0;
+  max-width: 1020px;
+  color: #ffffff;
+  font-size: clamp(2.4rem, 4.6vw, 5.25rem);
+  line-height: 1.03;
+}
+
+.story-hero p {
+  max-width: 980px;
+  color: #dbeafe;
+  font-size: clamp(1.05rem, 1.3vw, 1.35rem);
+  line-height: 1.55;
+}
+
+.story-hero .eyebrow {
+  color: #b9d4ff;
+}
+
+.story-card-stack {
+  display: grid;
+  gap: 12px;
+  align-content: center;
+}
+
+.story-card-stack article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.story-card-stack article:nth-child(2) {
+  transform: translateX(20px);
+}
+
+.story-card-stack article:nth-child(3) {
+  transform: translateX(40px);
+}
+
+.story-card-stack span {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #0f4fb8;
+  color: #ffffff;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.story-card-stack strong {
+  display: block;
+  font-size: 1.12rem;
+  margin-bottom: 6px;
+}
+
+.story-card-stack p {
+  margin: 0;
+  color: #40506a;
+  line-height: 1.45;
+}
+
+.landing-band-block {
+  padding: 48px 0;
+}
+
+.landing-band-block:nth-of-type(odd) {
+  background: #ffffff;
+  box-shadow: 0 0 0 100vmax #ffffff;
+  clip-path: inset(0 -100vmax);
+}
+
+.landing-band-block:nth-of-type(even) {
+  background: #0f2f64;
+  box-shadow: 0 0 0 100vmax #0f2f64;
+  clip-path: inset(0 -100vmax);
+}
+
+.landing-band-block:nth-of-type(even) .eyebrow,
+.landing-band-block:nth-of-type(even) h2,
+.landing-band-block:nth-of-type(even) > p,
+.landing-band-block:nth-of-type(even) .section-head p,
+.landing-band-block:nth-of-type(even) .training-copy p,
+.landing-band-block:nth-of-type(even) .landing-band p {
+  color: #ffffff;
+}
+
+.landing-band-block:nth-of-type(even) .eyebrow {
+  color: #b9d4ff;
+}
+
+.connection-block {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.connection-block h2,
+.landing-band-block h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.9rem, 3vw, 3.25rem);
+  line-height: 1.08;
+}
+
+.connection-block > p,
+.landing-band-block .section-head p,
+.landing-band p {
+  color: #40506a;
+  font-size: 1.08rem;
+  line-height: 1.55;
+}
+
+.feature-block .stack-card {
+  min-height: 225px;
+}
+
+.process-block .workflow-line {
+  margin-top: 8px;
+}
+
+.process-shot {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  object-position: top center;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.workflow-line article:nth-child(2) .process-shot {
+  object-fit: contain;
+  background: #f4f7fb;
+}
+
+.preview-block .mock-browser {
+  min-height: 260px;
+}
+
 @media (max-width: 900px) {
   .landing-nav,
   .landing-hero,
   .landing-band,
-  .training-section {
+  .training-section,
+  .story-hero,
+  .connection-block {
     align-items: stretch;
     grid-template-columns: 1fr;
+  }
+
+  .story-hero,
+  .landing-band-block {
+    width: min(100% - 32px, 1440px);
+  }
+
+  .story-card-stack article,
+  .story-card-stack article:nth-child(2),
+  .story-card-stack article:nth-child(3) {
+    transform: none;
   }
 
   .landing-nav {
@@ -2005,7 +2197,16 @@ button {
   }
 
   .sales-hero h1 {
-    font-size: clamp(2.05rem, 10vw, 3.1rem);
+    font-size: clamp(1.9rem, 8vw, 2.75rem);
+  }
+
+  .landing-hero {
+    width: min(100% - 32px, 1680px);
+  }
+
+  .landing-banner img {
+    height: clamp(220px, 58vw, 420px);
+    object-position: center top;
   }
 
   .stack-card {
