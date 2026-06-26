@@ -1327,11 +1327,11 @@ button {
 
 .landing-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   align-items: center;
-  min-height: calc(100vh - 78px);
-  padding: 44px 0;
+  min-height: auto;
+  padding: 46px 0;
 }
 
 .landing-hero h1,
@@ -1342,8 +1342,9 @@ button {
 }
 
 .landing-hero h1 {
-  font-size: clamp(3rem, 7vw, 6.5rem);
-  line-height: 0.95;
+  font-size: clamp(2.25rem, 4.8vw, 4.65rem);
+  line-height: 1.04;
+  max-width: 1120px;
 }
 
 .hero-lede {
@@ -1413,7 +1414,22 @@ button {
 }
 
 .landing-section {
-  padding: 34px 0;
+  padding: 44px 0;
+}
+
+.stack-section,
+.preview-section,
+.landing-band {
+  background: #ffffff;
+  box-shadow: 0 0 0 100vmax #ffffff;
+  clip-path: inset(0 -100vmax);
+}
+
+.workflow-section,
+.pricing-section {
+  background: #edf5ff;
+  box-shadow: 0 0 0 100vmax #edf5ff;
+  clip-path: inset(0 -100vmax);
 }
 
 .landing-grid,
@@ -1489,30 +1505,15 @@ button {
 }
 
 .sales-hero {
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+  grid-template-columns: minmax(0, 1fr);
   min-height: auto;
-  padding: 58px 0 42px;
+  padding: 48px 0 40px;
 }
 
 .sales-hero h1 {
-  font-size: clamp(2.6rem, 5.5vw, 5.4rem);
-  line-height: 0.98;
-  max-width: 940px;
-}
-
-.landing-logo-showcase {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: var(--shadow);
-  padding: 18px;
-}
-
-.landing-logo-showcase img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: contain;
+  font-size: clamp(2.25rem, 4.8vw, 4.65rem);
+  line-height: 1.04;
+  max-width: 1100px;
 }
 
 .hero-proof-strip {
@@ -1627,6 +1628,24 @@ button {
   background: #ffffff;
   box-shadow: var(--shadow);
   padding: 16px;
+}
+
+.workflow-line article:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  z-index: 3;
+  top: 28px;
+  right: -32px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #0f4fb8;
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(15, 79, 184, 0.25);
 }
 
 .workflow-line article span {
@@ -1796,6 +1815,53 @@ button {
   margin-top: 5px;
 }
 
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.pricing-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 18px;
+  min-height: 245px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pricing-card span {
+  width: max-content;
+  border-radius: 999px;
+  background: #e9f1ff;
+  color: #0f4fb8;
+  font-weight: 900;
+  padding: 7px 10px;
+}
+
+.pricing-card strong {
+  font-size: 1.35rem;
+}
+
+.pricing-card p {
+  color: #40506a;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.pricing-card b {
+  margin-top: auto;
+  font-size: 1.2rem;
+}
+
+.featured-pricing {
+  border-color: #0f4fb8;
+  box-shadow: 0 16px 36px rgba(15, 79, 184, 0.18);
+}
+
 .owner-shell {
   width: min(1220px, calc(100% - 40px));
   margin: 0 auto;
@@ -1917,7 +1983,8 @@ button {
   .portal-grid,
   .stack-card-grid,
   .workflow-line,
-  .preview-grid {
+  .preview-grid,
+  .pricing-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1929,8 +1996,16 @@ button {
     display: none;
   }
 
+  .workflow-line article:not(:last-child)::after {
+    content: "↓";
+    top: auto;
+    right: auto;
+    left: 22px;
+    bottom: -34px;
+  }
+
   .sales-hero h1 {
-    font-size: clamp(2.3rem, 12vw, 3.4rem);
+    font-size: clamp(2.05rem, 10vw, 3.1rem);
   }
 
   .stack-card {

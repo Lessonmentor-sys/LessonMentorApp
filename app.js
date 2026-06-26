@@ -441,6 +441,7 @@ const avatars = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyPortalMode();
   bindNavigation();
   bindTeacher();
   bindStudent();
@@ -451,6 +452,21 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAll();
   applyInitialHashRoute();
 });
+
+function getPortalMode() {
+  const hash = window.location.hash.replace("#", "");
+  if (hash === "student-view") return "student";
+  if (hash === "admin-view") return "admin";
+  return "teacher";
+}
+
+function applyPortalMode() {
+  const portalMode = getPortalMode();
+  document.body.dataset.portal = portalMode;
+  document.querySelectorAll(".nav-button").forEach(button => {
+    button.hidden = button.dataset.view !== portalMode;
+  });
+}
 
 function bindNavigation() {
   document.querySelectorAll(".nav-button").forEach(button => {
@@ -476,7 +492,7 @@ function bindNavigation() {
 
 function applyInitialHashRoute() {
   const target = window.location.hash.replace("#", "");
-  const view = target.replace("-view", "");
+  const view = target ? target.replace("-view", "") : getPortalMode();
   const button = document.querySelector(`.nav-button[data-view="${view}"]`);
   if (button) button.click();
 }
