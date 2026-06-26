@@ -4,495 +4,95 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lesson Mentor</title>
-    <link rel="stylesheet" href="styles.css?v=live1">
+    <link rel="stylesheet" href="styles.css?v=live2">
   </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-mark">LM</div>
+  <body class="landing-page">
+    <header class="landing-nav">
+      <a class="landing-brand" href="/">
+        <span class="brand-mark">LM</span>
+        <span>
+          <strong>Lesson Mentor</strong>
+          <small>Built by a teacher, for teachers</small>
+        </span>
+      </a>
+      <nav class="landing-links" aria-label="Portal links">
+        <a href="/teacher/">Teacher Login</a>
+        <a href="/student/">Student Login</a>
+        <a href="/school/">School Login</a>
+        <a href="/admin/">Admin</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="landing-hero">
+        <div class="landing-hero-copy">
+          <p class="eyebrow">Education Under Construction LLC</p>
+          <h1>Lesson Mentor</h1>
+          <p class="hero-lede">AI-assisted lesson planning that rewrites lessons around the students in the room: learning profiles, IEP supports, selected instructional systems, standards, and usable teacher-ready materials.</p>
+          <div class="landing-actions">
+            <a class="primary-button landing-button" href="/teacher/">Teacher Login</a>
+            <a class="secondary-button landing-button" href="/student/">Student Login</a>
+          </div>
+        </div>
+        <div class="landing-snapshot" aria-label="Lesson Mentor preview">
+          <div class="snapshot-top">
+            <strong>Generated lesson</strong>
+            <span class="small-pill">15-day access</span>
+          </div>
+          <div class="snapshot-row">
+            <span>Class profile</span>
+            <b>Visual + Kinesthetic</b>
+          </div>
+          <div class="snapshot-row">
+            <span>Systems</span>
+            <b>CER, Kagan, SIOP</b>
+          </div>
+          <div class="snapshot-row">
+            <span>Supports</span>
+            <b>Sentence frames, breaks, check-ins</b>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section">
+        <div class="section-head">
           <div>
-            <h1>Lesson Mentor</h1>
-            <p>lessonmentor.app</p>
+            <h2>What It Does</h2>
+            <p>Lesson Mentor is designed to take the guesswork out of differentiating a real lesson for a real class.</p>
           </div>
         </div>
-
-        <nav class="nav" aria-label="Main navigation">
-          <button class="nav-button active" data-view="teacher">Teacher</button>
-          <button class="nav-button" data-view="student">Student</button>
-          <button class="nav-button" data-view="library">Library</button>
-          <button class="nav-button" data-view="admin">Admin</button>
-          <button class="nav-button" data-view="questions">Questions</button>
-        </nav>
-
-        <div class="status-box">
-          <span class="status-dot"></span>
-          <div>
-            <strong>Live starter</strong>
-            <p>Demo mode until Supabase is configured.</p>
-          </div>
+        <div class="landing-grid">
+          <article class="landing-card">
+            <strong>Rewrite lesson plans</strong>
+            <p>Upload or paste a lesson, then generate a teacher-ready version aligned to class learning profiles and selected systems.</p>
+          </article>
+          <article class="landing-card">
+            <strong>Launch student assessments</strong>
+            <p>Release the same question set to a whole class, a group, or one new student, with read-aloud and teacher display options.</p>
+          </article>
+          <article class="landing-card">
+            <strong>Embed IEP supports</strong>
+            <p>Class-level supports are placed intentionally into the lesson, with actual sentence frames and usable teacher language.</p>
+          </article>
+          <article class="landing-card">
+            <strong>Reduce standards stress</strong>
+            <p>Common Core and NGSS matching are part of the roadmap so teachers do not have to hunt down standards manually.</p>
+          </article>
         </div>
-      </aside>
+      </section>
 
-      <main class="workspace">
-        <section class="topbar">
-          <div>
-            <p class="eyebrow">Education Under Construction LLC</p>
-            <h2 id="view-title">Teacher dashboard</h2>
-          </div>
-          <div class="topbar-actions">
-            <button class="icon-button" id="reset-demo" title="Reset demo data">Reset</button>
-          </div>
-        </section>
-
-        <section class="view active" id="teacher-view" aria-labelledby="teacher-heading">
-          <div class="section-head teacher-title">
-            <div>
-              <h3 id="teacher-heading">Teacher dashboard</h3>
-              <p>Submit lesson plans, review generated documents, launch assessments, and manage student profiles from one place.</p>
-            </div>
-          </div>
-
-          <div class="lesson360-layout">
-            <aside class="class-profile-rail">
-              <div class="panel">
-                <div class="panel-title-row stacked-title">
-                  <h4>Class profile</h4>
-                  <label class="class-picker compact-picker">Class
-                    <select id="class-select" aria-label="Class period">
-                      <option value="1">Period 1 - Grade 4 Science</option>
-                      <option value="2">Period 2 - Grade 5 ELA</option>
-                      <option value="3">Period 3 - Grade 3 Science</option>
-                      <option value="4">Period 4 - Math Intervention</option>
-                      <option value="5">Period 5 - Grade 4 Science</option>
-                      <option value="6">Period 6 - Planning</option>
-                      <option value="7">Period 7 - Social Studies</option>
-                      <option value="8">Period 8 - Enrichment</option>
-                      <option value="9">Period 9 - Reading Lab</option>
-                      <option value="10">Period 10 - Homeroom</option>
-                    </select>
-                  </label>
-                </div>
-                <label class="switch-label rail-switch">
-                  <input type="checkbox" id="self-contained-toggle">
-                  <span>Self-contained</span>
-                </label>
-                <div class="profile-layout rail-profile">
-                  <div class="compass" id="teacher-compass" aria-label="Class learning profile chart"></div>
-                  <div class="profile-stats" id="teacher-profile-stats"></div>
-                </div>
-                <p class="insight" id="class-insight"></p>
-                <div class="rail-today">
-                  <strong>Today</strong>
-                  <p><b id="roster-count">0 students</b> in selected class</p>
-                  <p><b>0</b> lesson files awaiting review</p>
-                  <p><b>15 days</b> document access window</p>
-                </div>
-              </div>
-            </aside>
-
-            <div class="teacher-center">
-              <div class="submit-grid">
-                <div class="panel upload-panel submit-panel">
-                  <div class="panel-title-row">
-                    <h4>Submit a new lesson plan file</h4>
-                    <span class="small-pill">Jennifer template</span>
-                  </div>
-                  <div class="lesson-meta-grid">
-                    <label>Grade
-                      <select id="lesson-grade">
-                        <option value="2">Grade 2</option>
-                        <option value="3">Grade 3</option>
-                        <option value="4" selected>Grade 4</option>
-                        <option value="5">Grade 5</option>
-                        <option value="6">Grade 6</option>
-                        <option value="7">Grade 7</option>
-                        <option value="8">Grade 8</option>
-                      </select>
-                    </label>
-                    <label>Subject
-                      <select id="lesson-subject">
-                        <option value="art">Art</option>
-                        <option value="ela">ELA</option>
-                        <option value="language">Languages</option>
-                        <option value="library-makerspace">Library/Makerspace</option>
-                        <option value="math">Math</option>
-                        <option value="music">Music</option>
-                        <option value="pe">PE</option>
-                        <option value="science" selected>Science</option>
-                        <option value="social-studies">Social Studies</option>
-                        <option value="stem">STEM</option>
-                      </select>
-                    </label>
-                    <label>Board objective
-                      <select id="objective-style">
-                        <option value="ican" selected>I can statement</option>
-                        <option value="student">Student-friendly objective</option>
-                        <option value="both">Both</option>
-                      </select>
-                    </label>
-                  </div>
-                  <label class="upload-drop">
-                    <input type="file" id="lesson-file" accept=".txt,.md,.csv,.doc,.docx,.pdf">
-                    <span>Choose lesson file</span>
-                    <small>Upload a lesson file or paste the lesson text below. Word and PDF parsing will be connected in the full build.</small>
-                  </label>
-                  <textarea id="lesson-text" rows="4" placeholder="Paste a lesson, objective, or curriculum excerpt here..."></textarea>
-                  <div class="button-row">
-                    <button class="primary-button" id="generate-lesson">Generate plan</button>
-                    <button class="secondary-button" id="analyze-lesson">Analyze only</button>
-                    <button class="secondary-button" id="load-sample">Load sample</button>
-                  </div>
-                  <div class="inline-systems">
-                    <div class="panel-title-row">
-                      <h4>Systems to include</h4>
-                      <span class="small-pill">This lesson</span>
-                    </div>
-                    <div class="system-toggles" id="system-toggles"></div>
-                    <p class="auto-support-note">IEP supports are set per class in Settings and apply automatically.</p>
-                  </div>
-                  <div class="analysis-card" id="lesson-analysis">
-                    <strong>No lesson analyzed yet</strong>
-                    <p>Detected lesson signals and standards will appear here.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="teacher-tabs" role="tablist" aria-label="Lesson Mentor dashboard sections">
-                <button class="teacher-tab active" data-teacher-tab="submissions">Submission History <span>2</span></button>
-                <button class="teacher-tab" data-teacher-tab="profiles">Student Profiles <span>5</span></button>
-                <button class="teacher-tab" data-teacher-tab="assessment">Launch Assessment <span>12</span></button>
-                <button class="teacher-tab" data-teacher-tab="settings">Settings <span>9</span></button>
-              </div>
-
-              <div class="teacher-tab-panel active" id="teacher-tab-submissions">
-                <div class="panel generated-panel">
-                  <div class="panel-title-row">
-                    <h4>Latest generated lesson</h4>
-                    <span class="small-pill" id="template-count">Preview/download</span>
-                  </div>
-                  <div class="history-list lesson-output" id="lesson-output">
-                    <div class="history-row muted-row">
-                      <div>
-                        <strong>No generated lesson yet</strong>
-                        <p>Generate a plan and the newest file will appear here.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Submission history</h4>
-                    <span class="small-pill">Preview/download for 15 days</span>
-                  </div>
-                  <div class="history-list" id="submission-history"></div>
-                </div>
-              </div>
-
-              <div class="teacher-tab-panel" id="teacher-tab-profiles">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Student profiles</h4>
-                    <span class="small-pill" id="roster-tab-count">0 students</span>
-                  </div>
-                  <div class="roster-list" id="roster-list"></div>
-                </div>
-              </div>
-
-              <div class="teacher-tab-panel" id="teacher-tab-assessment">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Launch assessment</h4>
-                    <span class="small-pill">Teacher controlled</span>
-                  </div>
-                  <div class="launch-grid">
-                    <div class="settings-card settings-card-wide">
-                      <strong>Release to students</strong>
-                      <p>Open the same assessment question set for a whole class, a small group, or one student who needs to complete it later.</p>
-                      <div class="lesson-meta-grid compact-launch-form">
-                        <label>Who receives it?
-                          <select>
-                            <option>Entire selected class</option>
-                            <option>One student ID</option>
-                            <option>Selected group</option>
-                          </select>
-                        </label>
-                        <label>Question set
-                          <select>
-                            <option>Grade 3-5 baseline: 12 questions</option>
-                            <option>K-2 baseline: 12 questions</option>
-                            <option>Grades 6-12 baseline: 12 questions</option>
-                          </select>
-                        </label>
-                        <label>Order
-                          <select>
-                            <option>Same order for everyone</option>
-                            <option>Randomized later</option>
-                          </select>
-                        </label>
-                      </div>
-                      <div class="button-row">
-                        <button class="primary-button" id="launch-class-assessment">Launch for class</button>
-                        <button class="secondary-button" id="launch-student-assessment">Launch for one student</button>
-                      </div>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Teacher display view</strong>
-                      <p>Project the same student-facing questions in the same order, without showing learning-style labels or scoring mappings.</p>
-                      <button class="secondary-button">Open display view</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Read-aloud</strong>
-                      <p>Default on for K-2, optional for older students. Full build can use expressive voice settings when connected.</p>
-                      <button class="secondary-button">Set read-aloud options</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Active assessment</strong>
-                      <p id="active-assessment-status">No assessment is currently open. Once launched, this area will show completion counts and student IDs still pending.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="teacher-tab-panel" id="teacher-tab-settings">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Teacher settings</h4>
-                    <span class="small-pill">Class setup + account</span>
-                  </div>
-                  <div class="settings-grid">
-                    <div class="settings-card settings-card-wide">
-                      <strong>Class schedule</strong>
-                      <p>Set period names, start times, end times, meeting days, and alternate schedules for late-start or early-release days. This will also feed the future substitute lesson plan builder.</p>
-                      <div class="settings-actions">
-                        <button class="secondary-button">Build schedule</button>
-                        <button class="secondary-button">Upload schedule photo</button>
-                      </div>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Class IEP supports</strong>
-                      <p>Selected supports apply automatically to every lesson submitted for this class.</p>
-                      <button class="secondary-button" id="open-iep-modal">Edit IEP supports</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Student profile setup</strong>
-                      <p>Manage student IDs, grade levels, class placement, and yearly profile reset options.</p>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Lesson preferences</strong>
-                      <p>Choose default board language, standards format, template options, and protected organizer behavior.</p>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Teaching style inventory</strong>
-                      <p>Future setup: capture teacher strengths so Lesson Mentor can recommend differentiation moves that fit the teacher too.</p>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Account</strong>
-                      <p>Change display name, password, and notification preferences.</p>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Payment history</strong>
-                      <p>View receipts, access dates, and renewal information.</p>
-                    </div>
-                    <div class="settings-card">
-                      <strong>School year reset</strong>
-                      <p>Start a new school year and permanently clear old assessment data when ready.</p>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Substitute plan setup</strong>
-                      <p>Future setup: class routines, emergency notes, seating info, schedule rules, and preferred sub-plan format.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="view" id="student-view" aria-labelledby="student-heading">
-          <div class="section-head">
-            <div>
-              <h3 id="student-heading">Student assessment</h3>
-              <p>Student ID only, avatar choice, short assessment, and a draft learning profile result.</p>
-            </div>
-          </div>
-
-          <div class="student-grid">
-            <div class="panel">
-              <h4>Student sign-in</h4>
-              <div class="form-grid">
-                <label>Student ID <input id="student-id" value="48291"></label>
-                <label>Grade band
-                  <select id="grade-band">
-                    <option value="k2">K-2</option>
-                    <option value="g35" selected>Grades 3-5</option>
-                    <option value="g612">Grades 6-12</option>
-                  </select>
-                </label>
-                <label class="switch-label inline-switch">
-                  <input type="checkbox" id="read-aloud-toggle">
-                  <span>Read questions aloud</span>
-                </label>
-              </div>
-              <h4>Trail badge</h4>
-              <div class="avatar-grid" id="avatar-grid"></div>
-            </div>
-
-            <div class="panel assessment-panel">
-              <div class="panel-title-row">
-                <h4>Assessment</h4>
-                <span class="small-pill" id="assessment-progress"></span>
-              </div>
-              <div id="assessment-card"></div>
-              <div class="button-row">
-                <button class="secondary-button" id="read-question">Read aloud</button>
-                <button class="secondary-button" id="prev-question">Back</button>
-                <button class="primary-button" id="next-question">Next</button>
-              </div>
-            </div>
-
-            <div class="panel">
-              <h4>Learning profile</h4>
-              <div class="profile-layout">
-                <div class="compass" id="student-compass"></div>
-                <div class="profile-stats" id="student-profile-stats"></div>
-              </div>
-              <div class="tip-list" id="study-tips"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="view" id="library-view" aria-labelledby="library-heading">
-          <div class="section-head">
-            <div>
-              <h3 id="library-heading">Strategy library</h3>
-              <p>Browse teaching strategies apart from a generated lesson plan.</p>
-            </div>
-          </div>
-
-          <div class="filter-row">
-            <label>System
-              <select id="library-system-filter">
-                <option value="all">All systems</option>
-                <option value="kagan">Kagan</option>
-                <option value="siop">SIOP</option>
-                <option value="cer">CER</option>
-                <option value="iep">IEP Supports</option>
-              </select>
-            </label>
-            <label>Grade
-              <select id="library-grade-filter">
-                <option value="all">All grades</option>
-                <option value="k2">K-2</option>
-                <option value="g35">Grades 3-5</option>
-                <option value="g68">Grades 6-8</option>
-                <option value="g912">Grades 9-12</option>
-              </select>
-            </label>
-            <label>Subject
-              <select id="library-subject-filter">
-                <option value="all">All subjects</option>
-                <option value="art">Art</option>
-                <option value="ela">ELA</option>
-                <option value="language">Languages</option>
-                <option value="library-makerspace">Library/Makerspace</option>
-                <option value="math">Math</option>
-                <option value="music">Music</option>
-                <option value="pe">PE</option>
-                <option value="science">Science</option>
-                <option value="social-studies">Social Studies</option>
-                <option value="stem">STEM</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="strategy-grid" id="library-results"></div>
-        </section>
-
-        <section class="view" id="admin-view" aria-labelledby="admin-heading">
-          <div class="section-head">
-            <div>
-              <h3 id="admin-heading">Admin controls</h3>
-              <p>Operations, FERPA setup, teacher accounts, student IDs, rosters, and billing. Instructional choices stay with teachers.</p>
-            </div>
-          </div>
-
-          <div class="admin-grid">
-            <div class="panel">
-              <div class="panel-title-row">
-                <h4>Students</h4>
-                <span class="small-pill">ID only</span>
-              </div>
-              <div class="admin-list" id="admin-students"></div>
-            </div>
-
-            <div class="panel">
-              <div class="panel-title-row">
-                <h4>Teacher accounts</h4>
-                <span class="small-pill">Operations only</span>
-              </div>
-              <div id="assignment-grid"></div>
-            </div>
-
-            <div class="panel">
-              <h4>Privacy settings</h4>
-              <div class="privacy-list">
-                <p><strong>Teacher display:</strong> Student ID and optional display name only.</p>
-                <p><strong>AI data:</strong> Lesson text, class profile tags, and strategy settings only.</p>
-                <p><strong>Legal names:</strong> Admin-only table planned for backend build.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="view" id="questions-view" aria-labelledby="questions-heading">
-          <div class="section-head">
-            <div>
-              <h3 id="questions-heading">Question bank</h3>
-              <p>Starter question bank used by the assessment prototype.</p>
-            </div>
-            <select id="question-filter">
-              <option value="all">All grade bands</option>
-              <option value="k2">K-2</option>
-              <option value="g35">Grades 3-5</option>
-              <option value="g612">Grades 6-12</option>
-            </select>
-          </div>
-          <div class="question-grid" id="question-grid"></div>
-        </section>
-      </main>
-    </div>
-
-    <dialog class="modal" id="iep-modal">
-      <form method="dialog">
-        <div class="panel-title-row">
-          <h3>Class IEP supports</h3>
-          <button class="icon-button" value="close">Close</button>
+      <section class="landing-section landing-band">
+        <div>
+          <h2>Portals</h2>
+          <p>Each role gets a focused entry point. The strategy library and question bank are planned for teacher, school, and owner admin access.</p>
         </div>
-        <p class="modal-copy">Select the supports this class needs. Lesson Mentor will place usable prompts, frames, checks, and breaks into the generated lesson at the right moments.</p>
-        <div class="support-grid" id="iep-supports"></div>
-        <div class="button-row modal-actions">
-          <button class="primary-button" id="save-iep-supports" value="close">Save supports</button>
+        <div class="portal-grid">
+          <a class="portal-card" href="/teacher/"><strong>Teacher</strong><span>Lesson generation, class setup, student profiles, assessment launch.</span></a>
+          <a class="portal-card" href="/student/"><strong>Student</strong><span>ID-based assessment flow with badge choice and read-aloud support.</span></a>
+          <a class="portal-card" href="/school/"><strong>School</strong><span>School-level setup, account oversight, roster support, shared library access.</span></a>
+          <a class="portal-card" href="/admin/"><strong>Owner Admin</strong><span>Manage teacher accounts, school accounts, library content, and system settings.</span></a>
         </div>
-      </form>
-    </dialog>
-
-    <dialog class="modal" id="student-profile-modal">
-      <form method="dialog">
-        <div class="panel-title-row">
-          <h3>Student profile</h3>
-          <button class="icon-button" value="close">Close</button>
-        </div>
-        <div id="student-profile-modal-body"></div>
-        <div class="button-row modal-actions">
-          <button class="primary-button" value="close">Done</button>
-        </div>
-      </form>
-    </dialog>
-
-    <script src="config.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabaseClient.js"></script>
-    <script src="app.js?v=live1"></script>
+      </section>
+    </main>
   </body>
 </html>

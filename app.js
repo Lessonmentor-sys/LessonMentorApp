@@ -449,6 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bindLibrary();
   renderConnectionStatus();
   renderAll();
+  applyInitialHashRoute();
 });
 
 function bindNavigation() {
@@ -479,6 +480,13 @@ function bindNavigation() {
     `;
     renderAll();
   });
+}
+
+function applyInitialHashRoute() {
+  const target = window.location.hash.replace("#", "");
+  const view = target.replace("-view", "");
+  const button = document.querySelector(`.nav-button[data-view="${view}"]`);
+  if (button) button.click();
 }
 
 function bindTeacher() {
@@ -612,8 +620,6 @@ function renderTeacher() {
         <strong>ID # ${student.id}</strong>
         <span>|</span>
         <strong>Grade ${student.grade}</strong>
-        <span>|</span>
-        <strong>Primary - Secondary</strong>
       </div>
       <div class="student-style-cell">
         <div class="pill-row primary-secondary-pills">${stylePill(student.primary)}${stylePill(student.secondary)}</div>

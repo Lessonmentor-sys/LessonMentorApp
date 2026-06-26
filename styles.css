@@ -38,17 +38,24 @@ button {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   min-height: 100vh;
 }
 
 .sidebar {
-  background: #0f172a;
-  color: #eef4ff;
-  padding: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+  padding: 14px 28px;
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(30, 41, 59, 0.06);
+  backdrop-filter: blur(10px);
 }
 
 .brand {
@@ -58,13 +65,13 @@ button {
 }
 
 .brand-mark {
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: #ffffff;
-  color: #0f172a;
+  background: #0f172a;
+  color: #ffffff;
   font-weight: 800;
 }
 
@@ -78,38 +85,43 @@ button {
 }
 
 .brand p {
-  color: #b9c6da;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
 .nav {
-  display: grid;
+  display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .nav-button {
-  border: 1px solid transparent;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 11px 12px;
-  text-align: left;
-  background: transparent;
-  color: #dce7f7;
+  min-height: 38px;
+  padding: 0 12px;
+  text-align: center;
+  background: #fff;
+  color: #40506a;
+  font-weight: 750;
 }
 
 .nav-button.active,
 .nav-button:hover {
-  background: #1e293b;
-  border-color: #334155;
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }
 
 .status-box {
-  margin-top: auto;
-  padding: 14px;
+  padding: 9px 11px;
   display: flex;
   gap: 10px;
-  border: 1px solid #334155;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: #111c31;
+  background: #f8fafc;
+  max-width: 250px;
 }
 
 .status-box p,
@@ -118,7 +130,7 @@ button {
 }
 
 .status-box p {
-  color: #b9c6da;
+  color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.4;
 }
@@ -1141,14 +1153,22 @@ button {
 
   .sidebar {
     position: static;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 14px 18px;
   }
 
   .nav {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .nav-button {
     text-align: center;
+  }
+
+  .status-box {
+    max-width: none;
   }
 
   .workspace {
@@ -1215,7 +1235,251 @@ button {
     min-width: 0;
   }
 
-  .primary-secondary-pills {
-    justify-content: flex-start;
+.primary-secondary-pills {
+  justify-content: flex-start;
+  }
+}
+
+.landing-page,
+.portal-login-page {
+  background: #f4f7fb;
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 32px;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(30, 41, 59, 0.06);
+}
+
+.landing-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.landing-brand strong,
+.landing-brand small {
+  display: block;
+}
+
+.landing-brand small {
+  color: var(--muted);
+}
+
+.landing-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.landing-links a,
+.portal-card {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.landing-links a {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fff;
+  font-weight: 750;
+}
+
+.landing-hero,
+.landing-section {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 28px;
+  align-items: center;
+  min-height: calc(100vh - 78px);
+  padding: 44px 0;
+}
+
+.landing-hero h1,
+.landing-section h2,
+.login-card h1 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.landing-hero h1 {
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.95;
+}
+
+.hero-lede {
+  max-width: 760px;
+  margin: 18px 0 0;
+  color: #40506a;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.landing-actions,
+.login-form {
+  display: grid;
+  gap: 12px;
+}
+
+.landing-actions {
+  grid-template-columns: repeat(2, max-content);
+  margin-top: 24px;
+}
+
+.landing-button,
+.login-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.landing-snapshot,
+.login-card,
+.landing-card,
+.portal-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.landing-snapshot {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.snapshot-top,
+.snapshot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.snapshot-row {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fbfdff;
+}
+
+.snapshot-row span,
+.portal-card span,
+.landing-card p,
+.login-card p {
+  color: var(--muted);
+}
+
+.landing-section {
+  padding: 34px 0;
+}
+
+.landing-grid,
+.portal-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.landing-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.landing-card,
+.portal-card {
+  padding: 16px;
+}
+
+.landing-card strong,
+.portal-card strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.landing-card p,
+.portal-card span {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.landing-band {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.6fr) minmax(0, 1.4fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.portal-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.login-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.login-card {
+  width: min(520px, 100%);
+  padding: 24px;
+}
+
+.login-card h1 {
+  margin-top: 22px;
+  font-size: 2.2rem;
+}
+
+.login-card p {
+  line-height: 1.5;
+}
+
+.login-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 750;
+}
+
+.login-form input {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+@media (max-width: 900px) {
+  .landing-nav,
+  .landing-hero,
+  .landing-band {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .landing-nav {
+    flex-direction: column;
+  }
+
+  .landing-grid,
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-actions {
+    grid-template-columns: 1fr;
   }
 }
