@@ -1448,11 +1448,11 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 }
 
 .feature-gallery-copy {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 18px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .feature-gallery-copy h2 {
@@ -1484,15 +1484,29 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   border-radius: 8px;
   background: #ffffff;
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
-  animation: featureGalleryRotate 15s infinite ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.76);
+  transition: transform 520ms ease, opacity 520ms ease;
 }
 
-.feature-preview-card:nth-child(2) {
-  animation-delay: -5s;
+.feature-preview-card.is-active {
+  z-index: 3;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
 }
 
-.feature-preview-card:nth-child(3) {
-  animation-delay: -10s;
+.feature-preview-card.is-prev {
+  z-index: 2;
+  opacity: 0.72;
+  transform: translate(-108%, -50%) scale(0.78);
+}
+
+.feature-preview-card.is-next {
+  z-index: 2;
+  opacity: 0.72;
+  transform: translate(8%, -50%) scale(0.78);
 }
 
 .feature-preview-card img {
@@ -1526,33 +1540,58 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   text-align: right;
 }
 
-@keyframes featureGalleryRotate {
-  0%,
-  27% {
-    z-index: 3;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+.feature-gallery-button {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(15, 79, 184, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f4fb8;
+  cursor: pointer;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateY(-50%);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
+}
 
-  33%,
-  60% {
-    z-index: 2;
-    opacity: 0.72;
-    transform: translate(-108%, -50%) scale(0.78);
-  }
+.feature-gallery-button-prev {
+  left: 18px;
+}
 
-  66%,
-  93% {
-    z-index: 2;
-    opacity: 0.72;
-    transform: translate(8%, -50%) scale(0.78);
-  }
+.feature-gallery-button-next {
+  right: 18px;
+}
 
-  100% {
-    z-index: 3;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+.feature-gallery-button:hover {
+  background: #0f4fb8;
+  color: #ffffff;
+}
+
+.feature-gallery-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.feature-gallery-dots button {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #cbd5e1;
+  cursor: pointer;
+}
+
+.feature-gallery-dots button.is-active {
+  width: 34px;
+  background: #0f4fb8;
 }
 
 .landing-hero,
@@ -2041,10 +2080,11 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 }
 
 .training-list div {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 8px;
-  background: #f8fafc;
+  background: linear-gradient(180deg, #0f4fb8 0%, #0d336d 100%);
   padding: 14px;
+  box-shadow: 0 16px 32px rgba(15, 47, 100, 0.18);
 }
 
 .training-list strong,
@@ -2053,9 +2093,13 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 }
 
 .training-list span {
-  color: #40506a;
+  color: #dbeafe;
   line-height: 1.45;
   margin-top: 5px;
+}
+
+.training-list strong {
+  color: #ffffff;
 }
 
 .pricing-grid {
@@ -2330,6 +2374,25 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   color: #b9d4ff;
 }
 
+.training-section,
+.landing-band-block.training-section {
+  background: #ffffff;
+  box-shadow: 0 0 0 100vmax #ffffff, var(--shadow);
+  color: var(--ink);
+}
+
+.landing-band-block.training-section .eyebrow {
+  color: #64748b;
+}
+
+.landing-band-block.training-section h2 {
+  color: var(--ink);
+}
+
+.landing-band-block.training-section .training-copy p {
+  color: #40506a;
+}
+
 .connection-block {
   display: grid;
   grid-template-columns: 1fr;
@@ -2443,12 +2506,18 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
     padding: 14px;
   }
 
+  .feature-gallery-button,
+  .feature-gallery-dots {
+    display: none;
+  }
+
   .feature-preview-card,
   .feature-preview-card:nth-child(2),
   .feature-preview-card:nth-child(3) {
     position: static;
     width: 100%;
     opacity: 1;
+    pointer-events: auto;
     transform: none;
     animation: none;
   }
