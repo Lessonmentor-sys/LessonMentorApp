@@ -475,7 +475,7 @@ function bindNavigation() {
       document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
       button.classList.add("active");
       document.getElementById(`${button.dataset.view}-view`).classList.add("active");
-      const titles = { teacher: "Teacher dashboard", student: "Student dashboard", library: "Strategy library", admin: "School Dashboard", questions: "Question bank" };
+      const titles = { teacher: "Teacher Dashboard", student: "Student Dashboard", library: "Strategy Library", admin: "School Dashboard", questions: "Question Bank" };
       document.getElementById("view-title").textContent = titles[button.dataset.view];
     });
   });
@@ -487,6 +487,10 @@ function bindNavigation() {
     appState.answers = {};
     document.getElementById("lesson-text").value = "";
     renderAll();
+  });
+
+  document.getElementById("jump-settings")?.addEventListener("click", () => {
+    document.querySelector('[data-teacher-tab="settings"]')?.click();
   });
 }
 
@@ -619,8 +623,10 @@ function renderTeacher() {
   const profile = classProfiles[appState.activePeriod];
   paintCompass("teacher-compass", profile.profile);
   renderStats("teacher-profile-stats", profile.profile);
-  document.getElementById("class-insight").textContent = buildInsight(profile.profile);
-  document.getElementById("roster-count").textContent = `${profile.roster.length} students`;
+  const classInsight = document.getElementById("class-insight");
+  if (classInsight) classInsight.textContent = buildInsight(profile.profile);
+  const rosterCount = document.getElementById("roster-count");
+  if (rosterCount) rosterCount.textContent = `${profile.roster.length} students`;
   document.getElementById("roster-tab-count").textContent = `${profile.roster.length} students`;
   document.getElementById("roster-list").innerHTML = profile.roster.map(student => `
     <div class="roster-item student-profile-row">
@@ -894,6 +900,26 @@ function selectOrganizers() {
   return ({ science: scienceSet, ela: elaSet, math: mathSet, "social-studies": socialSet }[subject] || generalSet).slice(0, 3);
 }
 
+function getDaysAvailable(item) {
+  if (item.expired) return 0;
+  if (/^\d+\s*days?$/i.test(item.expires)) return parseInt(item.expires, 10);
+  const currentYear = new Date().getFullYear();
+  const target = new Date(`${item.expires}, ${currentYear}`);
+  if (Number.isNaN(target.getTime())) return 15;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  target.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.ceil((target - today) / 86400000));
+}
+
+function availabilityPill(item) {
+  if (item.expired) return `<span class="access-pill danger">Expired</span>`;
+  const days = getDaysAvailable(item);
+  const tone = days <= 5 ? "danger" : days <= 10 ? "warning" : "success";
+  const label = days === 1 ? "1 Day Left" : `${days} Days Left`;
+  return `<span class="access-pill ${tone}">${label}</span>`;
+}
+
 function renderSubmissionHistory() {
   const submissionHistory = document.getElementById("submission-history");
   if (!appState.submissions.length) {
@@ -912,10 +938,11 @@ function renderSubmissionHistory() {
     <div class="history-row">
       <div>
         <strong>${item.title}</strong>
-        <p>${item.date} · ${item.period} · ${item.systems.join(", ")} · ${item.expired ? "document expired" : `available until ${item.expires}`}</p>
+        <p>${item.date} · ${item.period} · ${item.systems.join(", ")}</p>
       </div>
       <div class="document-actions">
-        ${item.expired ? `<span class="small-pill expired">Expired</span>` : `<button class="secondary-button">Preview</button><button class="secondary-button">Download</button>`}
+        ${availabilityPill(item)}
+        ${item.expired ? "" : `<button class="secondary-button">Preview</button><button class="secondary-button">Download</button>`}
       </div>
     </div>
   `).join("");

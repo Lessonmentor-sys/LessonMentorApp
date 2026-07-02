@@ -185,6 +185,37 @@ button {
   font-size: 1.75rem;
 }
 
+.teacher-title-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.teacher-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.38), transparent 28%),
+    linear-gradient(135deg, #0f8f8a 0%, #68cfc3 100%);
+  box-shadow: 0 14px 28px rgba(15, 143, 138, 0.28);
+  color: #fff;
+  font-weight: 850;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .eyebrow {
   color: var(--muted);
   font-size: 0.82rem;
@@ -367,6 +398,17 @@ button {
   margin-bottom: 14px;
 }
 
+.inline-switch {
+  justify-content: flex-start;
+  min-height: 40px;
+  padding: 10px 12px;
+  border: 1px solid rgba(15, 143, 138, 0.22);
+  border-radius: 8px;
+  background: #ecfdf8;
+  color: #0f5f5b;
+  font-weight: 800;
+}
+
 .rail-profile {
   flex-direction: column;
   gap: 12px;
@@ -466,7 +508,9 @@ button {
 .settings-card {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fbfdff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(246, 252, 250, 0.96)),
+    radial-gradient(circle at 100% 0%, rgba(15, 143, 138, 0.10), transparent 34%);
   padding: 14px;
 }
 
@@ -568,6 +612,12 @@ button {
 .secondary-button:hover,
 .icon-button:hover {
   border-color: #94a3b8;
+}
+
+.warning-button {
+  border-color: #f2c94c;
+  color: #7a4f00;
+  background: #fff8df;
 }
 
 .small-pill,
@@ -1175,13 +1225,45 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 
 .document-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .expired {
   color: #9f1239;
   background: #ffe4e6;
+}
+
+.access-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border-radius: 999px;
+  padding: 0 13px;
+  font-size: 0.82rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.access-pill.success {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+}
+
+.access-pill.warning {
+  color: #854d0e;
+  background: #fef3c7;
+  border: 1px solid #facc15;
+}
+
+.access-pill.danger {
+  color: #9f1239;
+  background: #ffe4e6;
+  border: 1px solid #fda4af;
 }
 
 .modal {

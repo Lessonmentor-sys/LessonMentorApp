@@ -29,7 +29,7 @@
         <div class="status-box">
           <span class="status-dot"></span>
           <div>
-            <strong>Live starter</strong>
+            <strong>Live Starter</strong>
             <p>Demo mode until Supabase is configured.</p>
           </div>
         </div>
@@ -37,11 +37,15 @@
 
       <main class="workspace">
         <section class="topbar">
-          <div>
-            <p class="eyebrow">Education Under Construction LLC</p>
-            <h2 id="view-title">Teacher dashboard</h2>
+          <div class="teacher-title-block">
+            <div class="teacher-avatar" aria-hidden="true">JT</div>
+            <div>
+              <p class="eyebrow">Education Under Construction LLC</p>
+              <h2 id="view-title">Teacher Dashboard</h2>
+            </div>
           </div>
           <div class="topbar-actions">
+            <button class="icon-button" id="jump-settings" title="Open settings">Settings</button>
             <button class="icon-button" id="reset-demo" title="Reset demo data">Reset</button>
           </div>
         </section>
@@ -51,7 +55,7 @@
             <aside class="class-profile-rail">
               <div class="panel">
                 <div class="panel-title-row stacked-title">
-                  <h4>Class profile</h4>
+                  <h4>Class Profile</h4>
                   <label class="class-picker compact-picker">Class
                     <select id="class-select" aria-label="Class period">
                       <option value="1">Period 1 - Grade 4 Science</option>
@@ -67,20 +71,9 @@
                     </select>
                   </label>
                 </div>
-                <label class="switch-label rail-switch">
-                  <input type="checkbox" id="self-contained-toggle">
-                  <span>Self-contained</span>
-                </label>
                 <div class="profile-layout rail-profile">
                   <div class="compass" id="teacher-compass" aria-label="Class learning profile chart"></div>
                   <div class="profile-stats" id="teacher-profile-stats"></div>
-                </div>
-                <p class="insight" id="class-insight"></p>
-                <div class="rail-today">
-                  <strong>Today</strong>
-                  <p><b id="roster-count">0 students</b> in selected class</p>
-                  <p><b>0</b> lesson files awaiting review</p>
-                  <p><b>15 days</b> document access window</p>
                 </div>
               </div>
             </aside>
@@ -89,7 +82,7 @@
               <div class="submit-grid">
                 <div class="panel upload-panel submit-panel">
                   <div class="panel-title-row">
-                    <h4>Submit a new lesson plan file</h4>
+                    <h4>Submit A New Lesson Plan File</h4>
                     <span class="small-pill">Jennifer template</span>
                   </div>
                   <div class="lesson-meta-grid">
@@ -139,14 +132,14 @@
                   </div>
                   <div class="inline-systems">
                     <div class="panel-title-row">
-                      <h4>Systems to include</h4>
+                      <h4>Systems To Include</h4>
                       <span class="small-pill">This lesson</span>
                     </div>
                     <div class="system-toggles" id="system-toggles"></div>
                     <p class="auto-support-note">IEP supports are set per class in Settings and apply automatically.</p>
                   </div>
                   <div class="analysis-card" id="lesson-analysis">
-                    <strong>No lesson analyzed yet</strong>
+                    <strong>No Lesson Analyzed Yet</strong>
                     <p>Detected lesson signals and standards will appear here.</p>
                   </div>
                 </div>
@@ -162,7 +155,7 @@
               <div class="teacher-tab-panel active" id="teacher-tab-submissions">
                 <div class="panel">
                   <div class="panel-title-row">
-                    <h4>Submission history</h4>
+                    <h4>Submission History</h4>
                     <span class="small-pill">Preview/download for 15 days</span>
                   </div>
                   <div class="history-list" id="submission-history"></div>
@@ -172,7 +165,7 @@
               <div class="teacher-tab-panel" id="teacher-tab-profiles">
                 <div class="panel">
                   <div class="panel-title-row">
-                    <h4>Student profiles</h4>
+                    <h4>Student Profiles</h4>
                     <span class="small-pill" id="roster-tab-count">0 students</span>
                   </div>
                   <div class="roster-list" id="roster-list"></div>
@@ -182,12 +175,12 @@
               <div class="teacher-tab-panel" id="teacher-tab-assessment">
                 <div class="panel">
                   <div class="panel-title-row">
-                    <h4>Launch assessment</h4>
+                    <h4>Launch Assessment</h4>
                     <span class="small-pill">Teacher controlled</span>
                   </div>
                   <div class="launch-grid">
                     <div class="settings-card settings-card-wide">
-                      <strong>Release to students</strong>
+                      <strong>Release To Students</strong>
                       <p>Open the same assessment question set for a whole class, a small group, or one student who needs to complete it later.</p>
                       <div class="lesson-meta-grid compact-launch-form">
                         <label>Who receives it?
@@ -217,7 +210,7 @@
                       </div>
                     </div>
                     <div class="settings-card">
-                      <strong>Teacher display view</strong>
+                      <strong>Teacher Display View</strong>
                       <p>Project the same student-facing questions in the same order, without showing learning-style labels or scoring mappings.</p>
                       <button class="secondary-button">Open display view</button>
                     </div>
@@ -227,7 +220,7 @@
                       <button class="secondary-button">Set read-aloud options</button>
                     </div>
                     <div class="settings-card">
-                      <strong>Active assessment</strong>
+                      <strong>Active Assessment</strong>
                       <p id="active-assessment-status">No assessment is currently open. Once launched, this area will show completion counts and student IDs still pending.</p>
                     </div>
                   </div>
@@ -237,12 +230,12 @@
               <div class="teacher-tab-panel" id="teacher-tab-settings">
                 <div class="panel">
                   <div class="panel-title-row">
-                    <h4>Teacher settings</h4>
+                    <h4>Teacher Settings</h4>
                     <span class="small-pill">Class setup + account</span>
                   </div>
                   <div class="settings-grid">
                     <div class="settings-card settings-card-wide">
-                      <strong>Class schedule</strong>
+                      <strong>Class Schedule</strong>
                       <p>Set period names, start times, end times, meeting days, and alternate schedules for late-start or early-release days. This will also feed the future substitute lesson plan builder.</p>
                       <div class="settings-actions">
                         <button class="secondary-button">Build schedule</button>
@@ -250,37 +243,52 @@
                       </div>
                     </div>
                     <div class="settings-card">
-                      <strong>Class IEP supports</strong>
+                      <strong>Class IEP Supports</strong>
                       <p>Selected supports apply automatically to every lesson submitted for this class.</p>
                       <button class="secondary-button" id="open-iep-modal">Edit IEP supports</button>
                     </div>
                     <div class="settings-card">
-                      <strong>Student profile setup</strong>
+                      <strong>Class Structure</strong>
+                      <p>Mark this class as self-contained when one roster stays together for the full day.</p>
+                      <label class="switch-label inline-switch">
+                        <input type="checkbox" id="self-contained-toggle">
+                        <span>Self-Contained Class</span>
+                      </label>
+                    </div>
+                    <div class="settings-card">
+                      <strong>Student Profile Setup</strong>
                       <p>Manage student IDs, grade levels, class placement, and yearly profile reset options.</p>
+                      <button class="secondary-button">Manage Student Profiles</button>
                     </div>
                     <div class="settings-card">
-                      <strong>Lesson preferences</strong>
+                      <strong>Lesson Preferences</strong>
                       <p>Choose default board language, standards format, template options, and protected organizer behavior.</p>
+                      <button class="secondary-button">Edit Lesson Preferences</button>
                     </div>
                     <div class="settings-card">
-                      <strong>Teaching style inventory</strong>
+                      <strong>Teaching Style Inventory</strong>
                       <p>Future setup: capture teacher strengths so Lesson Mentor can recommend differentiation moves that fit the teacher too.</p>
+                      <button class="secondary-button">Open Inventory</button>
                     </div>
                     <div class="settings-card">
                       <strong>Account</strong>
                       <p>Change display name, password, and notification preferences.</p>
+                      <button class="secondary-button">Edit Account</button>
                     </div>
                     <div class="settings-card">
-                      <strong>Payment history</strong>
+                      <strong>Payment History</strong>
                       <p>View receipts, access dates, and renewal information.</p>
+                      <button class="secondary-button">View Payment History</button>
                     </div>
                     <div class="settings-card">
-                      <strong>School year reset</strong>
+                      <strong>School Year Reset</strong>
                       <p>Start a new school year and permanently clear old assessment data when ready.</p>
+                      <button class="secondary-button warning-button">Start School Year Reset</button>
                     </div>
                     <div class="settings-card">
-                      <strong>Substitute plan setup</strong>
+                      <strong>Substitute Plan Setup</strong>
                       <p>Future setup: class routines, emergency notes, seating info, schedule rules, and preferred sub-plan format.</p>
+                      <button class="secondary-button">Configure Sub Plans</button>
                     </div>
                   </div>
                 </div>
@@ -292,14 +300,14 @@
         <section class="view" id="student-view" aria-labelledby="student-heading">
           <div class="section-head">
             <div>
-              <h3 id="student-heading">Student assessment</h3>
+              <h3 id="student-heading">Student Assessment</h3>
               <p>Student ID only, avatar choice, short assessment, and a draft learning profile result.</p>
             </div>
           </div>
 
           <div class="student-grid">
             <div class="panel">
-              <h4>Student sign-in</h4>
+              <h4>Student Sign-In</h4>
               <div class="form-grid">
                 <label>Student ID <input id="student-id" value="48291"></label>
                 <label>Grade band
@@ -314,7 +322,7 @@
                   <span>Read questions aloud</span>
                 </label>
               </div>
-              <h4>Trail badge</h4>
+              <h4>Trail Badge</h4>
               <div class="avatar-grid" id="avatar-grid"></div>
             </div>
 
@@ -332,7 +340,7 @@
             </div>
 
             <div class="panel">
-              <h4>Learning profile</h4>
+              <h4>Learning Profile</h4>
               <div class="profile-layout">
                 <div class="compass" id="student-compass"></div>
                 <div class="profile-stats" id="student-profile-stats"></div>
@@ -345,7 +353,7 @@
         <section class="view" id="library-view" aria-labelledby="library-heading">
           <div class="section-head">
             <div>
-              <h3 id="library-heading">Strategy library</h3>
+              <h3 id="library-heading">Strategy Library</h3>
               <p>Browse teaching strategies apart from a generated lesson plan.</p>
             </div>
           </div>
@@ -408,14 +416,14 @@
 
             <div class="panel">
               <div class="panel-title-row">
-                <h4>Teacher accounts</h4>
+                <h4>Teacher Accounts</h4>
                 <span class="small-pill">Operations only</span>
               </div>
               <div id="assignment-grid"></div>
             </div>
 
             <div class="panel">
-              <h4>Privacy settings</h4>
+              <h4>Privacy Settings</h4>
               <div class="privacy-list">
                 <p><strong>Teacher display:</strong> Student ID and optional display name only.</p>
                 <p><strong>AI data:</strong> Lesson text, class profile tags, and strategy settings only.</p>
@@ -428,7 +436,7 @@
         <section class="view" id="questions-view" aria-labelledby="questions-heading">
           <div class="section-head">
             <div>
-              <h3 id="questions-heading">Question bank</h3>
+              <h3 id="questions-heading">Question Bank</h3>
               <p>Starter question bank used by the assessment prototype.</p>
             </div>
             <select id="question-filter">
@@ -446,7 +454,7 @@
     <dialog class="modal" id="iep-modal">
       <form method="dialog">
         <div class="panel-title-row">
-          <h3>Class IEP supports</h3>
+          <h3>Class IEP Supports</h3>
           <button class="icon-button" value="close">Close</button>
         </div>
         <p class="modal-copy">Select the supports this class needs. Lesson Mentor will place usable prompts, frames, checks, and breaks into the generated lesson at the right moments.</p>
@@ -460,7 +468,7 @@
     <dialog class="modal" id="student-profile-modal">
       <form method="dialog">
         <div class="panel-title-row">
-          <h3>Student profile</h3>
+          <h3>Student Profile</h3>
           <button class="icon-button" value="close">Close</button>
         </div>
         <div id="student-profile-modal-body"></div>
