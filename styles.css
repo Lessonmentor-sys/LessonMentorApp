@@ -2063,11 +2063,11 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   grid-template-columns: minmax(0, 0.82fr) minmax(320px, 1fr);
   gap: 18px;
   align-items: stretch;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 0;
+  border-radius: 0;
   background: #ffffff;
-  box-shadow: var(--shadow);
-  padding: 24px;
+  box-shadow: none;
+  padding: 48px 0;
 }
 
 .training-copy h2 {
@@ -2377,7 +2377,8 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 .training-section,
 .landing-band-block.training-section {
   background: #ffffff;
-  box-shadow: 0 0 0 100vmax #ffffff, var(--shadow);
+  box-shadow: 0 0 0 100vmax #ffffff;
+  clip-path: inset(0 -100vmax);
   color: var(--ink);
 }
 
@@ -2391,6 +2392,18 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 
 .landing-band-block.training-section .training-copy p {
   color: #40506a;
+}
+
+.landing-band {
+  grid-template-columns: 1fr;
+}
+
+.landing-band > div:first-child {
+  max-width: none;
+}
+
+.landing-band .portal-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .connection-block {
