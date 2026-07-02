@@ -2108,6 +2108,80 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   gap: 16px;
 }
 
+.pricing-tabs,
+.billing-toggle {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #eef5ff;
+}
+
+.pricing-tabs {
+  margin: 20px 0 18px;
+}
+
+.pricing-tabs button,
+.billing-toggle button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #334155;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  padding: 0 18px;
+}
+
+.pricing-tabs button.is-active,
+.billing-toggle button.is-active {
+  background: #0f4fb8;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 79, 184, 0.22);
+}
+
+.pricing-panel {
+  display: none;
+}
+
+.pricing-panel.is-active {
+  display: block;
+}
+
+.billing-toggle {
+  margin-bottom: 16px;
+}
+
+.school-pricing-note {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 16px;
+  border-radius: 999px;
+  background: #e9f1ff;
+  color: #0f4fb8;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.2;
+  padding: 9px 14px;
+}
+
+.teacher-pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.teacher-pricing-grid.is-monthly {
+  grid-template-columns: minmax(280px, 480px);
+}
+
+.school-pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .pricing-card {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -2118,6 +2192,10 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.pricing-card.is-hidden {
+  display: none;
 }
 
 .pricing-card span {
@@ -2142,6 +2220,25 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
 .pricing-card b {
   margin-top: auto;
   font-size: 1.2rem;
+}
+
+.pricing-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 8px;
+  background: #0f4fb8;
+  color: #ffffff;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+  padding: 0 14px;
+  box-shadow: 0 12px 24px rgba(15, 79, 184, 0.2);
+}
+
+.pricing-cta:hover {
+  background: #0d336d;
 }
 
 .featured-pricing {
@@ -2590,8 +2687,16 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   .stack-card-grid,
   .workflow-line,
   .preview-grid,
+  .teacher-pricing-grid,
+  .school-pricing-grid,
   .pricing-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pricing-tabs,
+  .billing-toggle {
+    width: 100%;
+    grid-auto-flow: row;
   }
 
   .landing-actions {

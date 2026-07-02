@@ -180,55 +180,73 @@
             <p>Start small, grow into team access, or bring Lesson Mentor to an entire school building.</p>
           </div>
         </div>
-        <div class="pricing-grid">
-          <article class="pricing-card">
-            <span>Founding Teacher</span>
-            <strong>$39 → $97 → $129</strong>
-            <p>First 50 teachers. Year 1, Year 2, then standard annual pricing.</p>
-            <b>1 teacher</b>
-          </article>
-          <article class="pricing-card">
-            <span>Monthly</span>
-            <strong>$12.99/mo</strong>
-            <p>For one teacher who wants flexible access and can cancel anytime.</p>
-            <b>1 teacher</b>
-          </article>
-          <article class="pricing-card">
-            <span>Annual</span>
-            <strong>$129/year</strong>
-            <p>Standard individual plan. School-year billing can be prorated Aug-Jul.</p>
-            <b>1 teacher</b>
-          </article>
-          <article class="pricing-card featured-pricing">
-            <span>Team</span>
-            <strong>$99/teacher/year</strong>
-            <p>For 3-10 teachers in one grade level or department.</p>
-            <b>23% off</b>
-          </article>
-          <article class="pricing-card">
-            <span>Campus - Small</span>
-            <strong>$89/teacher/year</strong>
-            <p>For 11-30 teachers in one school building.</p>
-            <b>31% off</b>
-          </article>
-          <article class="pricing-card">
-            <span>Campus - Mid</span>
-            <strong>$79/teacher/year</strong>
-            <p>For 31-75 teachers in one building.</p>
-            <b>39% off</b>
-          </article>
-          <article class="pricing-card">
-            <span>Campus - Large</span>
-            <strong>Contact For Quote</strong>
-            <p>For 76+ teachers in one building with expanded support needs.</p>
-            <b>Custom</b>
-          </article>
-          <article class="pricing-card">
-            <span>Student Teacher</span>
-            <strong>$39/year</strong>
-            <p>For pre-service educators in an active student-teaching placement.</p>
-            <b>Partner code</b>
-          </article>
+        <div class="pricing-tabs" aria-label="Pricing categories">
+          <button class="is-active" type="button" data-pricing-tab="teacher">Teacher Plans</button>
+          <button type="button" data-pricing-tab="school">School Plans</button>
+        </div>
+
+        <div class="pricing-panel is-active" data-pricing-panel="teacher">
+          <div class="billing-toggle" aria-label="Billing frequency">
+            <button class="is-active" type="button" data-billing="monthly">Monthly</button>
+            <button type="button" data-billing="annual">Annual</button>
+          </div>
+          <div class="pricing-grid teacher-pricing-grid">
+            <article class="pricing-card featured-pricing teacher-plan" data-billing-card="monthly">
+              <span>Teacher</span>
+              <strong>$12.99/mo</strong>
+              <p>For one classroom teacher who wants flexible access to lesson generation, strategy recommendations, and document history.</p>
+              <b>Cancel anytime</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="teacher-monthly">Start Planning Smarter</a>
+            </article>
+            <article class="pricing-card featured-pricing" data-billing-card="annual">
+              <span>Early Adopter</span>
+              <strong>$39</strong>
+              <p>Limited to the first 50 teachers. We will ask for feedback and surveys throughout the year to make our product more efficient and continue to meet teachers' needs as they are ever changing. Year 2 ($97) and Year 3 ($129) discounts are available for consistent use of the system.</p>
+              <b>Limited To: 50 Users</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="early-adopter">Claim The First Seat</a>
+            </article>
+            <article class="pricing-card" data-billing-card="annual">
+              <span>Student Teacher</span>
+              <strong>$39/year</strong>
+              <p>For pre-service educators in an active student-teaching placement.</p>
+              <b>Partner code</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="student-teacher">Start Strong</a>
+            </article>
+            <article class="pricing-card" data-billing-card="annual">
+              <span>Team</span>
+              <strong>$99/teacher/year</strong>
+              <p>For 3-10 teachers in one grade level or department.</p>
+              <b>23% off</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="team">Bring The Team</a>
+            </article>
+          </div>
+        </div>
+
+        <div class="pricing-panel" data-pricing-panel="school">
+          <div class="school-pricing-note">All School Plans Are Annual</div>
+          <div class="pricing-grid school-pricing-grid">
+            <article class="pricing-card featured-pricing">
+              <span>Campus - Small</span>
+              <strong>$89/per teacher</strong>
+              <p>For 11-30 teachers in one school building.</p>
+              <b>31% off</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="campus-small">Equip The Campus</a>
+            </article>
+            <article class="pricing-card">
+              <span>Campus - Mid</span>
+              <strong>$79/per teacher</strong>
+              <p>For 31-75 teachers in one school building.</p>
+              <b>39% off</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="campus-mid">Scale The Support</a>
+            </article>
+            <article class="pricing-card">
+              <span>Campus - Large</span>
+              <strong>Contact For Quote</strong>
+              <p>For 76+ teachers in a school district with expanded support needs. This would cover multiple buildings. Onsite training packages are available.</p>
+              <b>Custom</b>
+              <a class="pricing-cta" href="#" data-stripe-plan="campus-large">Plan The Rollout</a>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -287,6 +305,37 @@
         });
         setGallery(0);
         startRotation();
+      }
+
+      const pricing = document.querySelector(".pricing-section");
+      if (pricing) {
+        const tabButtons = [...pricing.querySelectorAll("[data-pricing-tab]")];
+        const panels = [...pricing.querySelectorAll("[data-pricing-panel]")];
+        const billingButtons = [...pricing.querySelectorAll("[data-billing]")];
+        const teacherGrid = pricing.querySelector(".teacher-pricing-grid");
+        const billingCards = [...pricing.querySelectorAll("[data-billing-card]")];
+
+        function setBilling(billing) {
+          billingButtons.forEach((billingButton) => billingButton.classList.toggle("is-active", billingButton.dataset.billing === billing));
+          billingCards.forEach((card) => card.classList.toggle("is-hidden", card.dataset.billingCard !== billing));
+          teacherGrid?.classList.toggle("is-monthly", billing === "monthly");
+        }
+
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const tab = button.dataset.pricingTab;
+            tabButtons.forEach((tabButton) => tabButton.classList.toggle("is-active", tabButton === button));
+            panels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.pricingPanel === tab));
+          });
+        });
+
+        billingButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            setBilling(button.dataset.billing);
+          });
+        });
+
+        setBilling("monthly");
       }
     </script>
   </body>
