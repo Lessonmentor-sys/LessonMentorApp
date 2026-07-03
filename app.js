@@ -503,8 +503,25 @@ function bindNavigation() {
     renderAll();
   });
 
-  document.getElementById("jump-settings")?.addEventListener("click", () => {
-    document.querySelector('[data-teacher-tab="settings"]')?.click();
+  document.getElementById("open-student-profiles")?.addEventListener("click", () => {
+    document.getElementById("student-profiles-modal")?.showModal();
+  });
+  document.getElementById("open-launch-assessment")?.addEventListener("click", () => {
+    document.getElementById("launch-assessment-modal")?.showModal();
+  });
+  document.getElementById("open-library-modal")?.addEventListener("click", () => {
+    document.getElementById("library-modal")?.showModal();
+  });
+  document.getElementById("open-settings-modal")?.addEventListener("click", () => {
+    document.getElementById("settings-modal")?.showModal();
+  });
+  document.getElementById("open-strategy-library")?.addEventListener("click", () => {
+    document.getElementById("library-modal")?.close();
+    document.querySelector('.nav-button[data-view="library"]')?.click();
+  });
+  document.getElementById("open-question-bank")?.addEventListener("click", () => {
+    document.getElementById("library-modal")?.close();
+    document.querySelector('.nav-button[data-view="questions"]')?.click();
   });
 }
 
@@ -553,21 +570,15 @@ function bindTeacher() {
   document.getElementById("generate-lesson").addEventListener("click", generateLessonPlan);
   document.getElementById("launch-class-assessment")?.addEventListener("click", () => launchAssessment("class"));
   document.getElementById("launch-student-assessment")?.addEventListener("click", () => launchAssessment("student"));
-  document.getElementById("open-iep-modal").addEventListener("click", () => document.getElementById("iep-modal").showModal());
+  document.getElementById("open-iep-modal").addEventListener("click", () => {
+    document.getElementById("settings-modal")?.close();
+    document.getElementById("iep-modal").showModal();
+  });
   document.getElementById("save-iep-supports").addEventListener("click", renderStrategies);
   ["lesson-grade", "lesson-subject", "objective-style"].forEach(id => {
     document.getElementById(id).addEventListener("change", () => {
       renderStandardsPreview();
       renderStrategies();
-    });
-  });
-
-  document.querySelectorAll(".teacher-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".teacher-tab").forEach(item => item.classList.remove("active"));
-      document.querySelectorAll(".teacher-tab-panel").forEach(panel => panel.classList.remove("active"));
-      tab.classList.add("active");
-      document.getElementById(`teacher-tab-${tab.dataset.teacherTab}`).classList.add("active");
     });
   });
 }

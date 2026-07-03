@@ -45,7 +45,10 @@
             </div>
           </div>
           <div class="topbar-actions">
-            <button class="icon-button" id="jump-settings" title="Open settings">Settings</button>
+            <button class="icon-button" id="open-student-profiles" title="Open student profiles">Student Profiles</button>
+            <button class="icon-button" id="open-launch-assessment" title="Launch assessment">Launch Assessment</button>
+            <button class="icon-button" id="open-library-modal" title="Open library">Library</button>
+            <button class="icon-button" id="open-settings-modal" title="Open settings">Settings</button>
             <button class="icon-button" id="reset-demo" title="Reset demo data">Reset</button>
           </div>
         </section>
@@ -145,153 +148,12 @@
                 </div>
               </div>
 
-              <div class="teacher-tabs" role="tablist" aria-label="Lesson Mentor dashboard sections">
-                <button class="teacher-tab active" data-teacher-tab="submissions">Submission History <span>2</span></button>
-                <button class="teacher-tab" data-teacher-tab="profiles">Student Profiles <span>5</span></button>
-                <button class="teacher-tab" data-teacher-tab="assessment">Launch Assessment <span>12</span></button>
-                <button class="teacher-tab" data-teacher-tab="settings">Settings <span>9</span></button>
-              </div>
-
-              <div class="teacher-tab-panel active" id="teacher-tab-submissions">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Submission History</h4>
-                    <span class="small-pill">Preview/download for 15 days</span>
-                  </div>
-                  <div class="history-list" id="submission-history"></div>
+              <div class="panel submission-panel-bottom">
+                <div class="panel-title-row">
+                  <h4>Submission History</h4>
+                  <span class="small-pill">Preview/download for 15 days</span>
                 </div>
-              </div>
-
-              <div class="teacher-tab-panel" id="teacher-tab-profiles">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Student Profiles</h4>
-                    <span class="small-pill" id="roster-tab-count">0 students</span>
-                  </div>
-                  <div class="roster-list" id="roster-list"></div>
-                </div>
-              </div>
-
-              <div class="teacher-tab-panel" id="teacher-tab-assessment">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Launch Assessment</h4>
-                    <span class="small-pill">Teacher controlled</span>
-                  </div>
-                  <div class="launch-grid">
-                    <div class="settings-card settings-card-wide">
-                      <strong>Release To Students</strong>
-                      <p>Open the same assessment question set for a whole class, a small group, or one student who needs to complete it later.</p>
-                      <div class="lesson-meta-grid compact-launch-form">
-                        <label>Who receives it?
-                          <select>
-                            <option>Entire selected class</option>
-                            <option>One student ID</option>
-                            <option>Selected group</option>
-                          </select>
-                        </label>
-                        <label>Question set
-                          <select>
-                            <option>Grade 3-5 baseline: 12 questions</option>
-                            <option>K-2 baseline: 12 questions</option>
-                            <option>Grades 6-12 baseline: 12 questions</option>
-                          </select>
-                        </label>
-                        <label>Order
-                          <select>
-                            <option>Same order for everyone</option>
-                            <option>Randomized later</option>
-                          </select>
-                        </label>
-                      </div>
-                      <div class="button-row">
-                        <button class="primary-button" id="launch-class-assessment">Launch for class</button>
-                        <button class="secondary-button" id="launch-student-assessment">Launch for one student</button>
-                      </div>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Teacher Display View</strong>
-                      <p>Project the same student-facing questions in the same order, without showing learning-style labels or scoring mappings.</p>
-                      <button class="secondary-button">Open display view</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Read-aloud</strong>
-                      <p>Default on for K-2, optional for older students. Full build can use expressive voice settings when connected.</p>
-                      <button class="secondary-button">Set read-aloud options</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Active Assessment</strong>
-                      <p id="active-assessment-status">No assessment is currently open. Once launched, this area will show completion counts and student IDs still pending.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="teacher-tab-panel" id="teacher-tab-settings">
-                <div class="panel">
-                  <div class="panel-title-row">
-                    <h4>Teacher Settings</h4>
-                    <span class="small-pill">Class setup + account</span>
-                  </div>
-                  <div class="settings-grid">
-                    <div class="settings-card settings-card-wide">
-                      <strong>Class Schedule</strong>
-                      <p>Set period names, start times, end times, meeting days, and alternate schedules for late-start or early-release days. This will also feed the future substitute lesson plan builder.</p>
-                      <div class="settings-actions">
-                        <button class="secondary-button">Build schedule</button>
-                        <button class="secondary-button">Upload schedule photo</button>
-                      </div>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Class IEP Supports</strong>
-                      <p>Selected supports apply automatically to every lesson submitted for this class.</p>
-                      <button class="secondary-button" id="open-iep-modal">Edit IEP supports</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Class Structure</strong>
-                      <p>Mark this class as self-contained when one roster stays together for the full day.</p>
-                      <label class="switch-label inline-switch">
-                        <input type="checkbox" id="self-contained-toggle">
-                        <span>Self-Contained Class</span>
-                      </label>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Student Profile Setup</strong>
-                      <p>Manage student IDs, grade levels, class placement, and yearly profile reset options.</p>
-                      <button class="secondary-button">Manage Student Profiles</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Lesson Preferences</strong>
-                      <p>Choose default board language, standards format, template options, and protected organizer behavior.</p>
-                      <button class="secondary-button">Edit Lesson Preferences</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Teaching Style Inventory</strong>
-                      <p>Future setup: capture teacher strengths so Lesson Mentor can recommend differentiation moves that fit the teacher too.</p>
-                      <button class="secondary-button">Open Inventory</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Account</strong>
-                      <p>Change display name, password, and notification preferences.</p>
-                      <button class="secondary-button">Edit Account</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Payment History</strong>
-                      <p>View receipts, access dates, and renewal information.</p>
-                      <button class="secondary-button">View Payment History</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>School Year Reset</strong>
-                      <p>Start a new school year and permanently clear old assessment data when ready.</p>
-                      <button class="secondary-button warning-button">Start School Year Reset</button>
-                    </div>
-                    <div class="settings-card">
-                      <strong>Substitute Plan Setup</strong>
-                      <p>Future setup: class routines, emergency notes, seating info, schedule rules, and preferred sub-plan format.</p>
-                      <button class="secondary-button">Configure Sub Plans</button>
-                    </div>
-                  </div>
-                </div>
+                <div class="history-list" id="submission-history"></div>
               </div>
             </div>
           </div>
@@ -450,6 +312,169 @@
         </section>
       </main>
     </div>
+
+    <dialog class="modal dashboard-modal" id="student-profiles-modal">
+      <form method="dialog">
+        <div class="panel-title-row">
+          <h3>Student Profiles</h3>
+          <div class="button-row">
+            <span class="small-pill" id="roster-tab-count">0 students</span>
+            <button class="icon-button" value="close">Close</button>
+          </div>
+        </div>
+        <div class="roster-list" id="roster-list"></div>
+      </form>
+    </dialog>
+
+    <dialog class="modal dashboard-modal" id="launch-assessment-modal">
+      <form method="dialog">
+        <div class="panel-title-row">
+          <h3>Launch Assessment</h3>
+          <div class="button-row">
+            <span class="small-pill">Teacher controlled</span>
+            <button class="icon-button" value="close">Close</button>
+          </div>
+        </div>
+        <div class="launch-grid">
+          <div class="settings-card settings-card-wide">
+            <strong>Release To Students</strong>
+            <p>Open the same assessment question set for a whole class, a small group, or one student who needs to complete it later.</p>
+            <div class="lesson-meta-grid compact-launch-form">
+              <label>Who receives it?
+                <select>
+                  <option>Entire selected class</option>
+                  <option>One student ID</option>
+                  <option>Selected group</option>
+                </select>
+              </label>
+              <label>Question set
+                <select>
+                  <option>Grade 3-5 baseline: 10 questions</option>
+                  <option>K-2 baseline: 10 questions</option>
+                  <option>Grades 6-12 baseline: 10 questions</option>
+                </select>
+              </label>
+              <label>Order
+                <select>
+                  <option>Same order for everyone</option>
+                  <option>Randomized later</option>
+                </select>
+              </label>
+            </div>
+            <div class="button-row">
+              <button class="primary-button" id="launch-class-assessment" type="button">Launch for class</button>
+              <button class="secondary-button" id="launch-student-assessment" type="button">Launch for one student</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <strong>Teacher Display View</strong>
+            <p>Project the same student-facing questions in the same order, without showing learning-style labels or scoring mappings.</p>
+            <button class="secondary-button" type="button">Open display view</button>
+          </div>
+          <div class="settings-card">
+            <strong>Read-aloud</strong>
+            <p>Default on for K-2, optional for older students. Full build can use expressive voice settings when connected.</p>
+            <button class="secondary-button" type="button">Set read-aloud options</button>
+          </div>
+          <div class="settings-card">
+            <strong>Active Assessment</strong>
+            <p id="active-assessment-status">No assessment is currently open. Once launched, this area will show completion counts and student IDs still pending.</p>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal dashboard-modal" id="library-modal">
+      <form method="dialog">
+        <div class="panel-title-row">
+          <h3>Library</h3>
+          <button class="icon-button" value="close">Close</button>
+        </div>
+        <p class="modal-copy">Quick access to the teacher learning library and the student question bank.</p>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <strong>Learning Strategy Library</strong>
+            <p>Browse Kagan, SIOP, CER, and support strategies by system, grade level, subject, and learner fit.</p>
+            <button class="secondary-button" id="open-strategy-library" type="button">Open Strategy Library</button>
+          </div>
+          <div class="settings-card">
+            <strong>Student Question Bank</strong>
+            <p>Review assessment questions for Auditory, Independent, Kinesthetic, Reading/Writing, Social, and Visual learners.</p>
+            <button class="secondary-button" id="open-question-bank" type="button">Open Question Bank</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal dashboard-modal" id="settings-modal">
+      <form method="dialog">
+        <div class="panel-title-row">
+          <h3>Teacher Settings</h3>
+          <div class="button-row">
+            <span class="small-pill">Class setup + account</span>
+            <button class="icon-button" value="close">Close</button>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-card settings-card-wide">
+            <strong>Class Schedule</strong>
+            <p>Set period names, start times, end times, meeting days, and alternate schedules for late-start or early-release days. This will also feed the future substitute lesson plan builder.</p>
+            <div class="settings-actions">
+              <button class="secondary-button" type="button">Build schedule</button>
+              <button class="secondary-button" type="button">Upload schedule photo</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <strong>Class IEP Supports</strong>
+            <p>Selected supports apply automatically to every lesson submitted for this class.</p>
+            <button class="secondary-button" id="open-iep-modal" type="button">Edit IEP supports</button>
+          </div>
+          <div class="settings-card">
+            <strong>Class Structure</strong>
+            <p>Mark this class as self-contained when one roster stays together for the full day.</p>
+            <label class="switch-label inline-switch">
+              <input type="checkbox" id="self-contained-toggle">
+              <span>Self-Contained Class</span>
+            </label>
+          </div>
+          <div class="settings-card">
+            <strong>Student Profile Setup</strong>
+            <p>Manage student IDs, grade levels, class placement, and yearly profile reset options.</p>
+            <button class="secondary-button" type="button">Manage Student Profiles</button>
+          </div>
+          <div class="settings-card">
+            <strong>Lesson Preferences</strong>
+            <p>Choose default board language, standards format, template options, and protected organizer behavior.</p>
+            <button class="secondary-button" type="button">Edit Lesson Preferences</button>
+          </div>
+          <div class="settings-card">
+            <strong>Teaching Style Inventory</strong>
+            <p>Future setup: capture teacher strengths so Lesson Mentor can recommend differentiation moves that fit the teacher too.</p>
+            <button class="secondary-button" type="button">Open Inventory</button>
+          </div>
+          <div class="settings-card">
+            <strong>Account</strong>
+            <p>Change display name, password, and notification preferences.</p>
+            <button class="secondary-button" type="button">Edit Account</button>
+          </div>
+          <div class="settings-card">
+            <strong>Payment History</strong>
+            <p>View receipts, access dates, and renewal information.</p>
+            <button class="secondary-button" type="button">View Payment History</button>
+          </div>
+          <div class="settings-card">
+            <strong>School Year Reset</strong>
+            <p>Start a new school year and permanently clear old assessment data when ready.</p>
+            <button class="secondary-button warning-button" type="button">Start School Year Reset</button>
+          </div>
+          <div class="settings-card">
+            <strong>Substitute Plan Setup</strong>
+            <p>Future setup: class routines, emergency notes, seating info, schedule rules, and preferred sub-plan format.</p>
+            <button class="secondary-button" type="button">Configure Sub Plans</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
 
     <dialog class="modal" id="iep-modal">
       <form method="dialog">

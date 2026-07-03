@@ -1299,6 +1299,12 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   box-shadow: 0 30px 90px rgba(15, 23, 42, 0.28);
 }
 
+.dashboard-modal {
+  width: min(1080px, calc(100vw - 36px));
+  max-height: min(84vh, 900px);
+  overflow: auto;
+}
+
 .modal::backdrop {
   background: rgba(15, 23, 42, 0.45);
 }
