@@ -19,12 +19,15 @@ serve(async (req) => {
 
   return Response.json({
     status: "stub",
-    message: "Lesson generation function is deployed. Connect OpenAI and the protected template library next.",
+    message: "Lesson generation function is deployed. Next step: connect OpenAI, OCR/document parsing, and the protected Lesson Mentor signature template generator.",
     received: {
       grade: payload.grade,
       subject: payload.subject,
-      systems: payload.selected_systems,
-      supportCount: payload.selected_supports?.length || 0
+      strategies: payload.selected_systems,
+      supportCount: payload.selected_supports?.length || 0,
+      outputTemplate: payload.output_template || "Lesson Mentor Signature Template",
+      outputFormats: payload.output_formats || ["pdf", "docx"],
+      uploadedFileCount: payload.uploaded_files?.length || 0
     }
   }, { headers: corsHeaders });
 });

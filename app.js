@@ -10,6 +10,7 @@ const styles = {
 const systems = [
   { id: "cer", label: "CER" },
   { id: "kagan", label: "Kagan" },
+  { id: "pbl", label: "Project Based Learning" },
   { id: "siop", label: "SIOP" }
 ];
 
@@ -17,6 +18,7 @@ const systemLabels = {
   cer: "CER",
   iep: "IEP Supports",
   kagan: "Kagan",
+  pbl: "Project Based Learning",
   siop: "SIOP"
 };
 
@@ -328,6 +330,20 @@ const strategyLibrary = [
     description: "Students sort observations into useful evidence, weak evidence, and unrelated details before writing."
   },
   {
+    system: "pbl",
+    title: "Driving Question Launch",
+    modalities: ["A", "I", "S", "V"],
+    keywords: ["project", "question", "problem", "design", "investigate"],
+    description: "Students begin with a meaningful question or problem that gives the lesson a clear purpose for inquiry."
+  },
+  {
+    system: "pbl",
+    title: "Product With Audience",
+    modalities: ["K", "R", "S", "V"],
+    keywords: ["project", "create", "present", "audience", "share"],
+    description: "Students create a product, explanation, model, or presentation for a defined audience beyond just completing the worksheet."
+  },
+  {
     system: "iep",
     title: "Chunked Directions",
     modalities: ["V", "R"],
@@ -359,6 +375,8 @@ const strategyDetails = {
   "Practice and Application": { grades: ["k2", "g35", "g68"], subjects: ["math", "science"], use: "Best when students can apply the concept with hands-on or language-integrated practice.", avoid: "Avoid when the lesson only has enough time for direct instruction." },
   "Claim Evidence Reasoning Frame": { grades: ["g35", "g68", "g912"], subjects: ["science", "ela", "social-studies"], use: "Best when students must explain a conclusion with evidence.", avoid: "Avoid when there is no evidence source for students to use." },
   "Evidence Sort": { grades: ["g35", "g68", "g912"], subjects: ["science", "social-studies", "ela"], use: "Best before writing, when students need to choose which details truly support a claim.", avoid: "Avoid when the teacher already gave students the exact evidence to use." },
+  "Driving Question Launch": { grades: ["g35", "g68", "g912"], subjects: ["science", "social-studies", "ela", "stem"], use: "Best when the lesson can be framed around a meaningful question, problem, or investigation.", avoid: "Avoid when the objective is a short skill check with no room for inquiry." },
+  "Product With Audience": { grades: ["g35", "g68", "g912"], subjects: ["science", "social-studies", "ela", "stem", "art"], use: "Best when students can show learning through a product, model, explanation, or presentation.", avoid: "Avoid when the product would take over the learning goal instead of supporting it." },
   "Chunked Directions": { grades: ["k2", "g35", "g68", "g912"], subjects: ["math", "ela", "science", "social-studies"], use: "Best for multi-step tasks, stations, projects, and independent work.", avoid: "Avoid making too many micro-steps that slow fluent students down." },
   "Sentence Frames": { grades: ["k2", "g35", "g68", "g912"], subjects: ["ela", "science", "social-studies"], use: "Best when the thinking is strong but language structure is a barrier.", avoid: "Avoid requiring every student to use the same frame if they can write independently." },
   "Reduced-Distraction Choice": { grades: ["k2", "g35", "g68", "g912"], subjects: ["math", "ela", "science", "social-studies"], use: "Best for assessment moments, written response, or tasks with heavy sensory load.", avoid: "Avoid separating students in a way that feels punitive or public." }
@@ -434,9 +452,10 @@ function rankedOptions(v, a, r, k, i, s) {
 
 const appState = {
   activePeriod: "1",
-  enabledSystems: { kagan: true, siop: true, cer: true, iep: true },
+  enabledSystems: { kagan: true, siop: true, cer: true, pbl: false, iep: true },
   selectedSupports: { "sentence-frames": true, "chunked-directions": true, "movement-break": true, "teacher-checkin": true, "graphic-organizer": true, "read-aloud": false },
   lessonText: "",
+  uploadedFiles: [],
   lessonKeywords: [],
   selectedAvatar: "Fox",
   gradeBand: "g35",
@@ -555,13 +574,41 @@ function bindTeacher() {
   });
 
   document.getElementById("lesson-file").addEventListener("change", async event => {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
     const textArea = document.getElementById("lesson-text");
-    if (file.type.startsWith("text/") || /\.(txt|md|csv)$/i.test(file.name)) {
-      textArea.value = await file.text();
+    const summary = document.getElementById("lesson-file-summary");
+    const textFiles = files.filter(file => file.type.startsWith("text/") || /\.(txt|md|csv)$/i.test(file.name));
+    const imageFiles = files.filter(file => file.type.startsWith("image/") || /\.(png|jpe?g|webp|heic|heif)$/i.test(file.name));
+    const documentFiles = files.filter(file => !textFiles.includes(file) && !imageFiles.includes(file));
+
+    if (summary) {
+      summary.innerHTML = files.map(file => `<span>${file.name}</span>`).join("");
+    }
+    appState.uploadedFiles = files.map(file => ({
+      name: file.name,
+      type: file.type || "unknown",
+      size: file.size || 0
+    }));
+
+    if (textFiles.length && textFiles.length === files.length) {
+      textArea.value = (await Promise.all(textFiles.map(file => file.text()))).join("\n\n--- Next Uploaded Text File ---\n\n");
     } else {
-      textArea.value = `Uploaded file: ${file.name}\n\nServer-side document parsing is not connected yet. Paste lesson text here for this browser prototype to analyze it.`;
+      const parts = [
+        `Uploaded ${files.length} file${files.length === 1 ? "" : "s"}:`,
+        ...files.map(file => `- ${file.name}`),
+        "",
+        "Full build behavior:",
+        "- Text files are read directly.",
+        "- Word/PDF files are parsed by the server.",
+        "- Photos and screenshots are read with OCR, then combined into one lesson-analysis request.",
+        "",
+        imageFiles.length ? `${imageFiles.length} image file${imageFiles.length === 1 ? "" : "s"} queued for OCR.` : "",
+        documentFiles.length ? `${documentFiles.length} document file${documentFiles.length === 1 ? "" : "s"} queued for parsing.` : "",
+        "",
+        "For this browser prototype, paste any visible lesson text here if you want to analyze it now.",
+      ].filter(Boolean);
+      textArea.value = parts.join("\n");
     }
   });
 
@@ -876,6 +923,9 @@ async function persistLessonSubmission(submission, standards, supportInserts, or
     selected_supports: supportInserts.map(item => item.id),
     recommended_organizers: organizers,
     lesson_text: appState.lessonText,
+    uploaded_files: appState.uploadedFiles,
+    output_template: "Lesson Mentor Signature Template",
+    output_formats: ["pdf", "docx", "google_docs_future"],
     document_status: "available",
     expires_at: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
   };
@@ -971,7 +1021,7 @@ function renderSubmissionHistory() {
       </div>
       <div class="document-actions">
         ${availabilityPill(item)}
-        ${item.expired ? "" : `<button class="secondary-button">Preview</button><button class="secondary-button">Download</button>`}
+        ${item.expired ? "" : `<button class="secondary-button">Preview PDF</button><button class="secondary-button">Download PDF</button><button class="secondary-button">Word .docx</button><button class="secondary-button muted-action" title="Google Docs export will require Google Drive authorization">Google Docs</button>`}
       </div>
     </div>
   `).join("");

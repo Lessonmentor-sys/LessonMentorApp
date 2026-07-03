@@ -124,11 +124,12 @@
                     </label>
                   </div>
                   <label class="upload-drop">
-                    <input type="file" id="lesson-file" accept=".txt,.md,.csv,.doc,.docx,.pdf">
-                    <span>Choose lesson file</span>
-                    <small>Upload a lesson file or paste the lesson text below. Word and PDF parsing will be connected in the full build.</small>
+                    <input type="file" id="lesson-file" accept=".txt,.md,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp,.heic,.heif,image/*" multiple>
+                    <span>Choose lesson files or photos</span>
+                    <small>Upload typed files, PDFs, screenshots, or photos from teacher materials. Image text will be read with OCR/server parsing in the full build.</small>
                   </label>
-                  <textarea id="lesson-text" rows="4" placeholder="Paste a lesson, objective, or curriculum excerpt here..."></textarea>
+                  <div class="upload-summary" id="lesson-file-summary" aria-live="polite">No files selected yet.</div>
+                  <textarea id="lesson-text" rows="4" placeholder="Paste a lesson, objective, or curriculum excerpt here...&#10;&#10;The more detailed information you give, the better the AI can produce a lesson that you are envisioning."></textarea>
                   <div class="button-row">
                     <button class="primary-button" id="generate-lesson">Generate plan</button>
                     <button class="secondary-button" id="analyze-lesson">Analyze only</button>
@@ -136,7 +137,7 @@
                   </div>
                   <div class="inline-systems">
                     <div class="panel-title-row">
-                      <h4>Systems To Include</h4>
+                      <h4>Strategies To Include</h4>
                       <span class="small-pill">This lesson</span>
                     </div>
                     <div class="system-toggles" id="system-toggles"></div>
@@ -228,6 +229,7 @@
                 <option value="kagan">Kagan</option>
                 <option value="siop">SIOP</option>
                 <option value="cer">CER</option>
+                <option value="pbl">Project Based Learning</option>
                 <option value="iep">IEP Supports</option>
               </select>
             </label>

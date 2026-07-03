@@ -918,6 +918,22 @@ button {
   font-size: 0.84rem;
 }
 
+.upload-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.upload-summary span {
+  border-radius: 999px;
+  background: #e8f1ff;
+  color: var(--blue);
+  padding: 4px 9px;
+  font-weight: 750;
+}
+
 .button-row {
   gap: 10px;
   flex-wrap: wrap;
@@ -1289,6 +1305,11 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   color: #9f1239;
   background: #ffe4e6;
   border: 1px solid #fda4af;
+}
+
+.muted-action {
+  color: var(--muted);
+  background: #f8fafc;
 }
 
 .modal {
