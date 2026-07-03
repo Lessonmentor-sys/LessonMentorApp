@@ -1,10 +1,10 @@
 const styles = {
-  V: { name: "Visual", color: "#2563eb", className: "visual" },
-  A: { name: "Auditory", color: "#16855b", className: "auditory" },
-  R: { name: "Reading/Writing", color: "#c57919", className: "readwrite" },
-  K: { name: "Kinesthetic", color: "#c24158", className: "kinesthetic" },
-  I: { name: "Independent Learner", color: "#7c3aed", className: "independent" },
-  S: { name: "Social Learner", color: "#0f8f8a", className: "social" }
+  V: { name: "Visual", color: "#2563eb", className: "visual", description: "Learns best when ideas are shown through images, charts, models, color, or spatial examples." },
+  A: { name: "Auditory", color: "#16855b", className: "auditory", description: "Learns best through listening, discussion, verbal explanation, read-alouds, or teacher modeling with talk." },
+  R: { name: "Reading/Writing", color: "#c57919", className: "readwrite", description: "Learns best through written directions, note-taking, lists, sentence frames, reading, and written reflection." },
+  K: { name: "Kinesthetic", color: "#c24158", className: "kinesthetic", description: "Learns best through movement, hands-on practice, role play, building, sorting, or manipulating materials." },
+  I: { name: "Independent Learner", color: "#7c3aed", className: "independent", description: "Learns best with quiet thinking time, clear goals, self-paced practice, and individual reflection." },
+  S: { name: "Social Learner", color: "#0f8f8a", className: "social", description: "Learns best through partner talk, groups, peer coaching, collaboration, and shared problem-solving." }
 };
 
 const systems = [
@@ -1282,9 +1282,13 @@ function paintCompass(id, profile) {
 }
 
 function renderStats(id, profile) {
-  document.getElementById(id).innerHTML = styleOrder.map(key => `
+  const orderedStyles = Object.keys(profile).sort((a, b) => {
+    const difference = (profile[b] || 0) - (profile[a] || 0);
+    return difference || styleOrder.indexOf(a) - styleOrder.indexOf(b);
+  });
+  document.getElementById(id).innerHTML = orderedStyles.map(key => `
     <div class="stat-row">
-      <span>${styles[key].name}</span>
+      <span class="stat-label" tabindex="0" title="${styles[key].description}" data-tooltip="${styles[key].description}">${styles[key].name}</span>
       <div class="bar"><span style="width:${profile[key] || 0}%;background:${styles[key].color}"></span></div>
       <strong>${profile[key] || 0}%</strong>
     </div>
