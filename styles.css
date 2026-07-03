@@ -410,12 +410,35 @@ button {
 }
 
 .rail-profile {
+  align-items: center;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 }
 
 .rail-profile .compass {
-  width: 118px;
+  width: min(165px, 70%);
+  margin: 8px auto 2px;
+}
+
+.rail-profile .profile-stats {
+  width: 100%;
+}
+
+.rail-profile .stat-row {
+  grid-template-columns: 1fr auto;
+  gap: 6px 10px;
+  padding: 2px 0;
+}
+
+.rail-profile .stat-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+
+.rail-profile .stat-row .bar {
+  grid-column: 1 / -1;
+  height: 10px;
 }
 
 .rail-today {
@@ -646,6 +669,8 @@ button {
 .style-pill.auditory { background: #dcfce7; color: #15803d; }
 .style-pill.readwrite { background: #fef3c7; color: #a16207; }
 .style-pill.kinesthetic { background: #ffe4e6; color: #be123c; }
+.style-pill.independent { background: #ede9fe; color: #6d28d9; }
+.style-pill.social { background: #ccfbf1; color: #0f766e; }
 .tag-pill { background: #eef2ff; color: #4f46e5; }
 
 .profile-layout {

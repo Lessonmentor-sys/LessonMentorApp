@@ -8,19 +8,17 @@
 
 /**
  * How many questions an assessment shows per grade band.
- * K-2 is fixed at 6 because there are exactly 6 modality pairs
- * (V-A, V-R, V-K, A-R, A-K, R-K) and we draw exactly one per pair.
- * 3-5 and 6-12 draw 8 from their 12-question pools (see prior
- * discussion: forced-rank items score all 4 modalities per question,
- * so 8 of them gives ~32 data points without overloading the student).
+ * K-2 draws 10 two-choice questions from the available modality-pair
+ * bank. 3-5 and 6-12 draw 10 from their pools; forced-rank items now
+ * score all 6 learning profile categories per question.
  */
 export const ASSESSMENT_SIZE = {
-  "K-2": 6,
-  "3-5": 8,
-  "6-12": 8,
+  "K-2": 10,
+  "3-5": 10,
+  "6-12": 10,
 };
 
-const ALL_PAIRS = ["A-K", "A-R", "A-V", "K-R", "K-V", "R-V"]; // sorted pair keys, fixed set of 6
+const ALL_PAIRS = ["A-I", "A-K", "A-R", "A-S", "A-V", "I-K", "I-R", "I-S", "I-V", "K-R", "K-S", "K-V", "R-S", "R-V", "S-V"]; // sorted pair keys, fixed set of 15
 
 /**
  * Deterministic-shape, non-deterministic-order shuffle (Fisher-Yates).
@@ -87,11 +85,11 @@ function reshuffleAvoidingBoundaryRepeat(idPool, lastDrawnId, rng) {
 }
 
 /**
- * K-2 selection: groups the pool by modality pair, draws exactly one
- * question per pair using that pair's own shuffle-bag. Returns the 6
- * selected question rows (one per pair, in pair order) plus the
- * updated per-pair bag states to persist.
+ * K-2 selection: groups the pool by modality pair, randomly selects
+ * the assessment's pair set, then draws one question from each selected
+ * pair using that pair's own shuffle-bag.
  *
+ * history.pairCycleBag shape: bagState over pair keys
  * history.pairBags shape: { "A-K": bagState, "A-R": bagState, ... }
  */
 function selectK2(pool, history, rng) {
@@ -106,8 +104,9 @@ function selectK2(pool, history, rng) {
   }
 
   const pairBags = { ...(history?.pairBags || {}) };
+  const { drawnIds: selectedPairs, bagState: pairCycleBag } = drawFromBag(ALL_PAIRS, ASSESSMENT_SIZE["K-2"], history?.pairCycleBag, rng);
   const selectedIds = [];
-  for (const pair of ALL_PAIRS) {
+  for (const pair of selectedPairs) {
     const { drawnIds, bagState } = drawFromBag(byPair[pair], 1, pairBags[pair], rng);
     selectedIds.push(drawnIds[0]);
     pairBags[pair] = bagState;
@@ -116,7 +115,7 @@ function selectK2(pool, history, rng) {
   const byId = Object.fromEntries(pool.map(r => [r.id, r]));
   return {
     selected: selectedIds.map(id => byId[id]),
-    updatedHistory: { ...history, pairBags },
+    updatedHistory: { ...history, pairCycleBag, pairBags },
   };
 }
 
@@ -164,7 +163,7 @@ export function selectAssessmentQuestions(pool, gradeBand, history = {}, rng = M
  * Returns a count per modality code across a set of selected rows.
  */
 export function modalityCoverage(selectedRows) {
-  const counts = { V: 0, A: 0, R: 0, K: 0 };
+  const counts = { V: 0, A: 0, R: 0, K: 0, I: 0, S: 0 };
   for (const row of selectedRows) {
     for (const [mod] of row.opts) counts[mod] += 1;
   }

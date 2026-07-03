@@ -5,6 +5,7 @@
   "private": true,
   "description": "Question selection engine for Lesson Mentor learning-style assessments.",
   "scripts": {
+    "generate-seed": "node generate-seed.mjs",
     "test": "node test-selector.js"
   }
 }

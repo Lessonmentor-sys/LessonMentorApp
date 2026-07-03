@@ -20,7 +20,7 @@ create table if not exists question_bank (
 create table if not exists question_options (
   id            uuid primary key default gen_random_uuid(),
   question_id   text not null references question_bank(id) on delete cascade,
-  modality_code text not null check (modality_code in ('V','A','R','K')),
+  modality_code text not null check (modality_code in ('V','A','R','K','I','S')),
   option_text   text not null,
   sort_order    int not null
 );
@@ -29,7 +29,7 @@ create index if not exists idx_question_options_question_id on question_options(
 create index if not exists idx_question_bank_grade_band on question_bank(grade_band);
 create index if not exists idx_question_bank_active on question_bank(active);
 
--- A question must have exactly 2 options (K-2) or exactly 4 (3-5/6-12).
+-- A question must have exactly 2 options (K-2) or exactly 6 (3-5/6-12).
 -- Enforced at the application layer when adding questions through the
 -- admin panel; this view makes it easy to audit the data directly.
 create or replace view question_bank_option_counts as
@@ -59,7 +59,7 @@ create table if not exists student_question_bags (
 
 -- ---------- 3. Administered assessments ----------
 -- Captures exactly which questions were shown and (on submission) the
--- raw answers plus the computed V/A/R/K result. This is what the
+-- raw answers plus the computed V/A/R/K/I/S result. This is what the
 -- "results" screen and the teacher/admin views read from — never the
 -- question_bank directly.
 
@@ -74,6 +74,8 @@ create table if not exists assessments (
   result_a        numeric,
   result_r        numeric,
   result_k        numeric,
+  result_i        numeric,
+  result_s        numeric,
   primary_style   text,                  -- denormalized for fast roster queries
   secondary_style  text,
   administered_at timestamptz not null default now(),

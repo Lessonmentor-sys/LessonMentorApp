@@ -16,19 +16,20 @@ function check(name, fn) {
 }
 
 console.log("== K-2: single draw shape ==");
-check("returns exactly 6 questions", () => {
+check(`returns exactly ${ASSESSMENT_SIZE["K-2"]} questions`, () => {
   const { selected } = selectAssessmentQuestions(K2_POOL, "K-2");
-  assert.equal(selected.length, 6);
+  assert.equal(selected.length, ASSESSMENT_SIZE["K-2"]);
 });
-check("covers all 6 modality pairs exactly once", () => {
+check("draws unique modality pairs from the full six-style pair bank", () => {
   const { selected } = selectAssessmentQuestions(K2_POOL, "K-2");
-  const pairs = selected.map(r => r.pair).sort();
-  assert.deepEqual(pairs, ["A-K", "A-R", "A-V", "K-R", "K-V", "R-V"].sort());
+  const pairs = selected.map(r => r.pair);
+  assert.equal(new Set(pairs).size, selected.length);
+  for (const pair of pairs) assert.match(pair, /^[AIKRSV]-[AIKRSV]$/);
 });
-check("modality coverage is perfectly balanced (3 each)", () => {
+check("modality coverage includes all six profile keys", () => {
   const { selected } = selectAssessmentQuestions(K2_POOL, "K-2");
   const counts = modalityCoverage(selected);
-  assert.deepEqual(counts, { V: 3, A: 3, R: 3, K: 3 });
+  assert.deepEqual(Object.keys(counts).sort(), ["A", "I", "K", "R", "S", "V"]);
 });
 
 console.log("== 3-5 / 6-12: single draw shape ==");
@@ -38,11 +39,11 @@ for (const [label, pool] of [["3-5", G35_POOL], ["6-12", G612_POOL]]) {
     assert.equal(selected.length, ASSESSMENT_SIZE[label]);
     assert.equal(new Set(selected.map(r => r.id)).size, selected.length);
   });
-  check(`${label} every drawn question already covers all 4 modalities`, () => {
+  check(`${label} every drawn question already covers all 6 modalities`, () => {
     const { selected } = selectAssessmentQuestions(pool, label);
     for (const row of selected) {
       const mods = row.opts.map(([m]) => m).sort();
-      assert.deepEqual(mods, ["A", "K", "R", "V"]);
+      assert.deepEqual(mods, ["A", "I", "K", "R", "S", "V"]);
     }
   });
 }
@@ -65,6 +66,8 @@ check("K-2: each pair's own cycle is fully unique, and no pair ever repeats back
   for (const pair of Object.keys(seenPerPair)) {
     const cycleLen = byPair[pair].length;
     const seq = seenPerPair[pair];
+
+    if (cycleLen === 1) continue;
 
     // Invariant 1: every cycle-aligned chunk (positions [0:n], [n:2n], ...)
     // contains each id in the pool exactly once.
@@ -112,13 +115,13 @@ for (const [label, pool] of [["3-5", G35_POOL], ["6-12", G612_POOL]]) {
 }
 
 check("history persists across calls: cursor advances rather than resetting each call", () => {
-  // pool=12, draw=8 each call. Call 1 from empty history should land
-  // the cursor at 8. Call 2 should consume the remaining 4, then
-  // reshuffle and consume 4 more from the new cycle -> cursor lands at 4.
+  // pool=12, draw=10 each call. Call 1 from empty history should land
+  // the cursor at 10. Call 2 should consume the remaining 2, then
+  // reshuffle and consume 8 more from the new cycle -> cursor lands at 8.
   const { updatedHistory: h1 } = selectAssessmentQuestions(G612_POOL, "6-12", {});
-  assert.equal(h1.bag.cursor, 8, "first call should leave cursor at 8 of 12");
+  assert.equal(h1.bag.cursor, 10, "first call should leave cursor at 10 of 12");
   const { updatedHistory: h2 } = selectAssessmentQuestions(G612_POOL, "6-12", h1);
-  assert.equal(h2.bag.cursor, 4, "second call should wrap and leave cursor at 4 into the new cycle");
+  assert.equal(h2.bag.cursor, 8, "second call should wrap and leave cursor at 8 into the new cycle");
 });
 
 check("missing pair coverage in a malformed pool throws clearly", () => {

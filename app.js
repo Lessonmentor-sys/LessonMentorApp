@@ -2,7 +2,9 @@ const styles = {
   V: { name: "Visual", color: "#2563eb", className: "visual" },
   A: { name: "Auditory", color: "#16855b", className: "auditory" },
   R: { name: "Reading/Writing", color: "#c57919", className: "readwrite" },
-  K: { name: "Kinesthetic", color: "#c24158", className: "kinesthetic" }
+  K: { name: "Kinesthetic", color: "#c24158", className: "kinesthetic" },
+  I: { name: "Independent Learner", color: "#7c3aed", className: "independent" },
+  S: { name: "Social Learner", color: "#0f8f8a", className: "social" }
 };
 
 const systems = [
@@ -18,7 +20,7 @@ const systemLabels = {
   siop: "SIOP"
 };
 
-const styleOrder = ["A", "K", "R", "V"];
+const styleOrder = ["A", "I", "K", "R", "S", "V"];
 
 const iepSupports = [
   {
@@ -180,7 +182,7 @@ const standardsLibrary = [
 const classProfiles = {
   "1": {
     name: "Period 1",
-    profile: { V: 34, A: 18, R: 16, K: 32 },
+    profile: { V: 27, A: 14, I: 11, K: 25, R: 12, S: 11 },
     roster: [
       { id: "48291", grade: "4", primary: "V", secondary: "K", lastAssessment: "Jun 12, 2026", completed: "8/12" },
       { id: "51804", grade: "4", primary: "K", secondary: "V", lastAssessment: "Jun 11, 2026", completed: "12/12" },
@@ -191,17 +193,17 @@ const classProfiles = {
   },
   "2": {
     name: "Period 2",
-    profile: { V: 22, A: 33, R: 28, K: 17 },
+    profile: { V: 17, A: 25, I: 11, K: 14, R: 22, S: 11 },
     roster: [
       { id: "29310", grade: "5", primary: "A", secondary: "R", lastAssessment: "Jun 9, 2026", completed: "12/12" },
       { id: "41022", grade: "5", primary: "R", secondary: "A", lastAssessment: "Jun 9, 2026", completed: "11/12" },
-      { id: "61087", grade: "5", primary: "A", secondary: "V", lastAssessment: "Jun 8, 2026", completed: "12/12" },
+      { id: "61087", grade: "5", primary: "A", secondary: "S", lastAssessment: "Jun 8, 2026", completed: "12/12" },
       { id: "75922", grade: "5", primary: "R", secondary: "K", lastAssessment: "Jun 8, 2026", completed: "9/12" }
     ]
   },
   "3": {
     name: "Period 3",
-    profile: { V: 26, A: 19, R: 20, K: 35 },
+    profile: { V: 21, A: 15, I: 10, K: 28, R: 16, S: 10 },
     roster: [
       { id: "10294", grade: "3", primary: "K", secondary: "V", lastAssessment: "Jun 5, 2026", completed: "12/12" },
       { id: "34710", grade: "3", primary: "V", secondary: "K", lastAssessment: "Jun 5, 2026", completed: "12/12" },
@@ -211,7 +213,7 @@ const classProfiles = {
   },
   "4": {
     name: "Period 4",
-    profile: { V: 20, A: 20, R: 35, K: 25 },
+    profile: { V: 16, A: 16, I: 10, K: 20, R: 28, S: 10 },
     roster: [
       { id: "22904", grade: "4", primary: "R", secondary: "K", lastAssessment: "Jun 3, 2026", completed: "12/12" },
       { id: "33018", grade: "4", primary: "K", secondary: "R", lastAssessment: "Jun 3, 2026", completed: "12/12" },
@@ -220,7 +222,7 @@ const classProfiles = {
   },
   "5": {
     name: "Period 5",
-    profile: { V: 38, A: 16, R: 18, K: 28 },
+    profile: { V: 30, A: 13, I: 10, K: 22, R: 14, S: 11 },
     roster: [
       { id: "51882", grade: "4", primary: "V", secondary: "K", lastAssessment: "Jun 1, 2026", completed: "12/12" },
       { id: "62810", grade: "4", primary: "V", secondary: "R", lastAssessment: "May 31, 2026", completed: "12/12" },
@@ -229,12 +231,12 @@ const classProfiles = {
   },
   "6": {
     name: "Period 6",
-    profile: { V: 25, A: 25, R: 25, K: 25 },
+    profile: { V: 17, A: 17, I: 16, K: 17, R: 16, S: 17 },
     roster: []
   },
   "7": {
     name: "Period 7",
-    profile: { V: 28, A: 24, R: 31, K: 17 },
+    profile: { V: 22, A: 19, I: 10, K: 14, R: 25, S: 10 },
     roster: [
       { id: "70014", grade: "5", primary: "R", secondary: "V", lastAssessment: "May 29, 2026", completed: "12/12" },
       { id: "70032", grade: "5", primary: "A", secondary: "R", lastAssessment: "May 29, 2026", completed: "12/12" }
@@ -242,7 +244,7 @@ const classProfiles = {
   },
   "8": {
     name: "Period 8",
-    profile: { V: 30, A: 22, R: 18, K: 30 },
+    profile: { V: 24, A: 18, I: 10, K: 24, R: 14, S: 10 },
     roster: [
       { id: "81005", grade: "4", primary: "K", secondary: "V", lastAssessment: "May 27, 2026", completed: "10/12" },
       { id: "81016", grade: "4", primary: "V", secondary: "K", lastAssessment: "May 27, 2026", completed: "12/12" }
@@ -250,7 +252,7 @@ const classProfiles = {
   },
   "9": {
     name: "Period 9",
-    profile: { V: 19, A: 27, R: 39, K: 15 },
+    profile: { V: 15, A: 22, I: 11, K: 12, R: 30, S: 10 },
     roster: [
       { id: "92044", grade: "5", primary: "R", secondary: "A", lastAssessment: "May 25, 2026", completed: "12/12" },
       { id: "92070", grade: "5", primary: "R", secondary: "V", lastAssessment: "May 25, 2026", completed: "12/12" }
@@ -258,7 +260,7 @@ const classProfiles = {
   },
   "10": {
     name: "Period 10",
-    profile: { V: 33, A: 23, R: 20, K: 24 },
+    profile: { V: 26, A: 18, I: 11, K: 19, R: 16, S: 10 },
     roster: [
       { id: "10411", grade: "4", primary: "V", secondary: "A", lastAssessment: "May 22, 2026", completed: "12/12" },
       { id: "10429", grade: "4", primary: "K", secondary: "V", lastAssessment: "May 22, 2026", completed: "11/12" }
@@ -272,21 +274,21 @@ const strategyLibrary = [
   {
     system: "kagan",
     title: "RallyCoach",
-    modalities: ["A", "K"],
+    modalities: ["A", "K", "S"],
     keywords: ["partner", "practice", "math", "coach"],
     description: "Pairs take turns solving or explaining while the partner coaches with prompts and feedback."
   },
   {
     system: "kagan",
     title: "Quiz-Quiz-Trade",
-    modalities: ["A", "K", "R"],
+    modalities: ["A", "K", "R", "S"],
     keywords: ["vocabulary", "review", "cards", "question"],
     description: "Students circulate with prompt cards, answer, coach each other, then trade cards for repeated practice."
   },
   {
     system: "kagan",
     title: "Timed Pair Share",
-    modalities: ["A"],
+    modalities: ["A", "S"],
     keywords: ["discuss", "partner", "explain", "talk"],
     description: "Students explain thinking to a partner in equal timed turns before whole-class sharing."
   },
@@ -321,7 +323,7 @@ const strategyLibrary = [
   {
     system: "cer",
     title: "Evidence Sort",
-    modalities: ["V", "K", "R"],
+    modalities: ["V", "K", "R", "S"],
     keywords: ["evidence", "data", "sort", "observe"],
     description: "Students sort observations into useful evidence, weak evidence, and unrelated details before writing."
   },
@@ -342,7 +344,7 @@ const strategyLibrary = [
   {
     system: "iep",
     title: "Reduced-Distraction Choice",
-    modalities: ["K", "R"],
+    modalities: ["I", "K", "R"],
     keywords: ["exit ticket", "assessment", "independent"],
     description: "Offer a quieter or simplified response format for students who need less visual or social load."
   }
@@ -377,44 +379,56 @@ const questionBank = {
     { text: "How do you want to remember classroom steps?", options: [{ m: "R", t: "Look at a picture list" }, { m: "A", t: "Hear the steps again" }] },
     { text: "How do you want to learn about animals?", options: [{ m: "V", t: "Look at animal cards" }, { m: "A", t: "Talk about animal sounds" }] },
     { text: "How do you want to practice counting?", options: [{ m: "K", t: "Move counters" }, { m: "R", t: "Mark the numbers" }] },
-    { text: "How do you want to show the ending of a story?", options: [{ m: "R", t: "Choose words for it" }, { m: "V", t: "Pick a picture for it" }] }
+    { text: "How do you want to show the ending of a story?", options: [{ m: "R", t: "Choose words for it" }, { m: "V", t: "Pick a picture for it" }] },
+    { text: "How do you want to start a tricky puzzle?", options: [{ m: "I", t: "Try it quietly first" }, { m: "S", t: "Work with a friend" }] },
+    { text: "How do you want to fix a mistake?", options: [{ m: "I", t: "Check your own work" }, { m: "S", t: "Ask a partner to help" }] },
+    { text: "How do you want to learn a new game?", options: [{ m: "I", t: "Try one round by yourself" }, { m: "S", t: "Play with a small group" }] },
+    { text: "How do you want to practice letters?", options: [{ m: "I", t: "Use your own practice card" }, { m: "S", t: "Practice with a partner" }] },
+    { text: "How do you want to clean up centers?", options: [{ m: "I", t: "Follow your own checklist" }, { m: "S", t: "Work with your table team" }] },
+    { text: "How do you want to learn a classroom job?", options: [{ m: "I", t: "Try the job step by step" }, { m: "S", t: "Do the job with a helper" }] },
+    { text: "How do you want to read a new book?", options: [{ m: "I", t: "Look through it alone first" }, { m: "S", t: "Read it with a buddy" }] },
+    { text: "How do you want to build something new?", options: [{ m: "I", t: "Make your own plan" }, { m: "S", t: "Share ideas with a group" }] },
+    { text: "How do you want to answer a question?", options: [{ m: "I", t: "Think before you share" }, { m: "S", t: "Talk it out with a friend" }] },
+    { text: "How do you want to practice a new skill?", options: [{ m: "I", t: "Practice at your own spot" }, { m: "S", t: "Practice with classmates" }] }
   ],
   g35: [
-    { text: "Your class is learning about ecosystems. Rank what would help you most.", options: rankedOptions("See a food web diagram", "Talk through examples", "Read a short article", "Build a model habitat") },
-    { text: "You need to remember a new math process. Rank your choices.", options: rankedOptions("Watch the steps color-coded", "Hear the teacher explain", "Write the steps in your notebook", "Practice with tiles or tools") },
-    { text: "You are preparing for a quiz. Rank your study plan.", options: rankedOptions("Use charts and drawings", "Study with a partner out loud", "Make written notes", "Play a review game") },
-    { text: "You are starting a writing project. Rank what helps first.", options: rankedOptions("Look at an example organizer", "Discuss ideas", "Read the rubric", "Move cards into order") },
-    { text: "You are learning geography. Rank what helps most.", options: rankedOptions("Study a map", "Listen to clues", "Read place descriptions", "Make a floor map") },
-    { text: "You are learning symmetry. Rank what helps most.", options: rankedOptions("See mirror images", "Explain the rule aloud", "Write definitions", "Fold and test paper shapes") },
-    { text: "You are learning a new science word. Rank your choices.", options: rankedOptions("See a labeled picture", "Repeat and use it in a sentence", "Write a definition", "Act it out") },
-    { text: "You need to show your learning. Rank what feels best.", options: rankedOptions("Create a poster", "Give a short talk", "Write an explanation", "Build a demonstration") },
-    { text: "You are learning a new reading skill. Rank what helps first.", options: rankedOptions("See the strategy marked on a page", "Hear someone think aloud", "Read the steps on a bookmark", "Practice with sticky notes") },
-    { text: "You are solving a science problem. Rank what helps most.", options: rankedOptions("Look at the data chart", "Discuss what the data means", "Write a claim and evidence", "Sort evidence cards") },
-    { text: "You are learning a new classroom routine. Rank your choices.", options: rankedOptions("Watch the routine modeled", "Hear the directions repeated", "Read a checklist", "Practice the routine") },
-    { text: "You are working with a partner. Rank what helps you learn.", options: rankedOptions("Use a shared drawing or chart", "Talk through each step", "Write notes together", "Use cards or tools together") }
+    { text: "Your class is learning about ecosystems. Rank what would help you most.", options: rankedOptions("See a food web diagram", "Talk through examples", "Read a short article", "Build a model habitat", "Try the first question on my own", "Work with a small group") },
+    { text: "You need to remember a new math process. Rank your choices.", options: rankedOptions("Watch the steps color-coded", "Hear the teacher explain", "Write the steps in your notebook", "Practice with tiles or tools", "Try a few problems quietly first", "Solve examples with a partner") },
+    { text: "You are preparing for a quiz. Rank your study plan.", options: rankedOptions("Use charts and drawings", "Study with a partner out loud", "Make written notes", "Play a review game", "Use a solo practice checklist", "Quiz a classmate and trade roles") },
+    { text: "You are starting a writing project. Rank what helps first.", options: rankedOptions("Look at an example organizer", "Discuss ideas", "Read the rubric", "Move cards into order", "Plan quietly before drafting", "Brainstorm with a partner") },
+    { text: "You are learning geography. Rank what helps most.", options: rankedOptions("Study a map", "Listen to clues", "Read place descriptions", "Make a floor map", "Try the map task independently", "Compare answers with a group") },
+    { text: "You are learning symmetry. Rank what helps most.", options: rankedOptions("See mirror images", "Explain the rule aloud", "Write definitions", "Fold and test paper shapes", "Try several shapes by myself", "Test examples with a partner") },
+    { text: "You are learning a new science word. Rank your choices.", options: rankedOptions("See a labeled picture", "Repeat and use it in a sentence", "Write a definition", "Act it out", "Make my own example first", "Practice the word with a partner") },
+    { text: "You need to show your learning. Rank what feels best.", options: rankedOptions("Create a poster", "Give a short talk", "Write an explanation", "Build a demonstration", "Complete an independent response", "Work on a shared product") },
+    { text: "You are learning a new reading skill. Rank what helps first.", options: rankedOptions("See the strategy marked on a page", "Hear someone think aloud", "Read the steps on a bookmark", "Practice with sticky notes", "Try the strategy alone first", "Practice with a reading partner") },
+    { text: "You are solving a science problem. Rank what helps most.", options: rankedOptions("Look at the data chart", "Discuss what the data means", "Write a claim and evidence", "Sort evidence cards", "Think through the problem independently", "Compare evidence with a group") },
+    { text: "You are learning a new classroom routine. Rank your choices.", options: rankedOptions("Watch the routine modeled", "Hear the directions repeated", "Read a checklist", "Practice the routine", "Follow the routine card on my own", "Practice the routine with classmates") },
+    { text: "You are working with a partner. Rank what helps you learn.", options: rankedOptions("Use a shared drawing or chart", "Talk through each step", "Write notes together", "Use cards or tools together", "Think quietly before partner work", "Build the answer together") }
   ],
   g612: [
-    { text: "You are learning a complex historical event. Rank what helps most.", options: rankedOptions("Study a timeline or map", "Listen to a discussion", "Read primary source notes", "Role-play decision points") },
-    { text: "You are preparing a presentation. Rank your process.", options: rankedOptions("Storyboard slides", "Rehearse aloud", "Write speaker notes", "Practice moving through demos") },
-    { text: "You are learning geometry volume. Rank your choices.", options: rankedOptions("View 3D diagrams", "Hear an explanation", "Read formulas and examples", "Use physical models") },
-    { text: "You are analyzing a novel. Rank what helps first.", options: rankedOptions("Map character relationships", "Join a discussion", "Annotate passages", "Act out a scene") },
-    { text: "You are learning web coding. Rank your choices.", options: rankedOptions("See layout examples", "Talk through the logic", "Read docs and comments", "Edit and test code") },
-    { text: "You are studying a historic speech. Rank what helps most.", options: rankedOptions("Watch the speaker", "Listen to the rhythm", "Read and annotate the text", "Perform a section") },
-    { text: "You need to organize research. Rank what helps.", options: rankedOptions("Use a visual board", "Explain sources to a peer", "Make written source cards", "Sort printed evidence") },
-    { text: "You are checking your understanding. Rank your choices.", options: rankedOptions("Use a concept map", "Answer aloud", "Write a summary", "Create a sample problem") },
-    { text: "You are learning a new lab procedure. Rank what helps first.", options: rankedOptions("Watch a diagram or demo video", "Hear the safety steps explained", "Read the procedure sheet", "Practice with the materials") },
-    { text: "You are revising an essay. Rank what helps most.", options: rankedOptions("Color-code the draft", "Conference with someone", "Use a written revision checklist", "Move paragraphs or evidence cards") },
-    { text: "You are learning a new equation. Rank your choices.", options: rankedOptions("See worked examples", "Talk through why it works", "Read the rule and notes", "Use a model or simulation") },
-    { text: "You are preparing for a debate or discussion. Rank what helps.", options: rankedOptions("Map the argument visually", "Practice speaking with a partner", "Write evidence notes", "Stand and rehearse positions") }
+    { text: "You are learning a complex historical event. Rank what helps most.", options: rankedOptions("Study a timeline or map", "Listen to a discussion", "Read primary source notes", "Role-play decision points", "Process the evidence independently", "Debrief with a small group") },
+    { text: "You are preparing a presentation. Rank your process.", options: rankedOptions("Storyboard slides", "Rehearse aloud", "Write speaker notes", "Practice moving through demos", "Draft the plan independently", "Rehearse with peer feedback") },
+    { text: "You are learning geometry volume. Rank your choices.", options: rankedOptions("View 3D diagrams", "Hear an explanation", "Read formulas and examples", "Use physical models", "Try practice problems alone first", "Work through examples with a partner") },
+    { text: "You are analyzing a novel. Rank what helps first.", options: rankedOptions("Map character relationships", "Join a discussion", "Annotate passages", "Act out a scene", "Reflect in a reading journal", "Discuss interpretations with a group") },
+    { text: "You are learning web coding. Rank your choices.", options: rankedOptions("See layout examples", "Talk through the logic", "Read docs and comments", "Edit and test code", "Debug independently before asking", "Pair-program with a classmate") },
+    { text: "You are studying a historic speech. Rank what helps most.", options: rankedOptions("Watch the speaker", "Listen to the rhythm", "Read and annotate the text", "Perform a section", "Write a private reflection first", "Analyze the speech with a group") },
+    { text: "You need to organize research. Rank what helps.", options: rankedOptions("Use a visual board", "Explain sources to a peer", "Make written source cards", "Sort printed evidence", "Set up my own research plan", "Compare sources with a team") },
+    { text: "You are checking your understanding. Rank your choices.", options: rankedOptions("Use a concept map", "Answer aloud", "Write a summary", "Create a sample problem", "Self-check with a rubric", "Teach the idea to a peer") },
+    { text: "You are learning a new lab procedure. Rank what helps first.", options: rankedOptions("Watch a diagram or demo video", "Hear the safety steps explained", "Read the procedure sheet", "Practice with the materials", "Review the steps independently", "Run a practice check with a lab partner") },
+    { text: "You are revising an essay. Rank what helps most.", options: rankedOptions("Color-code the draft", "Conference with someone", "Use a written revision checklist", "Move paragraphs or evidence cards", "Revise quietly with a checklist", "Peer review with a partner") },
+    { text: "You are learning a new equation. Rank your choices.", options: rankedOptions("See worked examples", "Talk through why it works", "Read the rule and notes", "Use a model or simulation", "Try a set independently first", "Compare strategies with a partner") },
+    { text: "You are preparing for a debate or discussion. Rank what helps.", options: rankedOptions("Map the argument visually", "Practice speaking with a partner", "Write evidence notes", "Stand and rehearse positions", "Prepare notes independently", "Practice with a discussion team") }
   ]
 };
 
-function rankedOptions(v, a, r, k) {
+function rankedOptions(v, a, r, k, i, s) {
   return [
     { m: "V", t: v },
     { m: "A", t: a },
     { m: "R", t: r },
-    { m: "K", t: k }
+    { m: "K", t: k },
+    { m: "I", t: i },
+    { m: "S", t: s }
   ];
 }
 
@@ -1046,6 +1060,8 @@ function optionInput(option, index) {
         <option value="2" ${appState.answers[key] === 2 ? "selected" : ""}>2</option>
         <option value="3" ${appState.answers[key] === 3 ? "selected" : ""}>3</option>
         <option value="4" ${appState.answers[key] === 4 ? "selected" : ""}>4</option>
+        <option value="5" ${appState.answers[key] === 5 ? "selected" : ""}>5</option>
+        <option value="6" ${appState.answers[key] === 6 ? "selected" : ""}>6</option>
       </select>
       <span>${option.t}</span>
     </label>
@@ -1076,18 +1092,18 @@ function renderStudentProfile() {
 }
 
 function calculateStudentProfile() {
-  const scores = { V: 0, A: 0, R: 0, K: 0 };
+  const scores = { V: 0, A: 0, I: 0, K: 0, R: 0, S: 0 };
   const questions = questionBank[appState.gradeBand];
   questions.forEach((question, qIndex) => {
     question.options.forEach((option, oIndex) => {
       const value = appState.answers[`${appState.gradeBand}-${qIndex}-${oIndex}`] || 0;
       if (!value) return;
-      scores[option.m] += appState.gradeBand === "k2" ? 4 : 5 - value;
+      scores[option.m] += appState.gradeBand === "k2" ? 4 : 7 - value;
     });
   });
 
   const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
-  if (!total) return { V: 25, A: 25, R: 25, K: 25 };
+  if (!total) return { V: 17, A: 17, I: 16, K: 17, R: 16, S: 17 };
   return Object.fromEntries(Object.entries(scores).map(([key, value]) => [key, Math.round((value / total) * 100)]));
 }
 
@@ -1096,7 +1112,9 @@ function studyTip(modality) {
     V: "Use diagrams, color-coding, sketches, and before/after examples before writing.",
     A: "Talk through the idea with a partner, then repeat the key vocabulary out loud.",
     R: "Use a short written checklist, sentence frame, or summary box to lock in the idea.",
-    K: "Build, sort, move, model, or test the idea before answering on paper."
+    K: "Build, sort, move, model, or test the idea before answering on paper.",
+    I: "Preview the task, try the first step quietly, then check in with the teacher or a trusted peer.",
+    S: "Use structured partner talk, small-group roles, or peer teaching before completing the final response."
   };
   return tips[modality];
 }
@@ -1187,10 +1205,10 @@ function badgeSvg(name, index) {
 }
 
 function paintCompass(id, profile) {
-  const values = ["V", "A", "R", "K"].map(key => Math.max(0, profile[key] || 0));
+  const values = styleOrder.map(key => Math.max(0, profile[key] || 0));
   const total = values.reduce((sum, value) => sum + value, 0) || 100;
   let cursor = 0;
-  const stops = ["V", "A", "R", "K"].map((key, index) => {
+  const stops = styleOrder.map((key, index) => {
     const start = cursor;
     cursor += (values[index] / total) * 100;
     return `${styles[key].color} ${start}% ${cursor}%`;
@@ -1202,8 +1220,8 @@ function renderStats(id, profile) {
   document.getElementById(id).innerHTML = styleOrder.map(key => `
     <div class="stat-row">
       <span>${styles[key].name}</span>
-      <div class="bar"><span style="width:${profile[key]}%;background:${styles[key].color}"></span></div>
-      <strong>${profile[key]}%</strong>
+      <div class="bar"><span style="width:${profile[key] || 0}%;background:${styles[key].color}"></span></div>
+      <strong>${profile[key] || 0}%</strong>
     </div>
   `).join("");
 }
