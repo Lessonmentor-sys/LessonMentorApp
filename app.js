@@ -503,6 +503,10 @@ function bindNavigation() {
     renderAll();
   });
 
+  document.getElementById("go-home")?.addEventListener("click", () => {
+    document.querySelector('.nav-button[data-view="teacher"]')?.click();
+  });
+
   document.getElementById("open-student-profiles")?.addEventListener("click", () => {
     document.getElementById("student-profiles-modal")?.showModal();
   });
