@@ -192,6 +192,19 @@ button {
   min-width: 0;
 }
 
+.teacher-title-copy {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+
+.teacher-title-copy .eyebrow,
+.teacher-title-copy h2 {
+  white-space: nowrap;
+}
+
 .teacher-avatar {
   display: grid;
   flex: 0 0 auto;
@@ -209,11 +222,17 @@ button {
 }
 
 .topbar-actions {
+  display: grid;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.topbar-action-row {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
   flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
 .eyebrow {
@@ -301,11 +320,14 @@ button {
 }
 
 .teacher-center {
-  display: contents;
+  display: grid;
+  grid-column: 2;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 18px;
 }
 
 .submit-grid {
-  grid-column: 2;
   grid-template-columns: 1fr;
   align-items: stretch;
   margin-bottom: 0;
@@ -1465,9 +1487,25 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   }
 
   .submit-grid,
+  .teacher-center,
   .teacher-tabs,
   .teacher-tab-panel {
     grid-column: 1;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .topbar-action-row {
+    justify-content: flex-start;
+  }
+
+  .teacher-title-copy {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
   }
 
   .settings-grid {
