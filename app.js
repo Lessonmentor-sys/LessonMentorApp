@@ -526,6 +526,10 @@ function bindNavigation() {
     renderAll();
   });
 
+  document.getElementById("logout-demo")?.addEventListener("click", () => {
+    window.location.href = "/teacher/";
+  });
+
   document.getElementById("go-home")?.addEventListener("click", () => {
     document.querySelector('.nav-button[data-view="teacher"]')?.click();
   });
