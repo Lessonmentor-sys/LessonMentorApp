@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lesson Mentor</title>
     <link rel="icon" type="image/png" href="/assets/lessonmentor-favicon.png">
-    <link rel="stylesheet" href="styles.css?v=live2">
+    <link rel="stylesheet" href="styles.css?v=live3">
   </head>
   <body class="landing-page">
     <header class="landing-nav">
@@ -37,73 +37,59 @@
         <div class="feature-gallery-track">
           <button class="feature-gallery-button feature-gallery-button-prev" type="button" aria-label="Show previous feature">‹</button>
           <article class="feature-preview-card is-active">
-            <img src="/assets/gallery-class-profile.png" alt="Teacher class profile dashboard preview">
+            <img src="/assets/gallery-preview-1.png" alt="Teacher class profile dashboard preview">
             <div>
               <span>Class Profile</span>
               <strong>See Learning Styles At A Glance</strong>
             </div>
           </article>
           <article class="feature-preview-card is-next">
-            <img src="/assets/gallery-submit-lesson.png" alt="Teacher lesson submission preview">
+            <img src="/assets/gallery-preview-2.png" alt="Teacher lesson submission preview">
             <div>
               <span>Lesson Upload</span>
               <strong>Submit A Lesson Plan</strong>
             </div>
           </article>
           <article class="feature-preview-card is-prev">
-            <img src="/assets/gallery-submission-history.png" alt="Submission history preview">
+            <img src="/assets/gallery-preview-3.png" alt="Submission history preview">
             <div>
               <span>Document History</span>
               <strong>Preview And Download Generated Plans</strong>
             </div>
           </article>
           <article class="feature-preview-card">
-            <img src="/assets/gallery-strategy-library.png" alt="Strategy library preview">
+            <img src="/assets/gallery-preview-4.png" alt="Launch assessment preview">
+            <div>
+              <span>Launch Assessment</span>
+              <strong>Release The Survey When Ready</strong>
+            </div>
+          </article>
+          <article class="feature-preview-card">
+            <img src="/assets/gallery-preview-5.png" alt="Student assessment preview">
+            <div>
+              <span>Student Assessment</span>
+              <strong>Students Complete The Survey</strong>
+            </div>
+          </article>
+          <article class="feature-preview-card">
+            <img src="/assets/gallery-preview-6.png" alt="Question bank preview">
+            <div>
+              <span>Question Bank</span>
+              <strong>Review Assessment Questions</strong>
+            </div>
+          </article>
+          <article class="feature-preview-card">
+            <img src="/assets/gallery-preview-7.png" alt="Strategy library preview">
             <div>
               <span>Strategy Library</span>
               <strong>Browse Strategies By Fit</strong>
             </div>
           </article>
           <article class="feature-preview-card">
-            <img src="/assets/gallery-student-profiles.png" alt="Student profiles list preview">
+            <img src="/assets/gallery-preview-8.png" alt="Teacher settings preview">
             <div>
-              <span>Student Profiles</span>
-              <strong>Open Student Learning Profiles</strong>
-            </div>
-          </article>
-          <article class="feature-preview-card">
-            <img src="/assets/gallery-student-profile-detail.png" alt="Student profile detail preview">
-            <div>
-              <span>Student Evidence</span>
-              <strong>Review What Answers Measured</strong>
-            </div>
-          </article>
-          <article class="feature-preview-card">
-            <img src="/assets/gallery-student-sign-in.png" alt="Student sign-in and badge choice preview">
-            <div>
-              <span>Student Entry</span>
-              <strong>Student ID, Badge, And Read-Aloud</strong>
-            </div>
-          </article>
-          <article class="feature-preview-card">
-            <img src="/assets/gallery-assessment-k2.png" alt="K-2 assessment question preview">
-            <div>
-              <span>K-2 Assessment</span>
-              <strong>Simple Choices For Younger Students</strong>
-            </div>
-          </article>
-          <article class="feature-preview-card">
-            <img src="/assets/gallery-assessment-writing.png" alt="Writing assessment ranking question preview">
-            <div>
-              <span>Ranking Inventory</span>
-              <strong>Students Rank What Helps First</strong>
-            </div>
-          </article>
-          <article class="feature-preview-card">
-            <img src="/assets/gallery-assessment-history.png" alt="History assessment ranking question preview">
-            <div>
-              <span>Older Student Inventory</span>
-              <strong>Questions Stay Consistent And Private</strong>
+              <span>Teacher Settings</span>
+              <strong>Set Up The Class Tools</strong>
             </div>
           </article>
           <button class="feature-gallery-button feature-gallery-button-next" type="button" aria-label="Show next feature">›</button>
@@ -112,13 +98,11 @@
           <button class="is-active" type="button" aria-label="Show class profile preview"></button>
           <button type="button" aria-label="Show lesson upload preview"></button>
           <button type="button" aria-label="Show submission history preview"></button>
+          <button type="button" aria-label="Show launch assessment preview"></button>
+          <button type="button" aria-label="Show student assessment preview"></button>
+          <button type="button" aria-label="Show question bank preview"></button>
           <button type="button" aria-label="Show strategy library preview"></button>
-          <button type="button" aria-label="Show student profiles preview"></button>
-          <button type="button" aria-label="Show student profile detail preview"></button>
-          <button type="button" aria-label="Show student sign-in preview"></button>
-          <button type="button" aria-label="Show K-2 assessment preview"></button>
-          <button type="button" aria-label="Show writing assessment preview"></button>
-          <button type="button" aria-label="Show history assessment preview"></button>
+          <button type="button" aria-label="Show teacher settings preview"></button>
         </div>
       </section>
 
@@ -243,8 +227,8 @@
 
         <div class="pricing-panel is-active" data-pricing-panel="teacher">
           <div class="billing-toggle" aria-label="Billing frequency">
-            <button class="is-active" type="button" data-billing="monthly">Monthly</button>
-            <button type="button" data-billing="annual">Annual</button>
+            <button type="button" data-billing="monthly">Monthly</button>
+            <button class="is-active" type="button" data-billing="annual">Annual</button>
           </div>
           <div class="pricing-grid teacher-pricing-grid">
             <article class="pricing-card featured-pricing teacher-plan" data-billing-card="monthly">
@@ -391,7 +375,7 @@
           });
         });
 
-        setBilling("monthly");
+        setBilling("annual");
       }
     </script>
   </body>

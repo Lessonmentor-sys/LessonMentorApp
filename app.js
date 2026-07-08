@@ -178,6 +178,22 @@ const standardsLibrary = [
     subject: "math",
     keywords: ["area", "perimeter", "formula", "rectangle", "measurement"],
     text: "Apply the area and perimeter formulas for rectangles in real-world and mathematical problems."
+  },
+  {
+    id: "CCSS.ELA-LITERACY.RH.6-8.1",
+    framework: "Common Core",
+    grade: "6",
+    subject: "social-studies",
+    keywords: ["historical", "figure", "research", "evidence", "source", "primary", "secondary"],
+    text: "Cite specific textual evidence to support analysis of primary and secondary sources."
+  },
+  {
+    id: "CCSS.ELA-LITERACY.WHST.6-8.7",
+    framework: "Common Core",
+    grade: "6",
+    subject: "social-studies",
+    keywords: ["historical", "figure", "research", "project", "sources", "question"],
+    text: "Conduct short research projects to answer a question, drawing on several sources and generating additional related questions."
   }
 ];
 
@@ -269,6 +285,23 @@ const classProfiles = {
     ]
   }
 };
+
+const classAccessCodes = {
+  "1": { code: "LM-P1-SCI", gradeBand: "g35" },
+  "2": { code: "LM-P2-ELA", gradeBand: "g35" },
+  "3": { code: "LM-P3-SCI", gradeBand: "g35" },
+  "4": { code: "LM-P4-MATH", gradeBand: "g35" },
+  "5": { code: "LM-P5-SCI", gradeBand: "g35" },
+  "6": { code: "LM-P6-PLAN", gradeBand: "g35" },
+  "7": { code: "LM-P7-SS", gradeBand: "g35" },
+  "8": { code: "LM-P8-ENR", gradeBand: "g35" },
+  "9": { code: "LM-P9-READ", gradeBand: "g35" },
+  "10": { code: "LM-P10-HR", gradeBand: "g35" }
+};
+
+// Full build: replace this demo flag with the teacher launch lookup from Supabase.
+// Example future check: const studentAssessmentDemoOpen = activeAssessmentLaunch?.status === "open";
+const studentAssessmentDemoOpen = true;
 
 const sampleLesson = `Grade 4 science lesson: Students investigate erosion by rotating through stations with soil trays, water droppers, photographs of landforms, vocabulary cards, and a short evidence notebook. Objective: explain how water changes land over time. Students make a claim, cite evidence from the station data, and explain their reasoning. Include partner talk, a teacher model, sentence frames, and a quick exit ticket.`;
 
@@ -457,14 +490,11 @@ const appState = {
   lessonText: "",
   uploadedFiles: [],
   lessonKeywords: [],
-  selectedAvatar: "Fox",
+  selectedAvatar: "",
   gradeBand: "g35",
   questionIndex: 0,
   answers: {},
-  submissions: [
-    { title: "Erosion station lesson", period: "Period 1", systems: ["CER", "IEP Supports", "SIOP"], status: "ready", date: "Jun 24", expires: "Jul 9", expired: false },
-    { title: "Geometry volume review", period: "Period 3", systems: ["IEP Supports", "Kagan"], status: "expired", date: "Jun 3", expires: "Jun 18", expired: true }
-  ]
+  submissions: []
 };
 
 const avatars = [
@@ -474,6 +504,7 @@ const avatars = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
+  setupMobileWarning();
   applyPortalMode();
   bindNavigation();
   bindTeacher();
@@ -485,6 +516,26 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAll();
   applyInitialHashRoute();
 });
+
+function setupMobileWarning() {
+  const warning = document.getElementById("mobile-use-warning");
+  if (!warning) return;
+
+  const userAgent = navigator.userAgent || "";
+  const mobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  const coarseSmallScreen = window.matchMedia?.("(pointer: coarse)")?.matches && window.matchMedia?.("(max-width: 900px)")?.matches;
+  let dismissed = false;
+
+  try {
+    dismissed = window.sessionStorage.getItem("lessonmentor-mobile-warning-dismissed") === "true";
+  } catch {
+    dismissed = false;
+  }
+
+  if ((mobileUserAgent || coarseSmallScreen) && !dismissed) {
+    document.body.classList.add("is-mobile-device");
+  }
+}
 
 function getPortalMode() {
   const hash = window.location.hash.replace("#", "");
@@ -504,6 +555,12 @@ function applyPortalMode() {
 function bindNavigation() {
   document.getElementById("dismiss-mobile-warning")?.addEventListener("click", () => {
     document.getElementById("mobile-use-warning")?.classList.add("is-dismissed");
+    document.body.classList.remove("is-mobile-device");
+    try {
+      window.sessionStorage.setItem("lessonmentor-mobile-warning-dismissed", "true");
+    } catch {
+      // Session storage can be blocked in strict browser settings.
+    }
   });
 
   document.querySelectorAll(".nav-button").forEach(button => {
@@ -527,7 +584,7 @@ function bindNavigation() {
   });
 
   document.getElementById("logout-demo")?.addEventListener("click", () => {
-    window.location.href = "/teacher/";
+    window.location.href = "/";
   });
 
   document.getElementById("go-home")?.addEventListener("click", () => {
@@ -627,6 +684,7 @@ function bindTeacher() {
 
   document.getElementById("analyze-lesson").addEventListener("click", analyzeLesson);
   document.getElementById("generate-lesson").addEventListener("click", generateLessonPlan);
+  document.getElementById("submission-history")?.addEventListener("click", handleSubmissionAction);
   document.getElementById("launch-class-assessment")?.addEventListener("click", () => launchAssessment("class"));
   document.getElementById("launch-student-assessment")?.addEventListener("click", () => launchAssessment("student"));
   document.getElementById("open-iep-modal").addEventListener("click", () => {
@@ -654,27 +712,23 @@ function renderConnectionStatus() {
 }
 
 function bindStudent() {
-  document.getElementById("grade-band").addEventListener("change", event => {
-    appState.gradeBand = event.target.value;
-    appState.questionIndex = 0;
+  document.getElementById("student-teacher-code")?.addEventListener("input", event => {
+    appState.gradeBand = gradeBandFromTeacherCode(event.target.value);
     appState.answers = {};
-    renderStudent();
-    renderQuestions();
-  });
-
-  document.getElementById("prev-question").addEventListener("click", () => {
-    appState.questionIndex = Math.max(0, appState.questionIndex - 1);
     renderAssessment();
   });
 
-  document.getElementById("next-question").addEventListener("click", () => {
-    const questions = questionBank[appState.gradeBand];
-    appState.questionIndex = Math.min(questions.length - 1, appState.questionIndex + 1);
-    renderAssessment();
-    renderStudentProfile();
+  document.getElementById("submit-assessment")?.addEventListener("click", () => {
+    const studentId = document.getElementById("student-id")?.value || "student";
+    const message = document.getElementById("assessment-submit-status");
+    if (message) {
+      message.textContent = `Assessment submitted for ID # ${studentId}.`;
+    }
   });
 
-  document.getElementById("read-question").addEventListener("click", readCurrentQuestion);
+  document.getElementById("student-logout")?.addEventListener("click", () => {
+    window.location.href = "/";
+  });
 }
 
 function bindAdmin() {
@@ -705,8 +759,11 @@ function renderAll() {
 
 function renderTeacher() {
   const profile = classProfiles[appState.activePeriod];
+  const classCode = classAccessCodes[appState.activePeriod]?.code || "LM-CLASS";
   paintCompass("teacher-compass", profile.profile);
   renderStats("teacher-profile-stats", profile.profile);
+  const codeEl = document.getElementById("teacher-class-code");
+  if (codeEl) codeEl.textContent = classCode;
   const classInsight = document.getElementById("class-insight");
   if (classInsight) classInsight.textContent = buildInsight(profile.profile);
   const rosterCount = document.getElementById("roster-count");
@@ -820,7 +877,8 @@ function openStudentProfile(studentId) {
 
 function analyzeLesson() {
   appState.lessonText = document.getElementById("lesson-text").value.trim();
-  const words = appState.lessonText.toLowerCase().match(/[a-z]{4,}/g) || [];
+  const sourceText = getAnalyzableLessonText();
+  const words = sourceText.toLowerCase().match(/[a-z]{4,}/g) || [];
   const useful = words.filter(word => !["with", "from", "that", "this", "students", "lesson", "teacher"].includes(word));
   appState.lessonKeywords = [...new Set(useful)].slice(0, 18);
   renderLessonAnalysis();
@@ -851,7 +909,7 @@ function renderStandardsPreview() {
 function getStandardMatches() {
   const grade = document.getElementById("lesson-grade")?.value || "4";
   const subject = document.getElementById("lesson-subject")?.value || "science";
-  const words = appState.lessonKeywords.length ? appState.lessonKeywords : sampleLesson.toLowerCase().match(/[a-z]{4,}/g);
+  const words = appState.lessonKeywords.length ? appState.lessonKeywords : getAnalyzableLessonText().toLowerCase().match(/[a-z]{4,}/g);
   const primary = standardsLibrary
     .filter(item => item.grade === grade && item.subject === subject)
     .map(item => ({ ...item, score: item.keywords.filter(keyword => words.includes(keyword)).length }))
@@ -866,20 +924,90 @@ function getStandardMatches() {
 function buildObjectiveStatement() {
   const style = document.getElementById("objective-style")?.value || "ican";
   const subject = document.getElementById("lesson-subject")?.value || "science";
-  const objective = subject === "science"
-    ? "explain how evidence from observations supports a claim about how water changes land over time"
-    : "use evidence and academic language to explain my thinking";
-  const language = subject === "science"
-    ? "claim, evidence, reasoning, erosion, observe"
-    : "claim, evidence, explain, detail";
+  const title = deriveLessonTitle().toLowerCase();
+  let objective = "use evidence and academic language to explain my thinking";
+  let language = "claim, evidence, explain, detail";
+  if (subject === "science") {
+    objective = "explain how evidence from observations supports a scientific claim";
+    language = "claim, evidence, reasoning, observe";
+  } else if (subject === "social-studies" && /historical|figure|research/.test(title)) {
+    objective = "research a historical figure and explain their impact using evidence from sources";
+    language = "historical figure, source, evidence, impact, explain";
+  } else if (subject === "social-studies") {
+    objective = "explain a social studies idea using evidence from sources";
+    language = "source, evidence, event, impact, explain";
+  } else if (subject === "math") {
+    objective = "solve the problem and explain the strategy I used";
+    language = "strategy, model, equation, explain";
+  }
   const iCan = `I can ${objective}.`;
   const student = `Today I will use ${language} to ${objective}.`;
   if (style === "both") return `${iCan} ${student}`;
   return style === "student" ? student : iCan;
 }
 
+function getAnalyzableLessonText() {
+  const pasted = document.getElementById("lesson-text")?.value.trim() || "";
+  const parserNotice = pasted.includes("Full build behavior:") || pasted.includes("For this browser prototype");
+  if (pasted && !parserNotice) return pasted;
+  const filenameText = appState.uploadedFiles.map(file => readableTitleFromFilename(file.name)).join(" ");
+  const subject = subjectLabel(document.getElementById("lesson-subject")?.value || "");
+  const grade = document.getElementById("lesson-grade")?.value || "";
+  return [filenameText, subject, grade ? `Grade ${grade}` : ""].filter(Boolean).join(" ") || sampleLesson;
+}
+
+function readableTitleFromFilename(filename = "") {
+  const base = filename
+    .replace(/\.[^.]+$/, "")
+    .replace(/[_-]+/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\s+/g, " ")
+    .trim();
+  return titleCase(base || "Uploaded Lesson");
+}
+
+function deriveLessonTitle() {
+  const fileTitle = appState.uploadedFiles[0]?.name ? readableTitleFromFilename(appState.uploadedFiles[0].name) : "";
+  if (fileTitle) return `${fileTitle} lesson plan`;
+  const text = getAnalyzableLessonText();
+  const firstMeaningfulLine = text
+    .split(/\n+/)
+    .map(line => line.trim())
+    .find(line => line && !line.includes("Full build behavior:") && !line.startsWith("-"));
+  if (firstMeaningfulLine) {
+    return `${titleCase(firstMeaningfulLine.replace(/^grade\s+\d+\s*/i, "").split(/[.:;]/)[0].slice(0, 80))} lesson plan`;
+  }
+  return `${subjectLabel(document.getElementById("lesson-subject")?.value || "lesson")} lesson plan`;
+}
+
+function subjectLabel(value) {
+  const labels = {
+    art: "Art",
+    ela: "ELA",
+    language: "Languages",
+    "library-makerspace": "Library/Makerspace",
+    math: "Math",
+    music: "Music",
+    pe: "PE",
+    science: "Science",
+    "social-studies": "Social Studies",
+    stem: "STEM"
+  };
+  return labels[value] || titleCase(String(value || "Lesson").replace(/-/g, " "));
+}
+
+function titleCase(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/\b[a-z]/g, letter => letter.toUpperCase())
+    .replace(/\bIep\b/g, "IEP")
+    .replace(/\bEla\b/g, "ELA")
+    .replace(/\bStem\b/g, "STEM");
+}
+
 async function generateLessonPlan() {
-  if (!document.getElementById("lesson-text").value.trim()) {
+  const hasUpload = appState.uploadedFiles.length > 0;
+  if (!document.getElementById("lesson-text").value.trim() && !hasUpload) {
     document.getElementById("lesson-text").value = sampleLesson;
   }
   analyzeLesson();
@@ -896,19 +1024,32 @@ async function generateLessonPlan() {
   const organizers = selectOrganizers();
   const standards = getStandardMatches();
   const objectiveStatement = buildObjectiveStatement();
+  const lessonTitle = deriveLessonTitle();
+  const grade = document.getElementById("lesson-grade")?.value || "";
+  const subject = document.getElementById("lesson-subject")?.value || "";
   const selectedSystemLabels = systems
     .filter(system => appState.enabledSystems[system.id])
     .map(system => system.label);
   if (supportInserts.length) selectedSystemLabels.push("IEP Supports");
 
   const submission = {
-    title: "Generated erosion lesson plan",
+    id: `submission-${Date.now()}`,
+    title: lessonTitle,
     period: classProfiles[appState.activePeriod].name,
     systems: selectedSystemLabels,
     status: "ready",
     date: "Today",
     expires: "15 days",
-    expired: false
+    expired: false,
+    grade,
+    subject,
+    objective: objectiveStatement,
+    standards: standards.map(item => ({ id: item.id, framework: item.framework, text: item.text })),
+    supportInserts: supportInserts.map(item => ({ label: item.label, insert: item.insert })),
+    organizers,
+    strategies: matched.map(item => item.title),
+    keywords: appState.lessonKeywords,
+    uploadedFiles: [...appState.uploadedFiles]
   };
 
   appState.submissions.unshift(submission);
@@ -951,7 +1092,7 @@ async function persistLessonSubmission(submission, standards, supportInserts, or
 async function launchAssessment(scope) {
   const api = window.LessonMentorAPI;
   const profile = classProfiles[appState.activePeriod];
-  const gradeBand = document.getElementById("grade-band")?.value || "g35";
+  const gradeBand = classAccessCodes[appState.activePeriod]?.gradeBand || "g35";
   const questions = questionBank[gradeBand] || questionBank.g35;
   const target = scope === "student" ? "one student" : "selected class";
   const payload = {
@@ -1022,17 +1163,260 @@ function renderSubmissionHistory() {
   }
 
   submissionHistory.innerHTML = appState.submissions.map(item => `
-    <div class="history-row">
+    <div class="history-row" data-submission-row="${item.id || ""}">
       <div>
         <strong>${item.title}</strong>
         <p>${item.date} · ${item.period} · ${item.systems.join(", ")}</p>
       </div>
       <div class="document-actions">
         ${availabilityPill(item)}
-        ${item.expired ? "" : `<button class="secondary-button">Preview PDF</button><button class="secondary-button">Download PDF</button><button class="secondary-button">Word .docx</button><button class="secondary-button muted-action" title="Google Docs export will require Google Drive authorization">Google Docs</button>`}
+        ${item.expired ? "" : `
+          <button class="secondary-button" data-output-action="preview" data-submission-id="${item.id}">Preview PDF</button>
+          <button class="secondary-button" data-output-action="pdf" data-submission-id="${item.id}">Download PDF</button>
+          <button class="secondary-button" data-output-action="docx" data-submission-id="${item.id}">Word .docx</button>
+          <button class="secondary-button muted-action" data-output-action="gdocs" data-submission-id="${item.id}" title="Google Docs export will require Google Drive authorization">Google Docs</button>
+        `}
       </div>
     </div>
   `).join("");
+
+  submissionHistory.querySelectorAll("[data-output-action]").forEach(button => {
+    button.addEventListener("click", handleSubmissionAction);
+  });
+}
+
+function handleSubmissionAction(event) {
+  const button = event.target.closest("[data-output-action]");
+  if (!button) return;
+  const item = appState.submissions.find(submission => submission.id === button.dataset.submissionId);
+  if (!item) return;
+  const action = button.dataset.outputAction;
+  if (action === "preview") previewGeneratedLesson(item);
+  if (action === "pdf") downloadGeneratedPdf(item);
+  if (action === "docx") downloadGeneratedDocx(item);
+  if (action === "gdocs") {
+    alert("Google Docs export will connect after Google Drive authorization is added. For now, use the Word .docx download.");
+  }
+}
+
+function buildGeneratedLessonLines(item) {
+  const standards = item.standards?.length
+    ? item.standards.map(standard => `${standard.framework}: ${standard.id}`).join("; ")
+    : "Standards will be finalized after the standards matcher is connected.";
+  const strategies = item.strategies?.length
+    ? item.strategies.join(", ")
+    : item.systems?.filter(system => system !== "IEP Supports").join(", ") || "Selected strategies";
+  const supports = item.supportInserts?.length
+    ? item.supportInserts.map(support => `${support.insert} (${support.label})`)
+    : ["Class IEP supports will be inserted here after the full generator is connected."];
+  const organizers = item.organizers?.length ? item.organizers.join(", ") : "Organizer recommendations will appear here.";
+  const files = item.uploadedFiles?.length ? item.uploadedFiles.map(file => file.name).join(", ") : "No uploaded file recorded.";
+  return [
+    "Lesson Mentor Generated Draft",
+    item.title,
+    "",
+    `Class: ${item.period || classProfiles[appState.activePeriod].name}`,
+    `Grade: ${item.grade || document.getElementById("lesson-grade")?.value || ""}`,
+    `Subject: ${subjectLabel(item.subject || document.getElementById("lesson-subject")?.value || "")}`,
+    `Uploaded file(s): ${files}`,
+    "",
+    "Auto Standards",
+    standards,
+    "",
+    "Board Language",
+    item.objective || buildObjectiveStatement(),
+    "",
+    "Strategies To Include",
+    strategies,
+    "",
+    "Strategy Integrations/IEP",
+    ...supports.map(support => `- ${support}`),
+    "",
+    "Recommended Graphic Organizers",
+    organizers,
+    "",
+    "Prototype Note",
+    "This static preview uses the selected class, subject, filename, pasted text, and strategy settings. The full build will replace this draft with AI-generated content in Jennifer's signature template."
+  ];
+}
+
+function safeFilename(title, extension) {
+  const clean = String(title || "lesson-mentor-output")
+    .replace(/lesson plan$/i, "")
+    .trim()
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+  return `${clean || "lesson-mentor-output"}.${extension}`;
+}
+
+function previewGeneratedLesson(item) {
+  let modal = document.getElementById("generated-preview-modal");
+  if (!modal) {
+    modal = document.createElement("dialog");
+    modal.id = "generated-preview-modal";
+    modal.className = "modal dashboard-modal generated-preview-modal";
+    modal.innerHTML = `
+      <form method="dialog">
+        <div class="panel-title-row">
+          <h3 id="generated-preview-title">Generated Lesson Preview</h3>
+          <button class="icon-button" value="close">Close</button>
+        </div>
+        <div class="generated-preview-body" id="generated-preview-body"></div>
+      </form>
+    `;
+    document.body.appendChild(modal);
+  }
+  document.getElementById("generated-preview-title").textContent = item.title;
+  document.getElementById("generated-preview-body").innerHTML = `
+    <div class="analysis-card">
+      <strong>Draft Preview</strong>
+      <p>Full AI/template generation is still a backend build item. This preview reflects the selected class, subject, filename/pasted text, strategies, and settings.</p>
+    </div>
+    <pre>${escapeHtml(buildGeneratedLessonLines(item).join("\n"))}</pre>
+  `;
+  modal.showModal();
+}
+
+function downloadGeneratedPdf(item) {
+  const lines = buildGeneratedLessonLines(item);
+  const pdfBlob = makeSimplePdf(lines);
+  downloadBlob(pdfBlob, safeFilename(item.title, "pdf"));
+}
+
+function downloadGeneratedDocx(item) {
+  const xmlLines = buildGeneratedLessonLines(item).map(line => {
+    const escaped = escapeXml(line || " ");
+    if (!line) return `<w:p/>`;
+    const isHeading = !line.startsWith("-") && ["Lesson Mentor Generated Draft", item.title, "Auto Standards", "Board Language", "Strategies To Include", "Strategy Integrations/IEP", "Recommended Graphic Organizers", "Prototype Note"].includes(line);
+    return `<w:p><w:r><w:rPr>${isHeading ? "<w:b/>" : ""}</w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`;
+  }).join("");
+  const files = {
+    "[Content_Types].xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`,
+    "_rels/.rels": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`,
+    "word/document.xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${xmlLines}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720"/></w:sectPr></w:body></w:document>`
+  };
+  downloadBlob(makeZip(files), safeFilename(item.title, "docx"));
+}
+
+function makeSimplePdf(lines) {
+  const escapedLines = lines.flatMap(line => {
+    if (line.length <= 86) return [line];
+    const chunks = [];
+    let remaining = line;
+    while (remaining.length > 86) {
+      const cut = remaining.lastIndexOf(" ", 86);
+      chunks.push(remaining.slice(0, cut > 0 ? cut : 86));
+      remaining = remaining.slice(cut > 0 ? cut + 1 : 86);
+    }
+    chunks.push(remaining);
+    return chunks;
+  });
+  const content = ["BT", "/F1 12 Tf", "54 750 Td", "16 TL", ...escapedLines.map(line => `(${escapePdf(line)}) Tj T*`), "ET"].join("\n");
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(pdf.length);
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xref = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  offsets.slice(1).forEach(offset => {
+    pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  });
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return new Blob([pdf], { type: "application/pdf" });
+}
+
+function makeZip(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+  Object.entries(files).forEach(([name, content]) => {
+    const nameBytes = encoder.encode(name);
+    const data = encoder.encode(content);
+    const crc = crc32(data);
+    const local = concatBytes(
+      u32(0x04034b50), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(data.length), u32(data.length), u16(nameBytes.length), u16(0), nameBytes, data
+    );
+    localParts.push(local);
+    const central = concatBytes(
+      u32(0x02014b50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(data.length), u32(data.length), u16(nameBytes.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset), nameBytes
+    );
+    centralParts.push(central);
+    offset += local.length;
+  });
+  const centralSize = centralParts.reduce((sum, part) => sum + part.length, 0);
+  const end = concatBytes(u32(0x06054b50), u16(0), u16(0), u16(centralParts.length), u16(centralParts.length), u32(centralSize), u32(offset), u16(0));
+  return new Blob([...localParts, ...centralParts, end], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+}
+
+function crc32(bytes) {
+  let crc = -1;
+  for (const byte of bytes) {
+    crc = (crc >>> 8) ^ crcTable[(crc ^ byte) & 0xff];
+  }
+  return (crc ^ -1) >>> 0;
+}
+
+const crcTable = Array.from({ length: 256 }, (_, n) => {
+  let c = n;
+  for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  return c >>> 0;
+});
+
+function u16(value) {
+  const bytes = new Uint8Array(2);
+  new DataView(bytes.buffer).setUint16(0, value, true);
+  return bytes;
+}
+
+function u32(value) {
+  const bytes = new Uint8Array(4);
+  new DataView(bytes.buffer).setUint32(0, value >>> 0, true);
+  return bytes;
+}
+
+function concatBytes(...parts) {
+  const length = parts.reduce((sum, part) => sum + part.length, 0);
+  const output = new Uint8Array(length);
+  let offset = 0;
+  parts.forEach(part => {
+    output.set(part, offset);
+    offset += part.length;
+  });
+  return output;
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function escapeHtml(text) {
+  return String(text || "").replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[character]));
+}
+
+function escapeXml(text) {
+  return escapeHtml(text);
+}
+
+function escapePdf(text) {
+  return String(text || "").replace(/[\\()]/g, "\\$&");
 }
 
 function renderStrategies() {
@@ -1072,7 +1456,6 @@ function strategyScore(strategy, profile) {
 function renderStudent() {
   renderAvatars();
   renderAssessment();
-  renderStudentProfile();
 }
 
 function renderAvatars() {
@@ -1086,40 +1469,73 @@ function renderAvatars() {
   document.querySelectorAll("[data-avatar]").forEach(button => {
     button.addEventListener("click", () => {
       appState.selectedAvatar = button.dataset.avatar;
-      renderAvatars();
+      renderStudent();
     });
   });
 }
 
 function renderAssessment() {
+  const panel = document.getElementById("student-assessment-panel");
+  const card = document.getElementById("assessment-card");
+  const progress = document.getElementById("assessment-progress");
+  if (!panel || !card || !progress) return;
+
+  const teacherCode = document.getElementById("student-teacher-code")?.value || "";
+  appState.gradeBand = gradeBandFromTeacherCode(teacherCode);
   const questions = questionBank[appState.gradeBand];
-  const question = questions[appState.questionIndex];
-  document.getElementById("assessment-progress").textContent = `${appState.questionIndex + 1} of ${questions.length}`;
-  document.getElementById("assessment-card").innerHTML = `
-    <div class="question-card">
-      <strong>${question.text}</strong>
-      <p>${appState.gradeBand === "k2" ? "Choose the one that helps you most." : "Rank each option from 1, most helpful, to 4, least helpful."}</p>
-      <div class="question-options">
-        ${question.options.map((option, index) => optionInput(option, index)).join("")}
+
+  if (!appState.selectedAvatar) {
+    panel.hidden = true;
+    progress.textContent = "";
+    card.innerHTML = "";
+    return;
+  }
+
+  panel.hidden = false;
+
+  if (!studentAssessmentDemoOpen) {
+    panel.classList.remove("is-locked");
+    progress.textContent = "Closed";
+    card.innerHTML = `
+      <div class="question-card">
+        <strong>No Assessment Is Open Right Now</strong>
+        <p>Your teacher has not launched the learning-style survey for this class yet.</p>
       </div>
+    `;
+    return;
+  }
+
+  panel.classList.remove("is-locked");
+  progress.textContent = `${questions.length} Questions`;
+  card.innerHTML = `
+    <div class="survey-stack">
+      ${questions.map((question, qIndex) => `
+        <div class="question-card">
+          <strong>${qIndex + 1}. ${question.text}</strong>
+          <p>${appState.gradeBand === "k2" ? "Choose the one that helps you most." : "Rank each option from 1, most helpful, to 6, least helpful."}</p>
+          <div class="question-options">
+            ${question.options.map((option, index) => optionInput(option, qIndex, index)).join("")}
+          </div>
+        </div>
+      `).join("")}
+      <p class="assessment-submit-status" id="assessment-submit-status" aria-live="polite"></p>
     </div>
   `;
 
   document.querySelectorAll("[data-answer-index]").forEach(input => {
     input.addEventListener("change", event => {
-      const key = `${appState.gradeBand}-${appState.questionIndex}-${event.target.dataset.answerIndex}`;
+      const key = `${appState.gradeBand}-${event.target.dataset.questionIndex}-${event.target.dataset.answerIndex}`;
       appState.answers[key] = Number(event.target.value);
-      renderStudentProfile();
     });
   });
 }
 
-function optionInput(option, index) {
-  const key = `${appState.gradeBand}-${appState.questionIndex}-${index}`;
+function optionInput(option, qIndex, index) {
+  const key = `${appState.gradeBand}-${qIndex}-${index}`;
   if (appState.gradeBand === "k2") {
     return `
       <label class="option-row">
-        <input type="radio" name="k2-question-${appState.questionIndex}" data-answer-index="${index}" value="1" ${appState.answers[key] ? "checked" : ""}>
+        <input type="radio" name="k2-question-${qIndex}" data-question-index="${qIndex}" data-answer-index="${index}" value="1" ${appState.answers[key] ? "checked" : ""}>
         <span>${option.t}</span>
       </label>
     `;
@@ -1127,7 +1543,7 @@ function optionInput(option, index) {
 
   return `
     <label class="option-row">
-      <select data-answer-index="${index}">
+      <select data-question-index="${qIndex}" data-answer-index="${index}">
         <option value="0">-</option>
         <option value="1" ${appState.answers[key] === 1 ? "selected" : ""}>1</option>
         <option value="2" ${appState.answers[key] === 2 ? "selected" : ""}>2</option>
@@ -1139,6 +1555,12 @@ function optionInput(option, index) {
       <span>${option.t}</span>
     </label>
   `;
+}
+
+function gradeBandFromTeacherCode(rawCode) {
+  const normalized = String(rawCode || "").trim().toUpperCase();
+  const match = Object.values(classAccessCodes).find(item => item.code === normalized);
+  return match?.gradeBand || "g35";
 }
 
 function readCurrentQuestion() {
@@ -1154,6 +1576,8 @@ function readCurrentQuestion() {
 }
 
 function renderStudentProfile() {
+  // Future middle-school feature: re-enable student-facing learning profile and study tips here.
+  if (!document.getElementById("student-compass") || !document.getElementById("student-profile-stats") || !document.getElementById("study-tips")) return;
   const profile = calculateStudentProfile();
   paintCompass("student-compass", profile);
   renderStats("student-profile-stats", profile);
