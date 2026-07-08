@@ -3,26 +3,296 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student Login | Lesson Mentor</title>
+    <title>Student Assessment | Lesson Mentor</title>
     <link rel="icon" type="image/png" href="/assets/lessonmentor-favicon.png">
-    <link rel="stylesheet" href="../styles.css?v=live2">
+    <link rel="stylesheet" href="../styles.css?v=live5">
+    <style>
+      body.student-assessment-page {
+        min-height: 100vh;
+        margin: 0;
+        background: #f4f7fb;
+        color: #1f2937;
+      }
+
+      .student-assessment-shell {
+        width: min(980px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 26px 0 42px;
+      }
+
+      .student-assessment-header,
+      .student-assessment-card {
+        border: 1px solid #cbd8e6;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 36px rgba(15, 47, 100, 0.08);
+      }
+
+      .student-assessment-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 22px;
+        margin-bottom: 18px;
+        border-top: 6px solid #14968f;
+      }
+
+      .student-assessment-header h1,
+      .student-assessment-card h2,
+      .student-assessment-card h3 {
+        margin: 0;
+        color: #0f2f64;
+      }
+
+      .student-assessment-header p,
+      .student-assessment-card p {
+        color: #40506a;
+        line-height: 1.45;
+      }
+
+      .student-assessment-card {
+        padding: 22px;
+      }
+
+      .student-assessment-card + .student-assessment-card {
+        margin-top: 18px;
+      }
+
+      .student-signin-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin: 18px 0 22px;
+      }
+
+      .student-signin-grid label {
+        display: grid;
+        gap: 6px;
+        font-weight: 800;
+        color: #1f2937;
+      }
+
+      .student-signin-grid input {
+        min-height: 46px;
+        border: 1px solid #cbd8e6;
+        border-radius: 8px;
+        padding: 0 13px;
+        font-size: 1.05rem;
+        font-weight: 750;
+      }
+
+      .student-assessment-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+
+      .student-assessment-page .avatar-grid {
+        grid-template-columns: repeat(4, minmax(110px, 1fr));
+      }
+
+      .student-assessment-page .question-card {
+        border: 1px solid #cbd8e6;
+        border-radius: 8px;
+        padding: 18px;
+        background: #ffffff;
+      }
+
+      .student-assessment-page .option-row {
+        font-size: 1.05rem;
+      }
+
+      .student-hidden {
+        display: none !important;
+      }
+
+      .student-status {
+        min-height: 24px;
+        font-weight: 850;
+        color: #0f5f5b;
+      }
+
+      @media (max-width: 720px) {
+        .student-assessment-header,
+        .student-signin-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .student-assessment-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .student-assessment-page .avatar-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
   </head>
-  <body class="portal-login-page student-login">
-    <main class="login-shell">
-      <section class="login-card">
-        <a class="landing-brand" href="/">
+  <body class="student-assessment-page">
+    <main class="student-assessment-shell">
+      <header class="student-assessment-header">
+        <div class="landing-brand">
           <img class="brand-logo-image" src="/assets/lessonmentor-logo.png" alt="Lesson Mentor logo">
-          <span><strong>Lesson Mentor</strong><small>Student Portal</small></span>
-        </a>
-        <h1>Student Login</h1>
-        <p>Students use their ID to complete the learning-style assessment assigned by the teacher.</p>
-        <form class="login-form">
-          <label>Student ID <input type="text" placeholder="Enter student ID"></label>
-          <label>Class Code <input type="text" placeholder="Optional class code"></label>
-          <a class="primary-button login-link" href="/teacher/dashboard.html#student-view">Continue to Assessment</a>
-        </form>
-        <a class="portal-logout-link" href="/">Log Out</a>
+          <span><strong>Lesson Mentor</strong><small>Student Assessment</small></span>
+        </div>
+        <button class="secondary-button" id="student-logout" type="button">Log Out</button>
+      </header>
+
+      <section class="student-assessment-card" id="avatar-step">
+        <h1>Select Your Avatar</h1>
+        <p>Choose one avatar first. Then your assessment will open.</p>
+        <div class="student-signin-grid">
+          <label>Student ID
+            <input id="student-id" type="text" value="48291" autocomplete="off">
+          </label>
+          <label>Teacher Code
+            <input id="student-teacher-code" type="text" value="LM-P1-SCI" autocomplete="off">
+          </label>
+        </div>
+        <div class="avatar-grid" id="avatar-grid" aria-label="Choose an avatar"></div>
+        <p class="student-status" id="avatar-status" aria-live="polite">Pick an avatar to continue.</p>
+      </section>
+
+      <section class="student-assessment-card student-hidden" id="assessment-step" hidden>
+        <div class="panel-title-row">
+          <div>
+            <h2>Learning Style Survey</h2>
+            <p>Answer the questions your teacher opened for this class.</p>
+          </div>
+          <span class="small-pill" id="assessment-progress">12 Questions</span>
+        </div>
+        <div id="assessment-card"></div>
+        <div class="student-assessment-actions">
+          <button class="primary-button" id="submit-assessment" type="button">Submit Assessment</button>
+          <button class="secondary-button" id="student-logout-bottom" type="button">Log Out</button>
+        </div>
+        <p class="student-status" id="assessment-submit-status" aria-live="polite"></p>
       </section>
     </main>
+
+    <script>
+      const avatars = [
+        "Fox", "Owl", "Turtle", "Rabbit", "Otter", "Hedgehog", "Deer", "Bee", "Bear", "Panda",
+        "Koala", "Penguin", "Dolphin", "Octopus", "Narwhal", "Axolotl", "Komodo Dragon", "Chameleon",
+        "Toucan", "Elephant", "Flamingo", "Raccoon", "Wolf", "Sloth", "Seahorse"
+      ];
+
+      const questions = [
+        ["You are learning a complex historical event. Rank what helps most.", ["Study a timeline or map", "Listen to a discussion", "Read primary source notes", "Role-play decision points", "Process the evidence independently", "Debrief with a small group"]],
+        ["You are preparing a presentation. Rank your process.", ["Storyboard slides", "Rehearse aloud", "Write speaker notes", "Practice moving through demos", "Draft the plan independently", "Rehearse with peer feedback"]],
+        ["You are learning geometry volume. Rank your choices.", ["View 3D diagrams", "Hear an explanation", "Read formulas and examples", "Use physical models", "Try practice problems alone first", "Work through examples with a partner"]],
+        ["You are starting a writing project. Rank what helps first.", ["Look at an example organizer", "Discuss ideas", "Read the rubric", "Move cards into order", "Plan quietly before drafting", "Brainstorm with a partner"]],
+        ["You are checking your understanding. Rank your choices.", ["Use a concept map", "Answer aloud", "Write a summary", "Create a sample problem", "Self-check with a rubric", "Teach the idea to a peer"]],
+        ["You need to organize research. Rank what helps.", ["Use a visual board", "Explain sources to a peer", "Make written source cards", "Sort printed evidence", "Set up my own research plan", "Compare sources with a team"]],
+        ["You are learning a new classroom routine. Rank your choices.", ["Watch the routine modeled", "Hear the directions repeated", "Read a checklist", "Practice the routine", "Follow the routine card on my own", "Practice the routine with classmates"]],
+        ["You are revising an essay. Rank what helps most.", ["Color-code the draft", "Conference with someone", "Use a written revision checklist", "Move paragraphs or evidence cards", "Revise quietly with a checklist", "Peer review with a partner"]],
+        ["You are preparing for a quiz. Rank your study plan.", ["Use charts and drawings", "Listen to a review", "Read notes", "Play a review game", "Study quietly first", "Practice with a group"]],
+        ["You are learning a new equation. Rank your choices.", ["See worked examples", "Talk through why it works", "Read the rule and notes", "Use a model or simulation", "Try a set independently first", "Compare strategies with a partner"]],
+        ["You are working with a partner. Rank what helps you learn.", ["Use a shared drawing or chart", "Talk through each step", "Write notes together", "Use cards or tools together", "Think quietly before partner work", "Build the answer together"]],
+        ["You are preparing for a debate or discussion. Rank what helps.", ["Map the argument visually", "Practice speaking with a partner", "Write evidence notes", "Stand and rehearse positions", "Prepare notes independently", "Practice with a discussion team"]]
+      ];
+
+      // Full build: replace this demo flag with the teacher launch lookup from Supabase.
+      // Example future check: const teacherAssessmentDemoOpen = activeAssessmentLaunch?.status === "open";
+      const teacherAssessmentDemoOpen = true;
+
+      let selectedAvatar = "";
+
+      function badgeSvg(name, index) {
+        const colors = ["#f4a08d", "#a7d5f2", "#afd7a0", "#c9acef", "#a6d8d1", "#e4c35d", "#ef9aaa", "#f6d45c"];
+        const fill = colors[index % colors.length];
+        return `<svg class="badge-svg" viewBox="0 0 80 80" role="img" aria-label="${name} avatar">
+          <circle cx="40" cy="40" r="34" fill="#fbfaf5" stroke="#ded8cc" stroke-width="3"/>
+          <circle cx="28" cy="28" r="10" fill="${fill}" opacity=".8"/>
+          <circle cx="52" cy="28" r="10" fill="${fill}" opacity=".8"/>
+          <circle cx="40" cy="43" r="20" fill="${fill}"/>
+          <circle cx="32" cy="39" r="4" fill="#4b5563"/>
+          <circle cx="48" cy="39" r="4" fill="#4b5563"/>
+          <path d="M30 50 Q40 60 50 50" fill="none" stroke="#4b5563" stroke-width="4" stroke-linecap="round"/>
+          <text x="40" y="47" text-anchor="middle" font-size="13" font-weight="800" fill="#7a4b38">${name[0]}</text>
+        </svg>`;
+      }
+
+      function renderAvatars() {
+        document.getElementById("avatar-grid").innerHTML = avatars.map((avatar, index) => `
+          <button class="avatar-button ${avatar === selectedAvatar ? "active" : ""}" type="button" data-avatar="${avatar}">
+            ${badgeSvg(avatar, index)}
+            <span>${avatar}</span>
+          </button>
+        `).join("");
+
+        document.querySelectorAll("[data-avatar]").forEach(button => {
+          button.addEventListener("click", () => {
+            selectedAvatar = button.dataset.avatar;
+            document.getElementById("avatar-status").textContent = `${selectedAvatar} selected. Assessment is open.`;
+            renderAssessment();
+          });
+        });
+      }
+
+      function renderAssessment() {
+        const assessmentStep = document.getElementById("assessment-step");
+        const card = document.getElementById("assessment-card");
+        if (!selectedAvatar) {
+          assessmentStep.classList.add("student-hidden");
+          assessmentStep.hidden = true;
+          return;
+        }
+
+        assessmentStep.classList.remove("student-hidden");
+        assessmentStep.hidden = false;
+        if (!teacherAssessmentDemoOpen) {
+          card.innerHTML = `<div class="question-card"><h3>No Assessment Is Open Right Now</h3><p>Your teacher has not launched the survey for this class yet.</p></div>`;
+          document.getElementById("submit-assessment").disabled = true;
+          return;
+        }
+
+        document.getElementById("submit-assessment").disabled = false;
+        document.getElementById("assessment-progress").textContent = `${questions.length} Questions`;
+        card.innerHTML = `<div class="survey-stack">${questions.map((question, questionIndex) => `
+          <div class="question-card">
+            <h3>${questionIndex + 1}. ${question[0]}</h3>
+            <p>Rank each option from 1, most helpful, to 6, least helpful.</p>
+            <div class="question-options">
+              ${question[1].map((option, optionIndex) => `
+                <label class="option-row">
+                  <select name="q${questionIndex}-option${optionIndex}" aria-label="Rank for ${option}">
+                    <option value="">-</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                  </select>
+                  <span>${option}</span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+        `).join("")}</div>`;
+      }
+
+      function submitAssessment() {
+        if (!selectedAvatar) {
+          document.getElementById("avatar-status").textContent = "Choose an avatar before submitting.";
+          return;
+        }
+        const studentId = document.getElementById("student-id").value.trim() || "student";
+        document.getElementById("assessment-submit-status").textContent = `Assessment submitted for ID # ${studentId}.`;
+      }
+
+      function logout() {
+        window.location.href = "/";
+      }
+
+      renderAvatars();
+      document.getElementById("submit-assessment").addEventListener("click", submitAssessment);
+      document.getElementById("student-logout").addEventListener("click", logout);
+      document.getElementById("student-logout-bottom").addEventListener("click", logout);
+    </script>
   </body>
 </html>

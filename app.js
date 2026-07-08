@@ -287,23 +287,21 @@ const classProfiles = {
 };
 
 const classAccessCodes = {
-  "1": { code: "LM-P1-SCI", gradeBand: "g35" },
-  "2": { code: "LM-P2-ELA", gradeBand: "g35" },
-  "3": { code: "LM-P3-SCI", gradeBand: "g35" },
-  "4": { code: "LM-P4-MATH", gradeBand: "g35" },
-  "5": { code: "LM-P5-SCI", gradeBand: "g35" },
-  "6": { code: "LM-P6-PLAN", gradeBand: "g35" },
-  "7": { code: "LM-P7-SS", gradeBand: "g35" },
-  "8": { code: "LM-P8-ENR", gradeBand: "g35" },
-  "9": { code: "LM-P9-READ", gradeBand: "g35" },
-  "10": { code: "LM-P10-HR", gradeBand: "g35" }
+  "1": { code: "LM-P1-SCI", gradeBand: "g35", grade: "4", subject: "science", supports: ["sentence-frames", "chunked-directions", "movement-break", "teacher-checkin", "graphic-organizer"] },
+  "2": { code: "LM-P2-ELA", gradeBand: "g35", grade: "5", subject: "ela", supports: ["sentence-frames", "chunked-directions", "teacher-checkin", "graphic-organizer", "read-aloud"] },
+  "3": { code: "LM-P3-SCI", gradeBand: "g35", grade: "3", subject: "science", supports: ["chunked-directions", "movement-break", "teacher-checkin", "graphic-organizer"] },
+  "4": { code: "LM-P4-MATH", gradeBand: "g35", grade: "4", subject: "math", supports: ["chunked-directions", "movement-break", "teacher-checkin"] },
+  "5": { code: "LM-P5-SCI", gradeBand: "g35", grade: "4", subject: "science", supports: ["sentence-frames", "teacher-checkin", "graphic-organizer"] },
+  "6": { code: "LM-P6-PLAN", gradeBand: "g35", grade: "4", subject: "stem", supports: [] },
+  "7": { code: "LM-P7-SS", gradeBand: "g35", grade: "5", subject: "social-studies", supports: ["sentence-frames", "chunked-directions", "teacher-checkin", "graphic-organizer", "read-aloud"] },
+  "8": { code: "LM-P8-ENR", gradeBand: "g35", grade: "4", subject: "stem", supports: ["movement-break", "graphic-organizer"] },
+  "9": { code: "LM-P9-READ", gradeBand: "g35", grade: "5", subject: "ela", supports: ["sentence-frames", "chunked-directions", "teacher-checkin", "read-aloud"] },
+  "10": { code: "LM-P10-HR", gradeBand: "g35", grade: "4", subject: "social-studies", supports: ["sentence-frames", "teacher-checkin"] }
 };
 
 // Full build: replace this demo flag with the teacher launch lookup from Supabase.
 // Example future check: const studentAssessmentDemoOpen = activeAssessmentLaunch?.status === "open";
 const studentAssessmentDemoOpen = true;
-
-const sampleLesson = `Grade 4 science lesson: Students investigate erosion by rotating through stations with soil trays, water droppers, photographs of landforms, vocabulary cards, and a short evidence notebook. Objective: explain how water changes land over time. Students make a claim, cite evidence from the station data, and explain their reasoning. Include partner talk, a teacher model, sentence frames, and a quick exit ticket.`;
 
 const strategyLibrary = [
   {
@@ -517,6 +515,10 @@ document.addEventListener("DOMContentLoaded", () => {
   applyInitialHashRoute();
 });
 
+function on(id, eventName, handler) {
+  document.getElementById(id)?.addEventListener(eventName, handler);
+}
+
 function setupMobileWarning() {
   const warning = document.getElementById("mobile-use-warning");
   if (!warning) return;
@@ -565,52 +567,62 @@ function bindNavigation() {
 
   document.querySelectorAll(".nav-button").forEach(button => {
     button.addEventListener("click", () => {
-      document.querySelectorAll(".nav-button").forEach(item => item.classList.remove("active"));
-      document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
-      button.classList.add("active");
-      document.getElementById(`${button.dataset.view}-view`).classList.add("active");
-      const titles = { teacher: "Teacher Dashboard", student: "Student Dashboard", library: "Strategy Library", admin: "School Dashboard", questions: "Question Bank" };
-      document.getElementById("view-title").textContent = titles[button.dataset.view];
+      setActiveView(button.dataset.view);
     });
   });
 
-  document.getElementById("reset-demo").addEventListener("click", () => {
+  on("reset-demo", "click", () => {
     appState.lessonText = "";
+    appState.uploadedFiles = [];
     appState.lessonKeywords = [];
     appState.questionIndex = 0;
     appState.answers = {};
-    document.getElementById("lesson-text").value = "";
+    const lessonText = document.getElementById("lesson-text");
+    if (lessonText) lessonText.value = "";
+    const summary = document.getElementById("lesson-file-summary");
+    if (summary) summary.textContent = "No files selected yet.";
     renderAll();
   });
 
-  document.getElementById("logout-demo")?.addEventListener("click", () => {
+  on("logout-demo", "click", () => {
     window.location.href = "/";
   });
 
-  document.getElementById("go-home")?.addEventListener("click", () => {
-    document.querySelector('.nav-button[data-view="teacher"]')?.click();
+  on("go-home", "click", () => {
+    setActiveView("teacher");
   });
 
-  document.getElementById("open-student-profiles")?.addEventListener("click", () => {
+  on("open-student-profiles", "click", () => {
     document.getElementById("student-profiles-modal")?.showModal();
   });
-  document.getElementById("open-launch-assessment")?.addEventListener("click", () => {
+  on("open-launch-assessment", "click", () => {
     document.getElementById("launch-assessment-modal")?.showModal();
   });
-  document.getElementById("open-library-modal")?.addEventListener("click", () => {
+  on("open-library-modal", "click", () => {
     document.getElementById("library-modal")?.showModal();
   });
-  document.getElementById("open-settings-modal")?.addEventListener("click", () => {
+  on("open-settings-modal", "click", () => {
     document.getElementById("settings-modal")?.showModal();
   });
-  document.getElementById("open-strategy-library")?.addEventListener("click", () => {
+  on("open-strategy-library", "click", () => {
     document.getElementById("library-modal")?.close();
-    document.querySelector('.nav-button[data-view="library"]')?.click();
+    setActiveView("library");
   });
-  document.getElementById("open-question-bank")?.addEventListener("click", () => {
+  on("open-question-bank", "click", () => {
     document.getElementById("library-modal")?.close();
-    document.querySelector('.nav-button[data-view="questions"]')?.click();
+    setActiveView("questions");
   });
+}
+
+function setActiveView(viewKey) {
+  document.querySelectorAll(".nav-button").forEach(item => {
+    item.classList.toggle("active", item.dataset.view === viewKey);
+  });
+  document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+  document.getElementById(`${viewKey}-view`)?.classList.add("active");
+  const titles = { teacher: "Teacher Dashboard", student: "Student Dashboard", library: "Strategy Library", admin: "School Dashboard", questions: "Question Bank" };
+  const viewTitle = document.getElementById("view-title");
+  if (viewTitle && titles[viewKey]) viewTitle.textContent = titles[viewKey];
 }
 
 function applyInitialHashRoute() {
@@ -618,17 +630,20 @@ function applyInitialHashRoute() {
   const view = target ? target.replace("-view", "") : getPortalMode();
   const button = document.querySelector(`.nav-button[data-view="${view}"]`);
   if (button) button.click();
+  else setActiveView(view);
 }
 
 function bindTeacher() {
-  document.getElementById("class-select").addEventListener("change", event => {
+  on("class-select", "change", event => {
     appState.activePeriod = event.target.value;
+    syncLessonPeriodControls(appState.activePeriod);
     renderTeacher();
     renderStrategies();
     renderStandardsPreview();
+    renderIepSupports();
   });
 
-  document.getElementById("self-contained-toggle").addEventListener("change", event => {
+  on("self-contained-toggle", "change", event => {
     const profile = classProfiles[appState.activePeriod];
     if (event.target.checked) {
       profile.roster = profile.roster.slice(0, 1);
@@ -638,7 +653,7 @@ function bindTeacher() {
     renderTeacher();
   });
 
-  document.getElementById("lesson-file").addEventListener("change", async event => {
+  on("lesson-file", "change", async event => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
     const textArea = document.getElementById("lesson-text");
@@ -677,27 +692,55 @@ function bindTeacher() {
     }
   });
 
-  document.getElementById("load-sample").addEventListener("click", () => {
-    document.getElementById("lesson-text").value = sampleLesson;
-    analyzeLesson();
+  on("analyze-lesson", "click", analyzeLesson);
+  on("generate-lesson", "click", generateLessonPlan);
+  document.getElementById("submission-history")?.addEventListener("click", handleSubmissionAction);
+  on("launch-class-assessment", "click", () => launchAssessment("class"));
+  on("launch-student-assessment", "click", () => launchAssessment("student"));
+  on("open-iep-modal", "click", () => {
+    document.getElementById("settings-modal")?.close();
+    document.getElementById("iep-modal")?.showModal();
+  });
+  on("save-iep-supports", "click", renderStrategies);
+  on("lesson-period", "change", event => {
+    appState.activePeriod = event.target.value;
+    syncLessonPeriodControls(appState.activePeriod);
+    renderTeacher();
+    renderStrategies();
+    renderStandardsPreview();
+    renderIepSupports();
   });
 
-  document.getElementById("analyze-lesson").addEventListener("click", analyzeLesson);
-  document.getElementById("generate-lesson").addEventListener("click", generateLessonPlan);
-  document.getElementById("submission-history")?.addEventListener("click", handleSubmissionAction);
-  document.getElementById("launch-class-assessment")?.addEventListener("click", () => launchAssessment("class"));
-  document.getElementById("launch-student-assessment")?.addEventListener("click", () => launchAssessment("student"));
-  document.getElementById("open-iep-modal").addEventListener("click", () => {
-    document.getElementById("settings-modal")?.close();
-    document.getElementById("iep-modal").showModal();
-  });
-  document.getElementById("save-iep-supports").addEventListener("click", renderStrategies);
   ["lesson-grade", "lesson-subject", "objective-style"].forEach(id => {
-    document.getElementById(id).addEventListener("change", () => {
+    on(id, "change", () => {
       renderStandardsPreview();
       renderStrategies();
     });
   });
+}
+
+function getClassConfig(period = appState.activePeriod) {
+  return classAccessCodes[period] || classAccessCodes["1"];
+}
+
+function syncLessonPeriodControls(period = appState.activePeriod) {
+  const config = getClassConfig(period);
+  const classSelect = document.getElementById("class-select");
+  const lessonPeriod = document.getElementById("lesson-period");
+  const lessonGrade = document.getElementById("lesson-grade");
+  const lessonSubject = document.getElementById("lesson-subject");
+  if (classSelect) classSelect.value = period;
+  if (lessonPeriod) lessonPeriod.value = period;
+  if (lessonGrade && config.grade) lessonGrade.value = config.grade;
+  if (lessonSubject && config.subject) lessonSubject.value = config.subject;
+}
+
+function getSelectedSupportIds(period = appState.activePeriod) {
+  const configured = getClassConfig(period).supports;
+  if (Array.isArray(configured)) return configured;
+  return Object.entries(appState.selectedSupports)
+    .filter(([, selected]) => selected)
+    .map(([id]) => id);
 }
 
 const defaultProfiles = JSON.parse(JSON.stringify(classProfiles));
@@ -712,13 +755,13 @@ function renderConnectionStatus() {
 }
 
 function bindStudent() {
-  document.getElementById("student-teacher-code")?.addEventListener("input", event => {
+  on("student-teacher-code", "input", event => {
     appState.gradeBand = gradeBandFromTeacherCode(event.target.value);
     appState.answers = {};
     renderAssessment();
   });
 
-  document.getElementById("submit-assessment")?.addEventListener("click", () => {
+  on("submit-assessment", "click", () => {
     const studentId = document.getElementById("student-id")?.value || "student";
     const message = document.getElementById("assessment-submit-status");
     if (message) {
@@ -726,20 +769,20 @@ function bindStudent() {
     }
   });
 
-  document.getElementById("student-logout")?.addEventListener("click", () => {
+  on("student-logout", "click", () => {
     window.location.href = "/";
   });
 }
 
 function bindAdmin() {
-  document.getElementById("question-filter").addEventListener("change", renderQuestions);
+  on("question-filter", "change", renderQuestions);
 }
 
 function bindQuestions() {}
 
 function bindLibrary() {
   ["library-system-filter", "library-grade-filter", "library-subject-filter"].forEach(id => {
-    document.getElementById(id).addEventListener("change", renderLibrary);
+    on(id, "change", renderLibrary);
   });
 }
 
@@ -747,7 +790,6 @@ function renderAll() {
   renderTeacher();
   renderSystemToggles();
   renderStrategies();
-  renderLessonAnalysis();
   renderStandardsPreview();
   renderSubmissionHistory();
   renderStudent();
@@ -758,8 +800,10 @@ function renderAll() {
 }
 
 function renderTeacher() {
+  if (!document.getElementById("teacher-view")) return;
+  syncLessonPeriodControls(appState.activePeriod);
   const profile = classProfiles[appState.activePeriod];
-  const classCode = classAccessCodes[appState.activePeriod]?.code || "LM-CLASS";
+  const classCode = getClassConfig(appState.activePeriod)?.code || "LM-CLASS";
   paintCompass("teacher-compass", profile.profile);
   renderStats("teacher-profile-stats", profile.profile);
   const codeEl = document.getElementById("teacher-class-code");
@@ -768,8 +812,11 @@ function renderTeacher() {
   if (classInsight) classInsight.textContent = buildInsight(profile.profile);
   const rosterCount = document.getElementById("roster-count");
   if (rosterCount) rosterCount.textContent = `${profile.roster.length} students`;
-  document.getElementById("roster-tab-count").textContent = `${profile.roster.length} students`;
-  document.getElementById("roster-list").innerHTML = profile.roster.map(student => `
+  const rosterTabCount = document.getElementById("roster-tab-count");
+  if (rosterTabCount) rosterTabCount.textContent = `${profile.roster.length} students`;
+  const rosterList = document.getElementById("roster-list");
+  if (!rosterList) return;
+  rosterList.innerHTML = profile.roster.map(student => `
     <div class="roster-item student-profile-row">
       <div class="student-profile-string">
         <strong>ID # ${student.id}</strong>
@@ -783,7 +830,7 @@ function renderTeacher() {
     </div>
   `).join("") || `<div class="analysis-card"><strong>No student profiles loaded</strong><p>This class can be hidden or treated as planning time.</p></div>`;
   if (profile.roster.length) {
-    document.getElementById("roster-list").insertAdjacentHTML("beforeend", `
+    rosterList.insertAdjacentHTML("beforeend", `
       <div class="analysis-card">
         <strong>Data retention</strong>
         <p>Student assessment data permanently deletes after 365 days or when the teacher starts a new school year.</p>
@@ -796,7 +843,9 @@ function renderTeacher() {
 }
 
 function renderSystemToggles() {
-  document.getElementById("system-toggles").innerHTML = systems.map(system => `
+  const container = document.getElementById("system-toggles");
+  if (!container) return;
+  container.innerHTML = systems.map(system => `
     <label class="system-toggle">
       <span>${system.label}</span>
       <input type="checkbox" data-system="${system.id}" ${appState.enabledSystems[system.id] ? "checked" : ""}>
@@ -813,9 +862,12 @@ function renderSystemToggles() {
 }
 
 function renderIepSupports() {
-  document.getElementById("iep-supports").innerHTML = iepSupports.map(support => `
+  const container = document.getElementById("iep-supports");
+  if (!container) return;
+  const selectedSupportIds = new Set(getSelectedSupportIds(appState.activePeriod));
+  container.innerHTML = iepSupports.map(support => `
     <label class="support-card">
-      <input type="checkbox" data-support="${support.id}" ${appState.selectedSupports[support.id] ? "checked" : ""}>
+      <input type="checkbox" data-support="${support.id}" ${selectedSupportIds.has(support.id) ? "checked" : ""}>
       <span>
         <strong>${support.label}</strong>
         <p>${support.description}</p>
@@ -825,6 +877,11 @@ function renderIepSupports() {
 
   document.querySelectorAll("[data-support]").forEach(input => {
     input.addEventListener("change", event => {
+      const config = getClassConfig(appState.activePeriod);
+      const next = new Set(getSelectedSupportIds(appState.activePeriod));
+      if (event.target.checked) next.add(event.target.dataset.support);
+      else next.delete(event.target.dataset.support);
+      config.supports = [...next];
       appState.selectedSupports[event.target.dataset.support] = event.target.checked;
     });
   });
@@ -835,7 +892,9 @@ function openStudentProfile(studentId) {
   if (!student) return;
   const questions = questionBank.g35.slice(0, 3);
   const modal = document.getElementById("student-profile-modal");
-  document.getElementById("student-profile-modal-body").innerHTML = `
+  const body = document.getElementById("student-profile-modal-body");
+  if (!modal || !body) return;
+  body.innerHTML = `
     <div class="student-profile-summary">
       <div>
         <span class="roster-label">ID #</span>
@@ -876,7 +935,9 @@ function openStudentProfile(studentId) {
 }
 
 function analyzeLesson() {
-  appState.lessonText = document.getElementById("lesson-text").value.trim();
+  const lessonText = document.getElementById("lesson-text");
+  if (!lessonText) return;
+  appState.lessonText = lessonText.value.trim();
   const sourceText = getAnalyzableLessonText();
   const words = sourceText.toLowerCase().match(/[a-z]{4,}/g) || [];
   const useful = words.filter(word => !["with", "from", "that", "this", "students", "lesson", "teacher"].includes(word));
@@ -887,8 +948,16 @@ function analyzeLesson() {
 
 function renderLessonAnalysis() {
   const panel = document.getElementById("lesson-analysis");
+  if (!panel) return;
+  if (needsServerLessonParsing()) {
+    panel.innerHTML = `
+      <strong>Files Ready For AI Parsing</strong>
+      <p>Your uploaded file is queued for the full AI document parser. The final build will read Word/PDF/photo content, apply class data and selected strategies, and fill the Lesson Mentor signature template.</p>
+    `;
+    return;
+  }
   if (!appState.lessonText) {
-    panel.innerHTML = `<strong>No lesson analyzed yet</strong><p>Once a lesson is loaded, this panel shows detected keywords and suggested focus areas.</p>`;
+    panel.innerHTML = "";
     return;
   }
 
@@ -953,7 +1022,13 @@ function getAnalyzableLessonText() {
   const filenameText = appState.uploadedFiles.map(file => readableTitleFromFilename(file.name)).join(" ");
   const subject = subjectLabel(document.getElementById("lesson-subject")?.value || "");
   const grade = document.getElementById("lesson-grade")?.value || "";
-  return [filenameText, subject, grade ? `Grade ${grade}` : ""].filter(Boolean).join(" ") || sampleLesson;
+  return [filenameText, subject, grade ? `Grade ${grade}` : ""].filter(Boolean).join(" ");
+}
+
+function needsServerLessonParsing() {
+  const pasted = document.getElementById("lesson-text")?.value.trim() || "";
+  const parserNotice = pasted.includes("Full build behavior:") || pasted.includes("For this browser prototype");
+  return appState.uploadedFiles.length > 0 && (!pasted || parserNotice);
 }
 
 function readableTitleFromFilename(filename = "") {
@@ -1007,10 +1082,41 @@ function titleCase(text) {
 
 async function generateLessonPlan() {
   const hasUpload = appState.uploadedFiles.length > 0;
-  if (!document.getElementById("lesson-text").value.trim() && !hasUpload) {
-    document.getElementById("lesson-text").value = sampleLesson;
+  const lessonText = document.getElementById("lesson-text");
+  if (!lessonText) return;
+  if (!lessonText.value.trim() && !hasUpload) {
+    appState.lessonText = "";
+    renderLessonAnalysis();
+    const submissionHistory = document.getElementById("submission-history");
+    if (submissionHistory) {
+      submissionHistory.innerHTML = `
+        <div class="history-row muted-row">
+          <div>
+            <strong>No lesson submitted yet</strong>
+            <p>Upload a file or paste lesson text before generating.</p>
+          </div>
+        </div>
+      `;
+    }
+    return;
   }
+
   analyzeLesson();
+  if (needsServerLessonParsing()) {
+    renderLessonAnalysis();
+    const submissionHistory = document.getElementById("submission-history");
+    if (submissionHistory) {
+      submissionHistory.innerHTML = `
+        <div class="history-row muted-row">
+          <div>
+            <strong>AI Template Generation Needed</strong>
+            <p>${appState.uploadedFiles.length} file${appState.uploadedFiles.length === 1 ? "" : "s"} ready for OCR/document parsing. No sample lesson was generated.</p>
+          </div>
+        </div>
+      `;
+    }
+    return;
+  }
 
   const profile = classProfiles[appState.activePeriod].profile;
   const matched = strategyLibrary
@@ -1020,7 +1126,8 @@ async function generateLessonPlan() {
     .slice(0, 4);
   const primaryMove = matched[0]?.title || "a visual model";
   const secondaryMove = matched[1]?.title || "structured partner talk";
-  const supportInserts = iepSupports.filter(support => appState.selectedSupports[support.id]);
+  const selectedSupportIds = new Set(getSelectedSupportIds(appState.activePeriod));
+  const supportInserts = iepSupports.filter(support => selectedSupportIds.has(support.id));
   const organizers = selectOrganizers();
   const standards = getStandardMatches();
   const objectiveStatement = buildObjectiveStatement();
@@ -1036,6 +1143,7 @@ async function generateLessonPlan() {
     id: `submission-${Date.now()}`,
     title: lessonTitle,
     period: classProfiles[appState.activePeriod].name,
+    classCode: getClassConfig(appState.activePeriod).code,
     systems: selectedSystemLabels,
     status: "ready",
     date: "Today",
@@ -1070,6 +1178,7 @@ async function persistLessonSubmission(submission, standards, supportInserts, or
     selected_systems: submission.systems,
     matched_standards: standards.map(item => ({ id: item.id, framework: item.framework, text: item.text })),
     selected_supports: supportInserts.map(item => item.id),
+    teacher_code: getClassConfig(appState.activePeriod).code,
     recommended_organizers: organizers,
     lesson_text: appState.lessonText,
     uploaded_files: appState.uploadedFiles,
@@ -1106,14 +1215,17 @@ async function launchAssessment(scope) {
     status: "open"
   };
 
-  document.getElementById("active-assessment-status").textContent =
-    `Open for ${target}: ${questions.length} questions, same order for everyone, teacher display view enabled.`;
+  const status = document.getElementById("active-assessment-status");
+  if (status) {
+    status.textContent = `Open for ${target}: ${questions.length} questions, same order for everyone, teacher display view enabled.`;
+  }
 
   if (!api) return;
   const { error } = await api.createAssessmentLaunch(payload);
   if (error) {
-    document.getElementById("active-assessment-status").textContent =
-      `Open in demo view for ${target}; Supabase save needs attention.`;
+    if (status) {
+      status.textContent = `Open in demo view for ${target}; Supabase save needs attention.`;
+    }
     console.error("Assessment launch save failed", error);
   }
 }
@@ -1150,6 +1262,7 @@ function availabilityPill(item) {
 
 function renderSubmissionHistory() {
   const submissionHistory = document.getElementById("submission-history");
+  if (!submissionHistory) return;
   if (!appState.submissions.length) {
     submissionHistory.innerHTML = `
       <div class="history-row muted-row">
@@ -1216,6 +1329,7 @@ function buildGeneratedLessonLines(item) {
     item.title,
     "",
     `Class: ${item.period || classProfiles[appState.activePeriod].name}`,
+    `Teacher Code: ${item.classCode || getClassConfig(appState.activePeriod).code}`,
     `Grade: ${item.grade || document.getElementById("lesson-grade")?.value || ""}`,
     `Subject: ${subjectLabel(item.subject || document.getElementById("lesson-subject")?.value || "")}`,
     `Uploaded file(s): ${files}`,
@@ -1279,8 +1393,7 @@ function previewGeneratedLesson(item) {
 }
 
 function downloadGeneratedPdf(item) {
-  const lines = buildGeneratedLessonLines(item);
-  const pdfBlob = makeSimplePdf(lines);
+  const pdfBlob = makeLessonPlanPdf(item);
   downloadBlob(pdfBlob, safeFilename(item.title, "pdf"));
 }
 
@@ -1299,27 +1412,288 @@ function downloadGeneratedDocx(item) {
   downloadBlob(makeZip(files), safeFilename(item.title, "docx"));
 }
 
-function makeSimplePdf(lines) {
-  const escapedLines = lines.flatMap(line => {
-    if (line.length <= 86) return [line];
-    const chunks = [];
-    let remaining = line;
-    while (remaining.length > 86) {
-      const cut = remaining.lastIndexOf(" ", 86);
-      chunks.push(remaining.slice(0, cut > 0 ? cut : 86));
-      remaining = remaining.slice(cut > 0 ? cut + 1 : 86);
-    }
-    chunks.push(remaining);
-    return chunks;
+function makeLessonPlanPdf(item) {
+  const pdf = createPdfWriter({ width: 792, height: 612 });
+  const accent = "1F5C5C";
+  const lightAccent = "EAF2F2";
+  const amber = "B8862E";
+  const paleAmber = "F7EBD2";
+  const ink = "202938";
+  const muted = "4B5D78";
+  const border = "9CA3AF";
+  const margin = 30;
+  const pageWidth = 792;
+  const contentWidth = pageWidth - margin * 2;
+  const standards = item.standards?.length
+    ? item.standards.map(standard => `${standard.framework}: ${standard.id}`).join("; ")
+    : "Standards will be finalized after AI standards matching.";
+  const grade = item.grade || document.getElementById("lesson-grade")?.value || "";
+  const subject = subjectLabel(item.subject || document.getElementById("lesson-subject")?.value || "");
+  const periodLabel = item.period || classProfiles[appState.activePeriod]?.name || "Selected class";
+  const objective = item.objective || buildObjectiveStatement();
+  const keywords = item.keywords?.length ? item.keywords.slice(0, 8).join(", ") : "academic vocabulary from uploaded lesson";
+  const materials = [
+    item.uploadedFiles?.length ? item.uploadedFiles.map(file => file.name).join(", ") : "Uploaded lesson materials",
+    item.organizers?.length ? `Organizers: ${item.organizers.join(", ")}` : ""
+  ].filter(Boolean).join("; ");
+
+  pdf.addPage();
+  pdf.text("Teaching & Learning Moves Matrix", margin, 28, { size: 18, bold: true, color: accent });
+  pdf.text("A reciprocal planning grid - what the teacher does, what students do, and how language is supported, segment by segment", margin, 45, { size: 8.5, color: muted });
+  pdf.text("Lesson Mentor Generated Output", pageWidth - margin - 150, 30, { size: 9, bold: true, color: accent });
+
+  const headerY = 62;
+  const headerH = 48;
+  drawFieldTable(pdf, margin, headerY, contentWidth, headerH, [
+    ["Educator", "Education Under Construction LLC"],
+    ["Date", new Date().toLocaleDateString()],
+    ["Grade / Course", `${periodLabel} - Grade ${grade} ${subject}`],
+    ["Standard(s)", standards]
+  ], { accent, border, ink });
+
+  drawBox(pdf, margin, 122, contentWidth, 54, {
+    title: "Lesson Objective And Board Language",
+    body: objective,
+    accent,
+    border,
+    fill: "FFFFFF"
   });
-  const content = ["BT", "/F1 12 Tf", "54 750 Td", "16 TL", ...escapedLines.map(line => `(${escapePdf(line)}) Tj T*`), "ET"].join("\n");
+
+  drawTwoColumnFields(pdf, margin, 188, contentWidth, 38, [
+    ["Vocabulary", keywords],
+    ["Materials", materials]
+  ], { accent, border, ink });
+
+  const segments = buildTemplateSegments(item);
+  drawLessonMatrix(pdf, margin, 240, contentWidth, 318, segments, { accent, lightAccent, amber, paleAmber, border, ink, muted });
+
+  pdf.text("Generated by Lesson Mentor - differentiated planning, teacher-ready language, and intentional supports.", margin, 584, { size: 7.5, color: muted });
+
+  pdf.addPage();
+  pdf.text("Teaching & Learning Moves Matrix", margin, 30, { size: 16, bold: true, color: accent });
+  pdf.text(item.title || "Generated Lesson Plan", margin, 47, { size: 9, color: muted });
+
+  const footerSections = [
+    ["Grouping Used Today", buildGroupingText(item)],
+    ["Assessment Evidence - What Will You Collect Or Observe To Know Students Learned It?", buildAssessmentEvidenceText(item)],
+    ["Differentiation Notes", buildDifferentiationText(item)],
+    ["Reflection (Complete After Teaching)", "What worked? Which students still need another access point? What should be adjusted before teaching this lesson again?"]
+  ];
+  let y = 70;
+  footerSections.forEach(([title, body]) => {
+    drawBox(pdf, margin, y, contentWidth, 105, { title, body, accent, border, fill: "FFFFFF" });
+    y += 122;
+  });
+
+  return pdf.toBlob();
+}
+
+function buildTemplateSegments(item) {
+  const strategyList = item.strategies?.length ? item.strategies : item.systems?.filter(system => system !== "IEP Supports") || [];
+  const supportList = item.supportInserts?.length
+    ? item.supportInserts.map(support => `${support.insert} (${support.label})`)
+    : ["Use selected class IEP supports at the point where they match the task demand. (IEP)"];
+  const objective = item.objective || buildObjectiveStatement();
+  const primaryStrategy = strategyList[0] || "Comprehensible Input";
+  const secondaryStrategy = strategyList[1] || "Structured Partner Talk";
+  const cerStrategy = strategyList.find(strategy => /claim|evidence|reason/i.test(strategy)) || "Claim Evidence Reasoning Frame";
+  return [
+    {
+      segment: "Hook & Background Building",
+      teacher: `Launch the lesson with a short visual, source, or question connected to the objective: ${objective}`,
+      student: "Activate prior knowledge, notice key details, and make an initial prediction or connection.",
+      language: `Preview vocabulary: ${item.keywords?.slice(0, 5).join(", ") || "content vocabulary"}.`,
+      integration: `${primaryStrategy} (SIOP). Offer a visual/context anchor before directions.`
+    },
+    {
+      segment: "Direct Teach (I do)",
+      teacher: "Model the thinking process step by step. Show how to identify useful evidence and explain why it matters.",
+      student: "Track the model, annotate or sketch the key step, and rehearse one academic phrase.",
+      language: `Sentence frames: "My claim is ___ because ___." / "The evidence shows ___, so I think ___."`,
+      integration: `${supportList[0]}`
+    },
+    {
+      segment: "Guided Work (We do)",
+      teacher: "Guide students through a shared example. Pause for checks and clarify misconceptions before release.",
+      student: "Work with a partner or small group to sort, discuss, or apply evidence to the shared task.",
+      language: "Require students to say the evidence before writing it. Capture one shared response.",
+      integration: `${secondaryStrategy} (Kagan/SIOP). Add teacher check-in for students needing support.`
+    },
+    {
+      segment: "Independent Work (You do)",
+      teacher: "Release students to complete the aligned response or product. Circulate with targeted prompts.",
+      student: "Complete the task using the model, sentence frame, organizer, and evidence gathered during guided work.",
+      language: "Students write or present using claim, evidence, and explanation language.",
+      integration: `${cerStrategy} (CER). ${supportList[1] || supportList[0]}`
+    },
+    {
+      segment: "Wrap-Up & Check",
+      teacher: "Collect a quick check aligned to the objective and note which students need reteaching or extension.",
+      student: "Submit an exit response, explain one piece of evidence, or reflect on the strategy that helped most.",
+      language: "Board-ready closure: Today I learned ___ because the evidence showed ___.",
+      integration: `${supportList[2] || "Offer a short break or reduced-response option when appropriate. (IEP)"}`
+    }
+  ];
+}
+
+function buildGroupingText(item) {
+  const strategies = item.strategies?.join(", ") || "teacher-selected strategies";
+  return `Whole group for launch and modeling; partners or small groups for guided practice using ${strategies}; independent work for the final response.`;
+}
+
+function buildAssessmentEvidenceText(item) {
+  return `Collect the student response tied to the board language: ${item.objective || buildObjectiveStatement()} Look for accurate use of evidence, academic vocabulary, and the selected strategy supports.`;
+}
+
+function buildDifferentiationText(item) {
+  const supports = item.supportInserts?.length
+    ? item.supportInserts.map(support => support.insert).join(" ")
+    : "Apply selected IEP supports only where they are used in the lesson.";
+  const organizers = item.organizers?.length ? `Attach or offer: ${item.organizers.join(", ")}.` : "";
+  return `${supports} ${organizers}`.trim();
+}
+
+function drawFieldTable(pdf, x, y, width, height, fields, options) {
+  const firstRowH = height * 0.5;
+  const colW = width / 3;
+  fields.slice(0, 3).forEach(([label, value], index) => {
+    drawLabeledCell(pdf, x + colW * index, y, colW, firstRowH, label, value, options);
+  });
+  drawLabeledCell(pdf, x, y + firstRowH, width, height - firstRowH, fields[3][0], fields[3][1], options);
+}
+
+function drawTwoColumnFields(pdf, x, y, width, height, fields, options) {
+  const colW = width / 2;
+  fields.forEach(([label, value], index) => {
+    drawLabeledCell(pdf, x + colW * index, y, colW, height, label, value, options);
+  });
+}
+
+function drawLabeledCell(pdf, x, y, width, height, label, value, { accent, border, ink }) {
+  pdf.rect(x, y, width, height, { stroke: border, fill: "FFFFFF" });
+  pdf.rect(x, y, 74, height, { stroke: border, fill: accent });
+  pdf.wrap(label, x + 6, y + 12, 62, { size: 7.5, bold: true, color: "FFFFFF", maxLines: 2 });
+  pdf.wrap(value || " ", x + 82, y + 12, width - 90, { size: 8.5, color: ink, maxLines: 2 });
+}
+
+function drawBox(pdf, x, y, width, height, { title, body, accent, border, fill }) {
+  pdf.rect(x, y, width, height, { stroke: border, fill });
+  pdf.rect(x, y, width, 18, { stroke: accent, fill: accent });
+  pdf.text(title, x + 8, y + 13, { size: 8.5, bold: true, color: "FFFFFF" });
+  pdf.wrap(body || " ", x + 8, y + 34, width - 16, { size: 9, color: "202938", lineHeight: 11, maxLines: Math.max(2, Math.floor((height - 35) / 11)) });
+}
+
+function drawLessonMatrix(pdf, x, y, width, height, segments, colors) {
+  const columns = [
+    { label: "Segment", width: 116 },
+    { label: "Teacher Moves", width: 144 },
+    { label: "Student Moves", width: 144 },
+    { label: "Language & Support Notes", width: 154 },
+    { label: "Strategy Integrations/IEP", width: width - 116 - 144 - 144 - 154 }
+  ];
+  const headerH = 24;
+  const rowH = (height - headerH) / segments.length;
+  let cursor = x;
+  columns.forEach((column, index) => {
+    const fill = index === 4 ? colors.amber : colors.accent;
+    pdf.rect(cursor, y, column.width, headerH, { stroke: colors.border, fill });
+    pdf.wrap(column.label, cursor + 5, y + 15, column.width - 10, { size: 7.5, bold: true, color: "FFFFFF", maxLines: 2 });
+    cursor += column.width;
+  });
+  segments.forEach((segment, rowIndex) => {
+    let colX = x;
+    const rowY = y + headerH + rowH * rowIndex;
+    const rowValues = [segment.segment, segment.teacher, segment.student, segment.language, segment.integration];
+    columns.forEach((column, colIndex) => {
+      const fill = colIndex === 0 ? colors.lightAccent : colIndex === 4 ? colors.paleAmber : "FFFFFF";
+      pdf.rect(colX, rowY, column.width, rowH, { stroke: colors.border, fill });
+      pdf.wrap(rowValues[colIndex], colX + 5, rowY + 13, column.width - 10, {
+        size: colIndex === 0 ? 7.8 : 7.2,
+        bold: colIndex === 0,
+        color: colors.ink,
+        lineHeight: 8.7,
+        maxLines: Math.max(2, Math.floor((rowH - 10) / 8.7))
+      });
+      colX += column.width;
+    });
+  });
+}
+
+function createPdfWriter({ width, height }) {
+  const pages = [];
+  let current = [];
+  const writer = {
+    addPage() {
+      current = [];
+      pages.push(current);
+    },
+    text(text, x, y, options = {}) {
+      current.push("BT");
+      current.push(`/${options.bold ? "F2" : "F1"} ${options.size || 10} Tf`);
+      current.push(`${pdfColor(options.color || "000000")} rg`);
+      current.push(`${x.toFixed(2)} ${(height - y).toFixed(2)} Td`);
+      current.push(`(${escapePdf(pdfSafeText(text))}) Tj`);
+      current.push("ET");
+    },
+    wrap(text, x, y, boxWidth, options = {}) {
+      const size = options.size || 10;
+      const lineHeight = options.lineHeight || size + 2;
+      const maxLines = options.maxLines || 3;
+      const lines = wrapPdfText(text, boxWidth, size, maxLines);
+      lines.forEach((line, index) => {
+        writer.text(line, x, y + index * lineHeight, options);
+      });
+    },
+    rect(x, y, w, h, options = {}) {
+      if (options.fill) current.push(`${pdfColor(options.fill)} rg`);
+      if (options.stroke) current.push(`${pdfColor(options.stroke)} RG`);
+      current.push(`${x.toFixed(2)} ${(height - y - h).toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re ${options.fill && options.stroke ? "B" : options.fill ? "f" : "S"}`);
+    },
+    toBlob() {
+      return buildPdfBlob(pages, width, height);
+    }
+  };
+  return writer;
+}
+
+function wrapPdfText(text, boxWidth, size, maxLines) {
+  const clean = pdfSafeText(text);
+  const maxChars = Math.max(8, Math.floor(boxWidth / (size * 0.48)));
+  const words = clean.split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  words.forEach(word => {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > maxChars && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  });
+  if (line) lines.push(line);
+  if (lines.length > maxLines) {
+    const clipped = lines.slice(0, maxLines);
+    clipped[maxLines - 1] = clipped[maxLines - 1].replace(/\.*$/, "") + "...";
+    return clipped;
+  }
+  return lines.length ? lines : [" "];
+}
+
+function buildPdfBlob(pageStreams, width, height) {
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
-    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
-    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`
+    `<< /Type /Pages /Kids [${pageStreams.map((_, index) => `${3 + index * 2} 0 R`).join(" ")}] /Count ${pageStreams.length} >>`
   ];
+  pageStreams.forEach((stream, index) => {
+    const pageObjectNumber = 3 + index * 2;
+    const contentObjectNumber = pageObjectNumber + 1;
+    const content = stream.join("\n");
+    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${width} ${height}] /Resources << /Font << /F1 ${3 + pageStreams.length * 2} 0 R /F2 ${4 + pageStreams.length * 2} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`);
+    objects.push(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+  });
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
   let pdf = "%PDF-1.4\n";
   const offsets = [0];
   objects.forEach((object, index) => {
@@ -1333,6 +1707,24 @@ function makeSimplePdf(lines) {
   });
   pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
   return new Blob([pdf], { type: "application/pdf" });
+}
+
+function pdfColor(hex) {
+  const clean = String(hex || "000000").replace("#", "");
+  const r = parseInt(clean.slice(0, 2), 16) / 255;
+  const g = parseInt(clean.slice(2, 4), 16) / 255;
+  const b = parseInt(clean.slice(4, 6), 16) / 255;
+  return `${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)}`;
+}
+
+function pdfSafeText(text) {
+  return String(text || "")
+    .replace(/[–—]/g, "-")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[•]/g, "-")
+    .normalize("NFKD")
+    .replace(/[^\x20-\x7E]/g, "");
 }
 
 function makeZip(files) {
@@ -1459,7 +1851,9 @@ function renderStudent() {
 }
 
 function renderAvatars() {
-  document.getElementById("avatar-grid").innerHTML = avatars.map((avatar, index) => `
+  const grid = document.getElementById("avatar-grid");
+  if (!grid) return;
+  grid.innerHTML = avatars.map((avatar, index) => `
     <button class="avatar-button ${avatar === appState.selectedAvatar ? "active" : ""}" data-avatar="${avatar}" title="${avatar}">
       ${badgeSvg(avatar, index)}
       <span>${avatar}</span>
@@ -1617,8 +2011,11 @@ function studyTip(modality) {
 }
 
 function renderAdmin() {
+  const adminStudents = document.getElementById("admin-students");
+  const assignmentGrid = document.getElementById("assignment-grid");
+  if (!adminStudents || !assignmentGrid) return;
   const students = Object.values(classProfiles).flatMap(group => group.roster);
-  document.getElementById("admin-students").innerHTML = students.map(student => `
+  adminStudents.innerHTML = students.map(student => `
     <div class="student-row">
       <div>
         <strong>ID ${student.id}</strong>
@@ -1634,13 +2031,16 @@ function renderAdmin() {
       <span class="small-pill">${index < 4 ? "Assigned" : "Open"}</span>
     </div>
   `).join("");
-  document.getElementById("assignment-grid").innerHTML = slots;
+  assignmentGrid.innerHTML = slots;
 }
 
 function renderQuestions() {
-  const filter = document.getElementById("question-filter").value;
+  const filterControl = document.getElementById("question-filter");
+  const questionGrid = document.getElementById("question-grid");
+  if (!filterControl || !questionGrid) return;
+  const filter = filterControl.value;
   const entries = Object.entries(questionBank).filter(([band]) => filter === "all" || filter === band);
-  document.getElementById("question-grid").innerHTML = entries.flatMap(([band, questions]) => questions.map((question, index) => `
+  questionGrid.innerHTML = entries.flatMap(([band, questions]) => questions.map((question, index) => `
     <article class="question-card">
       <strong>${bandLabel(band)} Q${index + 1}</strong>
       <p>${question.text}</p>
@@ -1650,9 +2050,14 @@ function renderQuestions() {
 }
 
 function renderLibrary() {
-  const system = document.getElementById("library-system-filter").value;
-  const grade = document.getElementById("library-grade-filter").value;
-  const subject = document.getElementById("library-subject-filter").value;
+  const systemControl = document.getElementById("library-system-filter");
+  const gradeControl = document.getElementById("library-grade-filter");
+  const subjectControl = document.getElementById("library-subject-filter");
+  const results = document.getElementById("library-results");
+  if (!systemControl || !gradeControl || !subjectControl || !results) return;
+  const system = systemControl.value;
+  const grade = gradeControl.value;
+  const subject = subjectControl.value;
   const filtered = strategyLibrary.filter(strategy => {
     const systemOk = system === "all" || strategy.system === system;
     const gradeOk = grade === "all" || strategy.grades.includes(grade);
@@ -1660,7 +2065,7 @@ function renderLibrary() {
     return systemOk && gradeOk && subjectOk;
   });
 
-  document.getElementById("library-results").innerHTML = filtered.map(strategy => `
+  results.innerHTML = filtered.map(strategy => `
     <article class="strategy-card">
       <div class="panel-title-row">
         <strong>${strategy.title}</strong>
@@ -1702,6 +2107,8 @@ function badgeSvg(name, index) {
 }
 
 function paintCompass(id, profile) {
+  const compass = document.getElementById(id);
+  if (!compass) return;
   const values = styleOrder.map(key => Math.max(0, profile[key] || 0));
   const total = values.reduce((sum, value) => sum + value, 0) || 100;
   let cursor = 0;
@@ -1710,15 +2117,17 @@ function paintCompass(id, profile) {
     cursor += (values[index] / total) * 100;
     return `${styles[key].color} ${start}% ${cursor}%`;
   });
-  document.getElementById(id).style.background = `conic-gradient(${stops.join(", ")})`;
+  compass.style.background = `conic-gradient(${stops.join(", ")})`;
 }
 
 function renderStats(id, profile) {
+  const container = document.getElementById(id);
+  if (!container) return;
   const orderedStyles = Object.keys(profile).sort((a, b) => {
     const difference = (profile[b] || 0) - (profile[a] || 0);
     return difference || styleOrder.indexOf(a) - styleOrder.indexOf(b);
   });
-  document.getElementById(id).innerHTML = orderedStyles.map(key => `
+  container.innerHTML = orderedStyles.map(key => `
     <div class="stat-row">
       <span class="stat-label" tabindex="0" title="${styles[key].description}" data-tooltip="${styles[key].description}">${styles[key].name}</span>
       <div class="bar"><span style="width:${profile[key] || 0}%;background:${styles[key].color}"></span></div>

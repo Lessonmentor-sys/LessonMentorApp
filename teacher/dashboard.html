@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lesson Mentor</title>
     <link rel="icon" type="image/png" href="/assets/lessonmentor-favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=live2">
+    <link rel="stylesheet" href="/styles.css?v=live5">
   </head>
   <body>
     <div class="mobile-use-warning" id="mobile-use-warning" role="dialog" aria-labelledby="mobile-warning-title" aria-describedby="mobile-warning-copy">
@@ -24,14 +24,6 @@
             <p>lessonmentor.app</p>
           </div>
         </div>
-
-        <nav class="nav" aria-label="Main navigation">
-          <button class="nav-button active" data-view="teacher">Teacher</button>
-          <button class="nav-button" data-view="student">Student</button>
-          <button class="nav-button" data-view="library">Library</button>
-          <button class="nav-button" data-view="admin">School</button>
-          <button class="nav-button" data-view="questions">Questions</button>
-        </nav>
 
         <div class="status-box">
           <span class="status-dot"></span>
@@ -86,6 +78,10 @@
                       <option value="10">Period 10 - Homeroom</option>
                     </select>
                   </label>
+                  <div class="teacher-code-card">
+                    <span>Teacher Code</span>
+                    <strong id="teacher-class-code">LM-P1-SCI</strong>
+                  </div>
                 </div>
                 <div class="profile-layout rail-profile">
                   <div class="compass" id="teacher-compass" aria-label="Class learning profile chart"></div>
@@ -100,39 +96,63 @@
                   <div class="panel-title-row">
                     <h4>Submit A New Lesson Plan File</h4>
                   </div>
-                  <div class="lesson-meta-grid">
-                    <label>Grade
-                      <select id="lesson-grade">
-                        <option value="2">Grade 2</option>
-                        <option value="3">Grade 3</option>
-                        <option value="4" selected>Grade 4</option>
-                        <option value="5">Grade 5</option>
-                        <option value="6">Grade 6</option>
-                        <option value="7">Grade 7</option>
-                        <option value="8">Grade 8</option>
-                      </select>
-                    </label>
-                    <label>Subject
-                      <select id="lesson-subject">
-                        <option value="art">Art</option>
-                        <option value="ela">ELA</option>
-                        <option value="language">Languages</option>
-                        <option value="library-makerspace">Library/Makerspace</option>
-                        <option value="math">Math</option>
-                        <option value="music">Music</option>
-                        <option value="pe">PE</option>
-                        <option value="science" selected>Science</option>
-                        <option value="social-studies">Social Studies</option>
-                        <option value="stem">STEM</option>
-                      </select>
-                    </label>
-                    <label>Board objective
-                      <select id="objective-style">
-                        <option value="ican" selected>I can statement</option>
-                        <option value="student">Student-friendly objective</option>
-                        <option value="both">Both</option>
-                      </select>
-                    </label>
+                  <div class="lesson-setup-grid">
+                    <div class="lesson-meta-grid">
+                      <label>Class / Period
+                        <select id="lesson-period">
+                          <option value="1">Period 1 - Grade 4 Science</option>
+                          <option value="2">Period 2 - Grade 5 ELA</option>
+                          <option value="3">Period 3 - Grade 3 Science</option>
+                          <option value="4">Period 4 - Math Intervention</option>
+                          <option value="5">Period 5 - Grade 4 Science</option>
+                          <option value="6">Period 6 - Planning</option>
+                          <option value="7">Period 7 - Social Studies</option>
+                          <option value="8">Period 8 - Enrichment</option>
+                          <option value="9">Period 9 - Reading Lab</option>
+                          <option value="10">Period 10 - Homeroom</option>
+                        </select>
+                      </label>
+                      <label>Grade
+                        <select id="lesson-grade">
+                          <option value="2">Grade 2</option>
+                          <option value="3">Grade 3</option>
+                          <option value="4" selected>Grade 4</option>
+                          <option value="5">Grade 5</option>
+                          <option value="6">Grade 6</option>
+                          <option value="7">Grade 7</option>
+                          <option value="8">Grade 8</option>
+                        </select>
+                      </label>
+                      <label>Subject
+                        <select id="lesson-subject">
+                          <option value="art">Art</option>
+                          <option value="ela">ELA</option>
+                          <option value="language">Languages</option>
+                          <option value="library-makerspace">Library/Makerspace</option>
+                          <option value="math">Math</option>
+                          <option value="music">Music</option>
+                          <option value="pe">PE</option>
+                          <option value="science" selected>Science</option>
+                          <option value="social-studies">Social Studies</option>
+                          <option value="stem">STEM</option>
+                        </select>
+                      </label>
+                      <label>Board objective
+                        <select id="objective-style">
+                          <option value="ican" selected>I can statement</option>
+                          <option value="student">Student-friendly objective</option>
+                          <option value="both">Both</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="inline-systems">
+                      <div class="panel-title-row">
+                        <h4>Strategies To Include</h4>
+                        <span class="small-pill">This lesson</span>
+                      </div>
+                      <div class="system-toggles" id="system-toggles"></div>
+                      <p class="auto-support-note">IEP supports are set per class in Settings and apply automatically.</p>
+                    </div>
                   </div>
                   <label class="upload-drop">
                     <input type="file" id="lesson-file" accept=".txt,.md,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp,.heic,.heif,image/*" multiple>
@@ -144,19 +164,6 @@
                   <div class="button-row">
                     <button class="primary-button" id="generate-lesson">Generate plan</button>
                     <button class="secondary-button" id="analyze-lesson">Analyze only</button>
-                    <button class="secondary-button" id="load-sample">Load sample</button>
-                  </div>
-                  <div class="inline-systems">
-                    <div class="panel-title-row">
-                      <h4>Strategies To Include</h4>
-                      <span class="small-pill">This lesson</span>
-                    </div>
-                    <div class="system-toggles" id="system-toggles"></div>
-                    <p class="auto-support-note">IEP supports are set per class in Settings and apply automatically.</p>
-                  </div>
-                  <div class="analysis-card" id="lesson-analysis">
-                    <strong>No Lesson Analyzed Yet</strong>
-                    <p>Detected lesson signals and standards will appear here.</p>
                   </div>
                 </div>
               </div>
@@ -176,51 +183,36 @@
           <div class="section-head">
             <div>
               <h3 id="student-heading">Student Assessment</h3>
-              <p>Student ID only, avatar choice, short assessment, and a draft learning profile result.</p>
+              <p>Students choose an avatar first, enter the teacher code, and complete only the deployed assessment.</p>
             </div>
           </div>
 
           <div class="student-grid">
-            <div class="panel">
+            <div class="panel student-avatar-panel" id="student-avatar-panel">
               <h4>Student Sign-In</h4>
               <div class="form-grid">
                 <label>Student ID <input id="student-id" value="48291"></label>
-                <label>Grade band
-                  <select id="grade-band">
-                    <option value="k2">K-2</option>
-                    <option value="g35" selected>Grades 3-5</option>
-                    <option value="g612">Grades 6-12</option>
-                  </select>
-                </label>
+                <label>Teacher Code <input id="student-teacher-code" value="LM-P1-SCI"></label>
                 <label class="switch-label inline-switch">
                   <input type="checkbox" id="read-aloud-toggle">
                   <span>Read questions aloud</span>
                 </label>
               </div>
-              <h4>Trail Badge</h4>
+              <h4>Select An Avatar</h4>
+              <p class="student-step-note">Choose one avatar to open the assessment.</p>
               <div class="avatar-grid" id="avatar-grid"></div>
             </div>
 
-            <div class="panel assessment-panel">
+            <div class="panel assessment-panel" id="student-assessment-panel">
               <div class="panel-title-row">
-                <h4>Assessment</h4>
+                <h4>Learning Style Survey</h4>
                 <span class="small-pill" id="assessment-progress"></span>
               </div>
               <div id="assessment-card"></div>
               <div class="button-row">
-                <button class="secondary-button" id="read-question">Read aloud</button>
-                <button class="secondary-button" id="prev-question">Back</button>
-                <button class="primary-button" id="next-question">Next</button>
+                <button class="primary-button" id="submit-assessment">Submit Assessment</button>
+                <button class="secondary-button logout-button" id="student-logout" type="button">Log Out</button>
               </div>
-            </div>
-
-            <div class="panel">
-              <h4>Learning Profile</h4>
-              <div class="profile-layout">
-                <div class="compass" id="student-compass"></div>
-                <div class="profile-stats" id="student-profile-stats"></div>
-              </div>
-              <div class="tip-list" id="study-tips"></div>
             </div>
           </div>
         </section>
@@ -520,6 +512,6 @@
     <script src="/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabaseClient.js"></script>
-    <script src="/app.js?v=live2"></script>
+    <script src="/app.js?v=live5"></script>
   </body>
 </html>
