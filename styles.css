@@ -383,17 +383,18 @@ button {
 }
 
 .lesson-meta-grid {
-  grid-template-columns: repeat(3, minmax(140px, 220px));
+  grid-template-columns: minmax(250px, 1.25fr) minmax(110px, 0.5fr) minmax(150px, 0.68fr) minmax(165px, 0.72fr);
   gap: 10px;
-  justify-content: start;
+  justify-content: stretch;
+  align-items: end;
 }
 
 .lesson-setup-grid {
   display: grid;
-  grid-template-columns: minmax(520px, 680px) minmax(360px, 1fr);
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 12px;
   align-items: stretch;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .lesson-setup-grid .lesson-meta-grid {
@@ -528,9 +529,9 @@ button {
 }
 
 .inline-systems {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .inline-systems .panel-title-row {
@@ -577,6 +578,13 @@ button {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
+}
+
+.upload-section-title {
+  margin: 16px 0 6px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.2;
 }
 
 .settings-grid {
@@ -1131,6 +1139,21 @@ body:not(.landing-page):not(.portal-login-page):not(.owner-admin-page) .panel::b
   padding: 12px;
 }
 
+.upload-panel .upload-drop {
+  padding: 16px;
+}
+
+.upload-panel .upload-drop input::file-selector-button {
+  min-height: 38px;
+  margin-right: 10px;
+  border: 1px solid #94a3b8;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 800;
+  padding: 0 14px;
+}
+
 .upload-panel .inline-systems + .analysis-card {
   margin-top: 14px;
 }
@@ -1395,12 +1418,14 @@ body.is-mobile-device .mobile-use-warning p {
 }
 
 .lesson-meta-grid label {
-  font-size: 0.86rem;
+  font-size: 0.84rem;
 }
 
 .lesson-meta-grid select {
   min-height: 34px;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
 }
 
 .inline-switch {
@@ -1702,10 +1727,16 @@ body.is-mobile-device .mobile-use-warning p {
   .launch-grid,
   .strategy-grid,
   .question-grid,
-  .filter-row,
-  .lesson-setup-grid,
-  .lesson-meta-grid {
+  .filter-row {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .lesson-meta-grid {
+    grid-template-columns: minmax(230px, 1.15fr) minmax(100px, 0.5fr) minmax(130px, 0.62fr) minmax(150px, 0.7fr);
+  }
+
+  .lesson-setup-grid {
+    grid-template-columns: 1fr;
   }
 
   .lesson360-layout {
@@ -2729,6 +2760,14 @@ body.is-mobile-device .mobile-use-warning p {
 .pricing-card b {
   margin-top: auto;
   font-size: 1.2rem;
+}
+
+.early-adopter-note {
+  margin-top: auto;
+  color: #40506a;
+  font-size: 0.95rem;
+  font-weight: 850;
+  line-height: 1.35;
 }
 
 .pricing-cta {

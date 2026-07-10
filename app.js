@@ -10,7 +10,7 @@ const styles = {
 const systems = [
   { id: "cer", label: "CER" },
   { id: "kagan", label: "Kagan" },
-  { id: "pbl", label: "Project Based Learning" },
+  { id: "pbl", label: "PBL" },
   { id: "siop", label: "SIOP" }
 ];
 
@@ -18,7 +18,7 @@ const systemLabels = {
   cer: "CER",
   iep: "IEP Supports",
   kagan: "Kagan",
-  pbl: "Project Based Learning",
+  pbl: "PBL",
   siop: "SIOP"
 };
 

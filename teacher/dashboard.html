@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lesson Mentor</title>
     <link rel="icon" type="image/png" href="/assets/lessonmentor-favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=live5">
+    <link rel="stylesheet" href="/styles.css?v=live6">
   </head>
   <body>
     <div class="mobile-use-warning" id="mobile-use-warning" role="dialog" aria-labelledby="mobile-warning-title" aria-describedby="mobile-warning-copy">
@@ -48,9 +48,9 @@
               <button class="icon-button home-button" id="go-home" title="Return to teacher dashboard">Home</button>
               <button class="icon-button" id="open-student-profiles" title="Open student profiles">Student Profiles</button>
               <button class="icon-button" id="open-launch-assessment" title="Launch assessment">Launch Assessment</button>
+              <button class="icon-button" id="open-library-modal" title="Open library">Library</button>
             </div>
             <div class="topbar-action-row">
-              <button class="icon-button" id="open-library-modal" title="Open library">Library</button>
               <button class="icon-button" id="open-settings-modal" title="Open settings">Settings</button>
               <button class="icon-button" id="reset-demo" title="Reset demo data">Reset</button>
               <button class="icon-button logout-button" id="logout-demo" title="Log out">Log Out</button>
@@ -137,7 +137,7 @@
                           <option value="stem">STEM</option>
                         </select>
                       </label>
-                      <label>Board objective
+                      <label>Board Objective
                         <select id="objective-style">
                           <option value="ican" selected>I can statement</option>
                           <option value="student">Student-friendly objective</option>
@@ -154,9 +154,9 @@
                       <p class="auto-support-note">IEP supports are set per class in Settings and apply automatically.</p>
                     </div>
                   </div>
+                  <h5 class="upload-section-title">Choose Lesson Files Or Photos</h5>
                   <label class="upload-drop">
                     <input type="file" id="lesson-file" accept=".txt,.md,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp,.heic,.heif,image/*" multiple>
-                    <span>Choose lesson files or photos</span>
                     <small>Upload typed files, PDFs, screenshots, or photos from teacher materials. Image text will be read with OCR/server parsing in the full build.</small>
                   </label>
                   <div class="upload-summary" id="lesson-file-summary" aria-live="polite">No files selected yet.</div>
@@ -232,7 +232,7 @@
                 <option value="kagan">Kagan</option>
                 <option value="siop">SIOP</option>
                 <option value="cer">CER</option>
-                <option value="pbl">Project Based Learning</option>
+                <option value="pbl">PBL</option>
                 <option value="iep">IEP Supports</option>
               </select>
             </label>
@@ -512,6 +512,6 @@
     <script src="/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabaseClient.js"></script>
-    <script src="/app.js?v=live5"></script>
+    <script src="/app.js?v=live6"></script>
   </body>
 </html>
