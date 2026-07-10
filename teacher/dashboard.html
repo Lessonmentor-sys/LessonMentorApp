@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lesson Mentor</title>
     <link rel="icon" type="image/png" href="/assets/lessonmentor-favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=live6">
+    <link rel="stylesheet" href="/styles.css?v=live7">
   </head>
   <body>
     <div class="mobile-use-warning" id="mobile-use-warning" role="dialog" aria-labelledby="mobile-warning-title" aria-describedby="mobile-warning-copy">
@@ -64,6 +64,10 @@
               <div class="panel">
                 <div class="panel-title-row stacked-title">
                   <h4>Class Profile</h4>
+                  <div class="teacher-code-card">
+                    <span>Teacher Code</span>
+                    <strong id="teacher-class-code">LM-P1-SCI</strong>
+                  </div>
                   <label class="class-picker compact-picker">Class
                     <select id="class-select" aria-label="Class period">
                       <option value="1">Period 1 - Grade 4 Science</option>
@@ -78,10 +82,6 @@
                       <option value="10">Period 10 - Homeroom</option>
                     </select>
                   </label>
-                  <div class="teacher-code-card">
-                    <span>Teacher Code</span>
-                    <strong id="teacher-class-code">LM-P1-SCI</strong>
-                  </div>
                 </div>
                 <div class="profile-layout rail-profile">
                   <div class="compass" id="teacher-compass" aria-label="Class learning profile chart"></div>
@@ -112,6 +112,7 @@
                           <option value="10">Period 10 - Homeroom</option>
                         </select>
                       </label>
+                      <span class="lesson-or-divider" aria-hidden="true">OR</span>
                       <label>Grade
                         <select id="lesson-grade">
                           <option value="2">Grade 2</option>
@@ -159,8 +160,7 @@
                     <input type="file" id="lesson-file" accept=".txt,.md,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp,.heic,.heif,image/*" multiple>
                     <small>Upload typed files, PDFs, screenshots, or photos from teacher materials. Image text will be read with OCR/server parsing in the full build.</small>
                   </label>
-                  <div class="upload-summary" id="lesson-file-summary" aria-live="polite">No files selected yet.</div>
-                  <textarea id="lesson-text" rows="4" placeholder="Paste a lesson, objective, or curriculum excerpt here...&#10;&#10;The more detailed information you give, the better the AI can produce a lesson that you are envisioning."></textarea>
+                  <textarea id="lesson-text" rows="4"></textarea>
                   <div class="button-row">
                     <button class="primary-button" id="generate-lesson">Generate plan</button>
                     <button class="secondary-button" id="analyze-lesson">Analyze only</button>
@@ -512,6 +512,6 @@
     <script src="/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabaseClient.js"></script>
-    <script src="/app.js?v=live6"></script>
+    <script src="/app.js?v=live7"></script>
   </body>
 </html>

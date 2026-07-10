@@ -579,8 +579,6 @@ function bindNavigation() {
     appState.answers = {};
     const lessonText = document.getElementById("lesson-text");
     if (lessonText) lessonText.value = "";
-    const summary = document.getElementById("lesson-file-summary");
-    if (summary) summary.textContent = "No files selected yet.";
     renderAll();
   });
 
@@ -657,38 +655,18 @@ function bindTeacher() {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
     const textArea = document.getElementById("lesson-text");
-    const summary = document.getElementById("lesson-file-summary");
     const textFiles = files.filter(file => file.type.startsWith("text/") || /\.(txt|md|csv)$/i.test(file.name));
-    const imageFiles = files.filter(file => file.type.startsWith("image/") || /\.(png|jpe?g|webp|heic|heif)$/i.test(file.name));
-    const documentFiles = files.filter(file => !textFiles.includes(file) && !imageFiles.includes(file));
-
-    if (summary) {
-      summary.innerHTML = files.map(file => `<span>${file.name}</span>`).join("");
-    }
     appState.uploadedFiles = files.map(file => ({
       name: file.name,
       type: file.type || "unknown",
       size: file.size || 0
     }));
 
+    if (!textArea) return;
     if (textFiles.length && textFiles.length === files.length) {
       textArea.value = (await Promise.all(textFiles.map(file => file.text()))).join("\n\n--- Next Uploaded Text File ---\n\n");
-    } else {
-      const parts = [
-        `Uploaded ${files.length} file${files.length === 1 ? "" : "s"}:`,
-        ...files.map(file => `- ${file.name}`),
-        "",
-        "Full build behavior:",
-        "- Text files are read directly.",
-        "- Word/PDF files are parsed by the server.",
-        "- Photos and screenshots are read with OCR, then combined into one lesson-analysis request.",
-        "",
-        imageFiles.length ? `${imageFiles.length} image file${imageFiles.length === 1 ? "" : "s"} queued for OCR.` : "",
-        documentFiles.length ? `${documentFiles.length} document file${documentFiles.length === 1 ? "" : "s"} queued for parsing.` : "",
-        "",
-        "For this browser prototype, paste any visible lesson text here if you want to analyze it now.",
-      ].filter(Boolean);
-      textArea.value = parts.join("\n");
+    } else if (!textArea.value.trim()) {
+      textArea.value = "";
     }
   });
 
@@ -949,13 +927,6 @@ function analyzeLesson() {
 function renderLessonAnalysis() {
   const panel = document.getElementById("lesson-analysis");
   if (!panel) return;
-  if (needsServerLessonParsing()) {
-    panel.innerHTML = `
-      <strong>Files Ready For AI Parsing</strong>
-      <p>Your uploaded file is queued for the full AI document parser. The final build will read Word/PDF/photo content, apply class data and selected strategies, and fill the Lesson Mentor signature template.</p>
-    `;
-    return;
-  }
   if (!appState.lessonText) {
     panel.innerHTML = "";
     return;
@@ -1017,18 +988,11 @@ function buildObjectiveStatement() {
 
 function getAnalyzableLessonText() {
   const pasted = document.getElementById("lesson-text")?.value.trim() || "";
-  const parserNotice = pasted.includes("Full build behavior:") || pasted.includes("For this browser prototype");
-  if (pasted && !parserNotice) return pasted;
+  if (pasted) return pasted;
   const filenameText = appState.uploadedFiles.map(file => readableTitleFromFilename(file.name)).join(" ");
   const subject = subjectLabel(document.getElementById("lesson-subject")?.value || "");
   const grade = document.getElementById("lesson-grade")?.value || "";
   return [filenameText, subject, grade ? `Grade ${grade}` : ""].filter(Boolean).join(" ");
-}
-
-function needsServerLessonParsing() {
-  const pasted = document.getElementById("lesson-text")?.value.trim() || "";
-  const parserNotice = pasted.includes("Full build behavior:") || pasted.includes("For this browser prototype");
-  return appState.uploadedFiles.length > 0 && (!pasted || parserNotice);
 }
 
 function readableTitleFromFilename(filename = "") {
@@ -1048,7 +1012,7 @@ function deriveLessonTitle() {
   const firstMeaningfulLine = text
     .split(/\n+/)
     .map(line => line.trim())
-    .find(line => line && !line.includes("Full build behavior:") && !line.startsWith("-"));
+    .find(line => line && !line.startsWith("-"));
   if (firstMeaningfulLine) {
     return `${titleCase(firstMeaningfulLine.replace(/^grade\s+\d+\s*/i, "").split(/[.:;]/)[0].slice(0, 80))} lesson plan`;
   }
@@ -1102,22 +1066,6 @@ async function generateLessonPlan() {
   }
 
   analyzeLesson();
-  if (needsServerLessonParsing()) {
-    renderLessonAnalysis();
-    const submissionHistory = document.getElementById("submission-history");
-    if (submissionHistory) {
-      submissionHistory.innerHTML = `
-        <div class="history-row muted-row">
-          <div>
-            <strong>AI Template Generation Needed</strong>
-            <p>${appState.uploadedFiles.length} file${appState.uploadedFiles.length === 1 ? "" : "s"} ready for OCR/document parsing. No sample lesson was generated.</p>
-          </div>
-        </div>
-      `;
-    }
-    return;
-  }
-
   const profile = classProfiles[appState.activePeriod].profile;
   const matched = strategyLibrary
     .filter(strategy => appState.enabledSystems[strategy.system])

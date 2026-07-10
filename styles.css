@@ -383,10 +383,21 @@ button {
 }
 
 .lesson-meta-grid {
-  grid-template-columns: minmax(250px, 1.25fr) minmax(110px, 0.5fr) minmax(150px, 0.68fr) minmax(165px, 0.72fr);
+  grid-template-columns: minmax(220px, 320px) auto minmax(120px, 180px) minmax(170px, 260px) minmax(190px, 280px);
   gap: 10px;
   justify-content: stretch;
   align-items: end;
+}
+
+.lesson-or-divider {
+  align-self: end;
+  display: grid;
+  min-height: 38px;
+  place-items: center;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 950;
+  letter-spacing: 0.03em;
 }
 
 .lesson-setup-grid {
@@ -1732,7 +1743,7 @@ body.is-mobile-device .mobile-use-warning p {
   }
 
   .lesson-meta-grid {
-    grid-template-columns: minmax(230px, 1.15fr) minmax(100px, 0.5fr) minmax(130px, 0.62fr) minmax(150px, 0.7fr);
+    grid-template-columns: minmax(210px, 1fr) auto minmax(110px, 0.55fr) minmax(140px, 0.7fr) minmax(150px, 0.75fr);
   }
 
   .lesson-setup-grid {
