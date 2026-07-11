@@ -22,6 +22,35 @@ const systemLabels = {
   siop: "SIOP"
 };
 
+const accountProfile = {
+  educatorName: "Jennifer Touati",
+  organizationName: "Education Under Construction LLC",
+  teachingState: "BASE"
+};
+
+const copyrightNotice = "© 2026 Lesson Mentor | Education Under Construction LLC. Signature lesson plan template format protected. Do not remove.";
+
+const standardsConfig = {
+  baseLabel: "Base Standards",
+  statePackages: {
+    BASE: { label: "Base: CCSS/NGSS", loaded: true },
+    TX: { label: "Texas State Standards", loaded: false },
+    MA: { label: "Massachusetts State Standards", loaded: false }
+  },
+  baseFrameworkBySubject: {
+    ela: "CCSS",
+    math: "CCSS",
+    science: "NGSS",
+    "social-studies": "CCSS Literacy",
+    art: "National Arts",
+    language: "ACTFL",
+    "library-makerspace": "AASL",
+    music: "National Arts",
+    pe: "SHAPE",
+    stem: "NGSS/CCSS"
+  }
+};
+
 const styleOrder = ["A", "I", "K", "R", "S", "V"];
 
 const iepSupports = [
@@ -691,14 +720,38 @@ function bindTeacher() {
 
   ["lesson-grade", "lesson-subject", "objective-style"].forEach(id => {
     on(id, "change", () => {
+      if (id === "lesson-grade" || id === "lesson-subject") clearLessonPeriodForManualDetails();
       renderStandardsPreview();
       renderStrategies();
     });
+  });
+
+  on("teacher-state", "change", event => {
+    accountProfile.teachingState = event.target.value || "BASE";
+    renderStandardsPreview();
   });
 }
 
 function getClassConfig(period = appState.activePeriod) {
   return classAccessCodes[period] || classAccessCodes["1"];
+}
+
+function hasConfiguredClasses() {
+  return Object.keys(classAccessCodes).length > 0;
+}
+
+function setLessonDetailMode() {
+  const savedClassMode = hasConfiguredClasses();
+  const metaGrid = document.querySelector(".lesson-meta-grid");
+  const orDivider = document.querySelector(".lesson-or-divider");
+  document.querySelectorAll(".saved-class-field").forEach(field => {
+    field.hidden = !savedClassMode;
+  });
+  document.querySelectorAll(".manual-lesson-field").forEach(field => {
+    field.hidden = savedClassMode;
+  });
+  if (orDivider) orDivider.hidden = true;
+  metaGrid?.classList.toggle("saved-class-only", savedClassMode);
 }
 
 function syncLessonPeriodControls(period = appState.activePeriod) {
@@ -711,6 +764,12 @@ function syncLessonPeriodControls(period = appState.activePeriod) {
   if (lessonPeriod) lessonPeriod.value = period;
   if (lessonGrade && config.grade) lessonGrade.value = config.grade;
   if (lessonSubject && config.subject) lessonSubject.value = config.subject;
+  setLessonDetailMode();
+}
+
+function clearLessonPeriodForManualDetails() {
+  const lessonPeriod = document.getElementById("lesson-period");
+  if (lessonPeriod) lessonPeriod.value = "";
 }
 
 function getSelectedSupportIds(period = appState.activePeriod) {
@@ -786,6 +845,8 @@ function renderTeacher() {
   renderStats("teacher-profile-stats", profile.profile);
   const codeEl = document.getElementById("teacher-class-code");
   if (codeEl) codeEl.textContent = classCode;
+  const stateSelect = document.getElementById("teacher-state");
+  if (stateSelect) stateSelect.value = accountProfile.teachingState || "BASE";
   const classInsight = document.getElementById("class-insight");
   if (classInsight) classInsight.textContent = buildInsight(profile.profile);
   const rosterCount = document.getElementById("roster-count");
@@ -946,37 +1007,76 @@ function renderStandardsPreview() {
   }
 }
 
+function getTeachingState() {
+  return document.getElementById("teacher-state")?.value || accountProfile.teachingState || "BASE";
+}
+
+function getStandardsPackage(state = getTeachingState()) {
+  return standardsConfig.statePackages[state] || standardsConfig.statePackages.BASE;
+}
+
+function baseFrameworkForSubject(subject) {
+  return standardsConfig.baseFrameworkBySubject[subject] || "CCSS";
+}
+
+function scoreStandards(candidates, words) {
+  return candidates
+    .map(item => ({ ...item, score: item.keywords.filter(keyword => words.includes(keyword)).length }))
+    .sort((a, b) => b.score - a.score);
+}
+
+function markStandardsSource(matches, state, subject, sourceType) {
+  const statePackage = getStandardsPackage(state);
+  const baseFramework = baseFrameworkForSubject(subject);
+  return matches.map(item => ({
+    ...item,
+    sourceState: state,
+    sourceType,
+    sourceLabel: sourceType === "state" ? statePackage.label : `${standardsConfig.baseLabel}: ${baseFramework}`,
+    fallbackNote: sourceType === "base-fallback" && state !== "BASE"
+      ? `${statePackage.label} package not loaded yet; using ${baseFramework} base standards.`
+      : ""
+  }));
+}
+
 function getStandardMatches() {
   const grade = document.getElementById("lesson-grade")?.value || "4";
   const subject = document.getElementById("lesson-subject")?.value || "science";
-  const words = appState.lessonKeywords.length ? appState.lessonKeywords : getAnalyzableLessonText().toLowerCase().match(/[a-z]{4,}/g);
-  const primary = standardsLibrary
-    .filter(item => item.grade === grade && item.subject === subject)
-    .map(item => ({ ...item, score: item.keywords.filter(keyword => words.includes(keyword)).length }))
-    .sort((a, b) => b.score - a.score)
+  const words = appState.lessonKeywords.length ? appState.lessonKeywords : (getAnalyzableLessonText().toLowerCase().match(/[a-z]{4,}/g) || []);
+  const state = getTeachingState();
+  const statePackage = getStandardsPackage(state);
+  const stateCandidates = standardsLibrary.filter(item => item.state === state && item.grade === grade && item.subject === subject);
+  if (state !== "BASE" && statePackage.loaded && stateCandidates.length) {
+    const stateMatches = scoreStandards(stateCandidates, words).filter(item => item.score > 0).slice(0, 2);
+    return markStandardsSource(stateMatches.length ? stateMatches : stateCandidates.slice(0, 2), state, subject, "state");
+  }
+
+  const baseCandidates = standardsLibrary.filter(item => !item.state && item.grade === grade && item.subject === subject);
+  const primary = scoreStandards(baseCandidates, words)
     .filter(item => item.score > 0)
     .slice(0, 2);
 
-  if (primary.length) return primary;
-  return standardsLibrary.filter(item => item.grade === grade && item.subject === subject).slice(0, 2);
+  const baseMatches = primary.length ? primary : baseCandidates.slice(0, 2);
+  return markStandardsSource(baseMatches, state, subject, state === "BASE" ? "base" : "base-fallback");
 }
 
 function buildObjectiveStatement() {
   const style = document.getElementById("objective-style")?.value || "ican";
   const subject = document.getElementById("lesson-subject")?.value || "science";
   const title = deriveLessonTitle().toLowerCase();
-  let objective = "use evidence and academic language to explain my thinking";
-  let language = "claim, evidence, explain, detail";
-  if (subject === "science") {
+  const context = inferLessonContext();
+  let objective = context.objective || "use evidence and academic language to explain my thinking";
+  let language = context.language || "claim, evidence, explain, detail";
+  if (context.topic === "the submitted lesson topic" && subject === "science") {
     objective = "explain how evidence from observations supports a scientific claim";
     language = "claim, evidence, reasoning, observe";
-  } else if (subject === "social-studies" && /historical|figure|research/.test(title)) {
+  } else if (context.topic === "the submitted lesson topic" && subject === "social-studies" && /historical|figure|research/.test(title)) {
     objective = "research a historical figure and explain their impact using evidence from sources";
     language = "historical figure, source, evidence, impact, explain";
-  } else if (subject === "social-studies") {
+  } else if (context.topic === "the submitted lesson topic" && subject === "social-studies") {
     objective = "explain a social studies idea using evidence from sources";
     language = "source, evidence, event, impact, explain";
-  } else if (subject === "math") {
+  } else if (context.topic === "the submitted lesson topic" && subject === "math") {
     objective = "solve the problem and explain the strategy I used";
     language = "strategy, model, equation, explain";
   }
@@ -984,6 +1084,60 @@ function buildObjectiveStatement() {
   const student = `Today I will use ${language} to ${objective}.`;
   if (style === "both") return `${iCan} ${student}`;
   return style === "student" ? student : iCan;
+}
+
+function inferLessonContext(text = getAnalyzableLessonText()) {
+  const lower = String(text || "").toLowerCase();
+  if (/soccer|kicking a ball|kick a ball/.test(lower)) {
+    return {
+      topic: "introductory soccer skills",
+      objective: "build background knowledge about soccer and demonstrate the basics of kicking a ball with control",
+      language: "soccer, control, pass, plant foot, inside of the foot, target, follow-through",
+      hook: "Show a soccer ball and ask students what they already know about moving, stopping, and passing the ball.",
+      directTeach: "Model a safe inside-of-the-foot kick: plant the non-kicking foot beside the ball, point toes toward the target, contact the ball with the inside of the foot, and follow through.",
+      guidedPractice: "Partners practice stationary passes to a target, using teacher cues before adding movement.",
+      independentPractice: "Students rotate through short kicking stations: target pass, gentle dribble-and-stop, and partner return pass.",
+      assessment: "Observe whether students can name two kicking cues and complete a controlled pass toward a target.",
+      grouping: "Whole group for safety/background, partners for passing practice, small groups for station rotation."
+    };
+  }
+  if (/historical figure|research project/.test(lower)) {
+    return {
+      topic: "historical figure research",
+      objective: "research a historical figure and explain their impact using evidence from sources",
+      language: "historical figure, source, evidence, impact, contribution, explain",
+      hook: "Display two short source excerpts and ask students what the details reveal about the person.",
+      directTeach: "Model how to pull one fact, one piece of evidence, and one impact statement from a short source.",
+      guidedPractice: "Students sort source details into facts, evidence, and impact statements with a partner.",
+      independentPractice: "Students begin a research organizer and draft one evidence-based impact statement.",
+      assessment: "Collect the organizer row or exit response showing one accurate fact, one source detail, and one impact explanation.",
+      grouping: "Whole group model, partner evidence sort, then independent organizer work."
+    };
+  }
+  if (/erosion|weathering|landforms?/.test(lower)) {
+    return {
+      topic: "erosion and landform change",
+      objective: "explain how evidence from observations supports a claim about how land changes over time",
+      language: "erosion, weathering, landform, evidence, observation, claim",
+      hook: "Show two images of landforms before and after water or wind changes and ask students what changed.",
+      directTeach: "Model how to connect one visible change to a claim about erosion.",
+      guidedPractice: "Students examine a shared image or station and choose the strongest evidence.",
+      independentPractice: "Students write a claim using evidence from the observation.",
+      assessment: "Collect a CER response or exit ticket naming the claim and evidence.",
+      grouping: "Whole group model, station or partner evidence talk, independent CER response."
+    };
+  }
+  return {
+    topic: "the submitted lesson topic",
+    objective: "use the lesson content, academic language, and selected strategies to meet the stated objective",
+    language: "content vocabulary, evidence, explain, practice, reflect",
+    hook: "Connect the lesson to students' prior knowledge with a short question, image, or example.",
+    directTeach: "Model the key concept or skill with explicit teacher language.",
+    guidedPractice: "Guide students through one shared example before release.",
+    independentPractice: "Students complete the aligned task using the provided supports.",
+    assessment: "Collect a short response or performance check aligned to the objective.",
+    grouping: "Whole group model, partner or small-group practice, independent evidence of learning."
+  };
 }
 
 function getAnalyzableLessonText() {
@@ -1005,18 +1159,49 @@ function readableTitleFromFilename(filename = "") {
   return titleCase(base || "Uploaded Lesson");
 }
 
+function getEducatorName() {
+  return accountProfile.educatorName || accountProfile.organizationName || "Lesson Mentor Teacher";
+}
+
+function titleFromPrompt(text = "") {
+  const compact = String(text)
+    .replace(/\s+/g, " ")
+    .replace(/^[\s"'`]+|[\s"'`]+$/g, "")
+    .trim();
+  const lower = compact.toLowerCase();
+  if (/soccer|kicking a ball|kick a ball/.test(lower)) {
+    return "Introductory Soccer Unit: Background Knowledge And Kicking Basics Lesson Plan";
+  }
+  if (/historical figure|research project/.test(lower)) {
+    return "Historical Figure Research Project Lesson Plan";
+  }
+  if (/erosion|weathering|landforms?/.test(lower)) {
+    return "Erosion And Landform Change Lesson Plan";
+  }
+  const cleaned = compact
+    .replace(/^(i'?m|i am)\s+looking\s+for\s+(an?|the)?\s*/i, "")
+    .replace(/^please\s+(create|make|build|generate)\s+(an?|the)?\s*/i, "")
+    .replace(/^i\s+need\s+(an?|the)?\s*/i, "")
+    .split(/[.;!?]/)[0]
+    .slice(0, 90)
+    .trim();
+  return `${titleCase(cleaned || "Generated Lesson")} Lesson Plan`;
+}
+
 function deriveLessonTitle() {
+  const pasted = document.getElementById("lesson-text")?.value.trim() || "";
+  if (pasted) return titleFromPrompt(pasted);
   const fileTitle = appState.uploadedFiles[0]?.name ? readableTitleFromFilename(appState.uploadedFiles[0].name) : "";
-  if (fileTitle) return `${fileTitle} lesson plan`;
+  if (fileTitle) return `${fileTitle} Lesson Plan`;
   const text = getAnalyzableLessonText();
   const firstMeaningfulLine = text
     .split(/\n+/)
     .map(line => line.trim())
     .find(line => line && !line.startsWith("-"));
   if (firstMeaningfulLine) {
-    return `${titleCase(firstMeaningfulLine.replace(/^grade\s+\d+\s*/i, "").split(/[.:;]/)[0].slice(0, 80))} lesson plan`;
+    return `${titleCase(firstMeaningfulLine.replace(/^grade\s+\d+\s*/i, "").split(/[.:;]/)[0].slice(0, 80))} Lesson Plan`;
   }
-  return `${subjectLabel(document.getElementById("lesson-subject")?.value || "lesson")} lesson plan`;
+  return `${subjectLabel(document.getElementById("lesson-subject")?.value || "lesson")} Lesson Plan`;
 }
 
 function subjectLabel(value) {
@@ -1080,6 +1265,8 @@ async function generateLessonPlan() {
   const standards = getStandardMatches();
   const objectiveStatement = buildObjectiveStatement();
   const lessonTitle = deriveLessonTitle();
+  const lessonContext = inferLessonContext();
+  const teachingState = getTeachingState();
   const grade = document.getElementById("lesson-grade")?.value || "";
   const subject = document.getElementById("lesson-subject")?.value || "";
   const selectedSystemLabels = systems
@@ -1097,10 +1284,21 @@ async function generateLessonPlan() {
     date: "Today",
     expires: "15 days",
     expired: false,
+    educator: getEducatorName(),
+    teachingState,
+    standardsSource: standards[0]?.sourceLabel || getStandardsPackage(teachingState).label,
     grade,
     subject,
     objective: objectiveStatement,
-    standards: standards.map(item => ({ id: item.id, framework: item.framework, text: item.text })),
+    lessonText: appState.lessonText,
+    lessonContext,
+    standards: standards.map(item => ({
+      id: item.id,
+      framework: item.framework,
+      text: item.text,
+      sourceLabel: item.sourceLabel,
+      fallbackNote: item.fallbackNote
+    })),
     supportInserts: supportInserts.map(item => ({ label: item.label, insert: item.insert })),
     organizers,
     strategies: matched.map(item => item.title),
@@ -1124,7 +1322,15 @@ async function persistLessonSubmission(submission, standards, supportInserts, or
     subject: document.getElementById("lesson-subject")?.value || null,
     objective_style: document.getElementById("objective-style")?.value || null,
     selected_systems: submission.systems,
-    matched_standards: standards.map(item => ({ id: item.id, framework: item.framework, text: item.text })),
+    matched_standards: standards.map(item => ({
+      id: item.id,
+      framework: item.framework,
+      text: item.text,
+      source: item.sourceLabel,
+      fallback_note: item.fallbackNote
+    })),
+    standards_state: submission.teachingState,
+    standards_source: submission.standardsSource,
     selected_supports: supportInserts.map(item => item.id),
     teacher_code: getClassConfig(appState.activePeriod).code,
     recommended_organizers: organizers,
@@ -1208,10 +1414,15 @@ function availabilityPill(item) {
   return `<span class="access-pill ${tone}">${label}</span>`;
 }
 
+function isSubmissionVisibleToTeacher(item) {
+  return !item.teacherHidden && !item.expired && getDaysAvailable(item) > 0;
+}
+
 function renderSubmissionHistory() {
   const submissionHistory = document.getElementById("submission-history");
   if (!submissionHistory) return;
-  if (!appState.submissions.length) {
+  const visibleSubmissions = appState.submissions.filter(isSubmissionVisibleToTeacher);
+  if (!visibleSubmissions.length) {
     submissionHistory.innerHTML = `
       <div class="history-row muted-row">
         <div>
@@ -1223,7 +1434,7 @@ function renderSubmissionHistory() {
     return;
   }
 
-  submissionHistory.innerHTML = appState.submissions.map(item => `
+  submissionHistory.innerHTML = visibleSubmissions.map(item => `
     <div class="history-row" data-submission-row="${item.id || ""}">
       <div>
         <strong>${item.title}</strong>
@@ -1236,6 +1447,7 @@ function renderSubmissionHistory() {
           <button class="secondary-button" data-output-action="pdf" data-submission-id="${item.id}">Download PDF</button>
           <button class="secondary-button" data-output-action="docx" data-submission-id="${item.id}">Word .docx</button>
           <button class="secondary-button muted-action" data-output-action="gdocs" data-submission-id="${item.id}" title="Google Docs export will require Google Drive authorization">Google Docs</button>
+          <button class="secondary-button destructive-action" data-output-action="clear" data-submission-id="${item.id}" title="Remove this lesson from teacher history">Clear</button>
         `}
       </div>
     </div>
@@ -1255,15 +1467,27 @@ function handleSubmissionAction(event) {
   if (action === "preview") previewGeneratedLesson(item);
   if (action === "pdf") downloadGeneratedPdf(item);
   if (action === "docx") downloadGeneratedDocx(item);
+  if (action === "clear") clearTeacherSubmission(item);
   if (action === "gdocs") {
     alert("Google Docs export will connect after Google Drive authorization is added. For now, use the Word .docx download.");
   }
 }
 
+function clearTeacherSubmission(item) {
+  const shouldClear = window.confirm(`Remove "${item.title}" from the teacher submission history?`);
+  if (!shouldClear) return;
+  item.teacherHidden = true;
+  item.teacherHiddenAt = new Date().toISOString();
+  renderSubmissionHistory();
+}
+
 function buildGeneratedLessonLines(item) {
+  const context = item.lessonContext || inferLessonContext(item.lessonText || item.title || getAnalyzableLessonText());
   const standards = item.standards?.length
     ? item.standards.map(standard => `${standard.framework}: ${standard.id}`).join("; ")
     : "Standards will be finalized after the standards matcher is connected.";
+  const standardsSource = item.standardsSource || item.standards?.[0]?.sourceLabel || `${standardsConfig.baseLabel}: ${baseFrameworkForSubject(item.subject)}`;
+  const standardsNote = item.standards?.find(standard => standard.fallbackNote)?.fallbackNote || "";
   const strategies = item.strategies?.length
     ? item.strategies.join(", ")
     : item.systems?.filter(system => system !== "IEP Supports").join(", ") || "Selected strategies";
@@ -1276,13 +1500,17 @@ function buildGeneratedLessonLines(item) {
     "Lesson Mentor Generated Draft",
     item.title,
     "",
+    `Educator: ${item.educator || getEducatorName()}`,
     `Class: ${item.period || classProfiles[appState.activePeriod].name}`,
     `Teacher Code: ${item.classCode || getClassConfig(appState.activePeriod).code}`,
     `Grade: ${item.grade || document.getElementById("lesson-grade")?.value || ""}`,
     `Subject: ${subjectLabel(item.subject || document.getElementById("lesson-subject")?.value || "")}`,
     `Uploaded file(s): ${files}`,
+    `Lesson Focus: ${titleCase(context.topic)}`,
     "",
     "Auto Standards",
+    `Source: ${standardsSource}`,
+    standardsNote ? `Note: ${standardsNote}` : "",
     standards,
     "",
     "Board Language",
@@ -1297,8 +1525,17 @@ function buildGeneratedLessonLines(item) {
     "Recommended Graphic Organizers",
     organizers,
     "",
+    "Lesson-Specific Teaching Flow",
+    `- Background Builder: ${context.hook}`,
+    `- Teacher Model: ${context.directTeach}`,
+    `- Guided Practice: ${context.guidedPractice}`,
+    `- Independent/Station Practice: ${context.independentPractice}`,
+    `- Evidence Of Learning: ${context.assessment}`,
+    "",
     "Prototype Note",
-    "This static preview uses the selected class, subject, filename, pasted text, and strategy settings. The full build will replace this draft with AI-generated content in Jennifer's signature template."
+    "This static preview uses the selected class, subject, filename, pasted text, and strategy settings. The full build will replace this draft with AI-generated content in the Lesson Mentor signature template.",
+    "",
+    copyrightNotice
   ];
 }
 
@@ -1349,8 +1586,9 @@ function downloadGeneratedDocx(item) {
   const xmlLines = buildGeneratedLessonLines(item).map(line => {
     const escaped = escapeXml(line || " ");
     if (!line) return `<w:p/>`;
-    const isHeading = !line.startsWith("-") && ["Lesson Mentor Generated Draft", item.title, "Auto Standards", "Board Language", "Strategies To Include", "Strategy Integrations/IEP", "Recommended Graphic Organizers", "Prototype Note"].includes(line);
-    return `<w:p><w:r><w:rPr>${isHeading ? "<w:b/>" : ""}</w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`;
+    const isHeading = !line.startsWith("-") && ["Lesson Mentor Generated Draft", item.title, "Auto Standards", "Board Language", "Strategies To Include", "Strategy Integrations/IEP", "Recommended Graphic Organizers", "Lesson-Specific Teaching Flow", "Prototype Note"].includes(line);
+    const isCopyright = line === copyrightNotice;
+    return `<w:p><w:r><w:rPr>${isHeading ? "<w:b/>" : ""}${isCopyright ? '<w:color w:val="8A94A6"/><w:sz w:val="16"/>' : ""}</w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`;
   }).join("");
   const files = {
     "[Content_Types].xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`,
@@ -1368,6 +1606,7 @@ function makeLessonPlanPdf(item) {
   const paleAmber = "F7EBD2";
   const ink = "202938";
   const muted = "4B5D78";
+  const watermark = "8A94A6";
   const border = "9CA3AF";
   const margin = 30;
   const pageWidth = 792;
@@ -1375,11 +1614,13 @@ function makeLessonPlanPdf(item) {
   const standards = item.standards?.length
     ? item.standards.map(standard => `${standard.framework}: ${standard.id}`).join("; ")
     : "Standards will be finalized after AI standards matching.";
+  const standardsSource = item.standardsSource || item.standards?.[0]?.sourceLabel || `${standardsConfig.baseLabel}: ${baseFrameworkForSubject(item.subject)}`;
   const grade = item.grade || document.getElementById("lesson-grade")?.value || "";
   const subject = subjectLabel(item.subject || document.getElementById("lesson-subject")?.value || "");
   const periodLabel = item.period || classProfiles[appState.activePeriod]?.name || "Selected class";
   const objective = item.objective || buildObjectiveStatement();
-  const keywords = item.keywords?.length ? item.keywords.slice(0, 8).join(", ") : "academic vocabulary from uploaded lesson";
+  const context = item.lessonContext || inferLessonContext(item.lessonText || item.title || getAnalyzableLessonText());
+  const keywords = context.language || (item.keywords?.length ? item.keywords.slice(0, 8).join(", ") : "academic vocabulary from uploaded lesson");
   const materials = [
     item.uploadedFiles?.length ? item.uploadedFiles.map(file => file.name).join(", ") : "Uploaded lesson materials",
     item.organizers?.length ? `Organizers: ${item.organizers.join(", ")}` : ""
@@ -1393,10 +1634,10 @@ function makeLessonPlanPdf(item) {
   const headerY = 62;
   const headerH = 48;
   drawFieldTable(pdf, margin, headerY, contentWidth, headerH, [
-    ["Educator", "Education Under Construction LLC"],
+    ["Educator", item.educator || getEducatorName()],
     ["Date", new Date().toLocaleDateString()],
     ["Grade / Course", `${periodLabel} - Grade ${grade} ${subject}`],
-    ["Standard(s)", standards]
+    ["Standard(s)", `${standardsSource} - ${standards}`]
   ], { accent, border, ink });
 
   drawBox(pdf, margin, 122, contentWidth, 54, {
@@ -1415,7 +1656,8 @@ function makeLessonPlanPdf(item) {
   const segments = buildTemplateSegments(item);
   drawLessonMatrix(pdf, margin, 240, contentWidth, 318, segments, { accent, lightAccent, amber, paleAmber, border, ink, muted });
 
-  pdf.text("Generated by Lesson Mentor - differentiated planning, teacher-ready language, and intentional supports.", margin, 584, { size: 7.5, color: muted });
+  pdf.text("Generated by Lesson Mentor - differentiated planning, teacher-ready language, and intentional supports.", margin, 582, { size: 7.2, color: muted });
+  pdf.text(copyrightNotice, margin, 594, { size: 6.8, color: watermark });
 
   pdf.addPage();
   pdf.text("Teaching & Learning Moves Matrix", margin, 30, { size: 16, bold: true, color: accent });
@@ -1432,6 +1674,7 @@ function makeLessonPlanPdf(item) {
     drawBox(pdf, margin, y, contentWidth, 105, { title, body, accent, border, fill: "FFFFFF" });
     y += 122;
   });
+  pdf.text(copyrightNotice, margin, 584, { size: 6.8, color: watermark });
 
   return pdf.toBlob();
 }
@@ -1441,6 +1684,7 @@ function buildTemplateSegments(item) {
   const supportList = item.supportInserts?.length
     ? item.supportInserts.map(support => `${support.insert} (${support.label})`)
     : ["Use selected class IEP supports at the point where they match the task demand. (IEP)"];
+  const context = item.lessonContext || inferLessonContext(item.lessonText || item.title || getAnalyzableLessonText());
   const objective = item.objective || buildObjectiveStatement();
   const primaryStrategy = strategyList[0] || "Comprehensible Input";
   const secondaryStrategy = strategyList[1] || "Structured Partner Talk";
@@ -1448,35 +1692,35 @@ function buildTemplateSegments(item) {
   return [
     {
       segment: "Hook & Background Building",
-      teacher: `Launch the lesson with a short visual, source, or question connected to the objective: ${objective}`,
+      teacher: context.hook,
       student: "Activate prior knowledge, notice key details, and make an initial prediction or connection.",
-      language: `Preview vocabulary: ${item.keywords?.slice(0, 5).join(", ") || "content vocabulary"}.`,
+      language: `Preview vocabulary: ${context.language || item.keywords?.slice(0, 5).join(", ") || "content vocabulary"}.`,
       integration: `${primaryStrategy} (SIOP). Offer a visual/context anchor before directions.`
     },
     {
       segment: "Direct Teach (I do)",
-      teacher: "Model the thinking process step by step. Show how to identify useful evidence and explain why it matters.",
+      teacher: context.directTeach,
       student: "Track the model, annotate or sketch the key step, and rehearse one academic phrase.",
-      language: `Sentence frames: "My claim is ___ because ___." / "The evidence shows ___, so I think ___."`,
+      language: `Teacher language: "Watch for ___." / "I know I am successful when ___."`,
       integration: `${supportList[0]}`
     },
     {
       segment: "Guided Work (We do)",
-      teacher: "Guide students through a shared example. Pause for checks and clarify misconceptions before release.",
+      teacher: context.guidedPractice,
       student: "Work with a partner or small group to sort, discuss, or apply evidence to the shared task.",
       language: "Require students to say the evidence before writing it. Capture one shared response.",
       integration: `${secondaryStrategy} (Kagan/SIOP). Add teacher check-in for students needing support.`
     },
     {
       segment: "Independent Work (You do)",
-      teacher: "Release students to complete the aligned response or product. Circulate with targeted prompts.",
+      teacher: context.independentPractice,
       student: "Complete the task using the model, sentence frame, organizer, and evidence gathered during guided work.",
       language: "Students write or present using claim, evidence, and explanation language.",
       integration: `${cerStrategy} (CER). ${supportList[1] || supportList[0]}`
     },
     {
       segment: "Wrap-Up & Check",
-      teacher: "Collect a quick check aligned to the objective and note which students need reteaching or extension.",
+      teacher: context.assessment,
       student: "Submit an exit response, explain one piece of evidence, or reflect on the strategy that helped most.",
       language: "Board-ready closure: Today I learned ___ because the evidence showed ___.",
       integration: `${supportList[2] || "Offer a short break or reduced-response option when appropriate. (IEP)"}`
@@ -1486,11 +1730,13 @@ function buildTemplateSegments(item) {
 
 function buildGroupingText(item) {
   const strategies = item.strategies?.join(", ") || "teacher-selected strategies";
-  return `Whole group for launch and modeling; partners or small groups for guided practice using ${strategies}; independent work for the final response.`;
+  const context = item.lessonContext || inferLessonContext(item.lessonText || item.title || getAnalyzableLessonText());
+  return `${context.grouping} Use ${strategies} where they fit the class profile and task.`;
 }
 
 function buildAssessmentEvidenceText(item) {
-  return `Collect the student response tied to the board language: ${item.objective || buildObjectiveStatement()} Look for accurate use of evidence, academic vocabulary, and the selected strategy supports.`;
+  const context = item.lessonContext || inferLessonContext(item.lessonText || item.title || getAnalyzableLessonText());
+  return `${context.assessment} This evidence should connect to the board language: ${item.objective || buildObjectiveStatement()}`;
 }
 
 function buildDifferentiationText(item) {

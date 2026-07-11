@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lesson Mentor</title>
     <link rel="icon" type="image/png" href="/assets/lessonmentor-favicon.png">
-    <link rel="stylesheet" href="/styles.css?v=live7">
+    <link rel="stylesheet" href="/styles.css?v=live9">
   </head>
   <body>
     <div class="mobile-use-warning" id="mobile-use-warning" role="dialog" aria-labelledby="mobile-warning-title" aria-describedby="mobile-warning-copy">
@@ -97,8 +97,8 @@
                     <h4>Submit A New Lesson Plan File</h4>
                   </div>
                   <div class="lesson-setup-grid">
-                    <div class="lesson-meta-grid">
-                      <label>Class / Period
+                    <div class="lesson-meta-grid saved-class-only">
+                      <label class="saved-class-field">Class / Period
                         <select id="lesson-period">
                           <option value="1">Period 1 - Grade 4 Science</option>
                           <option value="2">Period 2 - Grade 5 ELA</option>
@@ -113,7 +113,7 @@
                         </select>
                       </label>
                       <span class="lesson-or-divider" aria-hidden="true">OR</span>
-                      <label>Grade
+                      <label class="manual-lesson-field">Grade
                         <select id="lesson-grade">
                           <option value="2">Grade 2</option>
                           <option value="3">Grade 3</option>
@@ -124,7 +124,7 @@
                           <option value="8">Grade 8</option>
                         </select>
                       </label>
-                      <label>Subject
+                      <label class="manual-lesson-field">Subject
                         <select id="lesson-subject">
                           <option value="art">Art</option>
                           <option value="ela">ELA</option>
@@ -426,8 +426,7 @@
             <strong>Class Schedule</strong>
             <p>Set period names, start times, end times, meeting days, and alternate schedules for late-start or early-release days. This will also feed the future substitute lesson plan builder.</p>
             <div class="settings-actions">
-              <button class="secondary-button" type="button">Build schedule</button>
-              <button class="secondary-button" type="button">Upload schedule photo</button>
+              <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
             </div>
           </div>
           <div class="settings-card">
@@ -446,37 +445,48 @@
           <div class="settings-card">
             <strong>Student Profile Setup</strong>
             <p>Manage student IDs, grade levels, class placement, and yearly profile reset options.</p>
-            <button class="secondary-button" type="button">Manage Student Profiles</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
           </div>
           <div class="settings-card">
             <strong>Lesson Preferences</strong>
             <p>Choose default board language, standards format, template options, and protected organizer behavior.</p>
-            <button class="secondary-button" type="button">Edit Lesson Preferences</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
+          </div>
+          <div class="settings-card">
+            <strong>State Standards</strong>
+            <p>Choose the state used to match lesson outputs to standards. If a state package is not loaded yet, Lesson Mentor falls back to the base standards.</p>
+            <label>Teaching State
+              <select id="teacher-state">
+                <option value="BASE" selected>Base: CCSS/NGSS</option>
+                <option value="TX">Texas</option>
+                <option value="MA">Massachusetts</option>
+              </select>
+            </label>
           </div>
           <div class="settings-card">
             <strong>Teaching Style Inventory</strong>
             <p>Future setup: capture teacher strengths so Lesson Mentor can recommend differentiation moves that fit the teacher too.</p>
-            <button class="secondary-button" type="button">Open Inventory</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
           </div>
           <div class="settings-card">
             <strong>Account</strong>
             <p>Change display name, password, and notification preferences.</p>
-            <button class="secondary-button" type="button">Edit Account</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
           </div>
           <div class="settings-card">
             <strong>Payment History</strong>
             <p>View receipts, access dates, and renewal information.</p>
-            <button class="secondary-button" type="button">View Payment History</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
           </div>
           <div class="settings-card">
             <strong>School Year Reset</strong>
             <p>Start a new school year and permanently clear old assessment data when ready.</p>
-            <button class="secondary-button warning-button" type="button">Start School Year Reset</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
           </div>
           <div class="settings-card">
             <strong>Substitute Plan Setup</strong>
             <p>Future setup: class routines, emergency notes, seating info, schedule rules, and preferred sub-plan format.</p>
-            <button class="secondary-button" type="button">Configure Sub Plans</button>
+            <button class="secondary-button coming-soon-button" type="button" disabled>Coming Soon</button>
           </div>
         </div>
       </form>
@@ -512,6 +522,6 @@
     <script src="/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabaseClient.js"></script>
-    <script src="/app.js?v=live7"></script>
+    <script src="/app.js?v=live9"></script>
   </body>
 </html>
